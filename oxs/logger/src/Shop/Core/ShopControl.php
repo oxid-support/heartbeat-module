@@ -8,7 +8,7 @@ use OxidSupport\Logger\Logger\RequestContext;
 use OxidSupport\Logger\Logger\ShopLogger;
 use Throwable;
 
-class ShopControlExtend extends ShopControlExtend_parent
+class ShopControl extends ShopControl_parent
 {
     /**
      * @throws Throwable

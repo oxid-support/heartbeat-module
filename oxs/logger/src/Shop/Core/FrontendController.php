@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Logger\Shop\Core;
 
-class FrontendControllerExtended extends FrontendControllerExtended_parent
+class FrontendController extends FrontendController_parent
 {
     public function render()
     {
