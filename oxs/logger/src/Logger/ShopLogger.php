@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-
 namespace OxidSupport\Logger\Logger;
 
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use OxidSupport\Logger\Bootstrap\Module;
 use Psr\Log\LoggerInterface;
+use OxidEsales\Eshop\Core\Registry;
 
 final class ShopLogger
 {
@@ -16,35 +15,32 @@ final class ShopLogger
 
     public static function get(): LoggerInterface
     {
-        if (self::$instance) {
+        if (self::$instance instanceof LoggerInterface) {
             return self::$instance;
         }
 
-        $logDir = self::logFilePath();
-        if (!is_dir($logDir)) {
-            @mkdir($logDir, 0775, true);
+        $logFile = self::logFilePath();
+        if (!is_dir($logFile)) {
+            @mkdir($logFile, 0775, true);
         }
 
-        $handler = new StreamHandler(
-            self::logFilePath() . self::logFileName(),
-            Logger::DEBUG,
-            true,
-            0664
-        );
+        $handler = new StreamHandler($logFile . self::logFileName(), Logger::INFO, true, 0664);
         $handler->setFormatter(new JsonFormatter());
 
-        $logger = new Logger(Module::ID);
+        $logger = new Logger('oxslogger');
         $logger->pushHandler($handler);
 
-        // Kontext-Processor (Request-Kontext automatisch anhängen)
-        $logger->pushProcessor(function (array $record) {
-            $record['extra']['context'] = RequestContext::build();
-            return $record;
-        });
+        // Kontext-Processor: immer Request-Kontext anhängen
+        //$logger->pushProcessor(function (array $record): array {
+        //    $record['extra']['context'] = RequestContext::build();
+        //    return $record;
+        //});
 
-        // Stacktrace nur für Aktions-Events, nicht für Errors
+        $logger->pushProcessor(new RequestContextProcessor());
+
+        // Stacktrace NUR für Aktions-Events
         $logger->pushProcessor(new StackTraceProcessor(
-            maxDepth: (int) ($_ENV['OXSL_STACK_DEPTH'] ?? 10),
+            maxDepth: (int)($_ENV['OXSL_STACK_DEPTH'] ?? 12),
             includeArgs: false
         ));
 
@@ -63,6 +59,6 @@ final class ShopLogger
     private static function logFileName(): string
     {
         //return RequestContext::requestId() . '.log';
-        return 'oxs-request.log';
+        return 'oxs-request.json';
     }
 }

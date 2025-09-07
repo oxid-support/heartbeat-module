@@ -1,39 +1,39 @@
 <?php
 declare(strict_types=1);
 
+namespace OxidSupport\Logger\Controller;
 
-namespace OxidSupport\Logger\Shop\Core;
+use OxidEsales\Eshop\Application\Controller\FrontendController as CoreFC;
+use OxidSupport\Logger\Logger\ShopLogger;
+use OxidSupport\Logger\Logger\ObjectInspector;
+use OxidSupport\Logger\Logger\RequestContext;
 
-class FrontendController extends FrontendController_parent
+class FrontendController extends CoreFC
 {
     public function render()
     {
         $tpl = parent::render();
 
-        // Metadaten zum „Was sieht der User gerade?“
         $ctrlInfo = [
             'class'    => static::class,
             'template' => is_string($tpl) ? $tpl : null,
         ];
 
-        // Controller-Objekte leichtgewichtig extrahieren
         $ctrlEntities = ObjectInspector::fromController($this);
 
-        // ViewData auswerten (nur Keys/Entity-Metadaten, keine Werte)
         $vd  = $this->getViewData();
-        $out = [
+        $view = [
             'viewKeys' => is_array($vd) ? array_values(array_map('strval', array_keys($vd))) : [],
         ];
         if (is_array($vd)) {
-            $viewEntities = ObjectInspector::fromViewData($vd);
-            $out = array_merge($out, $viewEntities);
+            $view = array_merge($view, ObjectInspector::fromViewData($vd));
         }
 
         ShopLogger::get()->info('user.view', [
             'requestId' => RequestContext::requestId(),
             'controller'=> $ctrlInfo,
-            'entities'  => $ctrlEntities ?: null,
-            'view'      => $out,
+            'entities'  => $ctrlEntities, // immer Array (ggf. mit leerem controllerParams)
+            'view'      => $view,
         ]);
 
         return $tpl;

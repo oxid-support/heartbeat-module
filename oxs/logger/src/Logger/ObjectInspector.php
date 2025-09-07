@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace OxidSupport\Logger\Logger;
 
 final class ObjectInspector
@@ -11,7 +10,7 @@ final class ObjectInspector
     {
         $out = [];
 
-        // Artikel
+        // Produkt
         if (method_exists($ctrl, 'getProduct')) {
             $p = $ctrl->getProduct();
             if (is_object($p)) {
@@ -43,28 +42,47 @@ final class ObjectInspector
             }
         }
 
-        // Warenkorb (nur size & sum, keine Positionen)
+        // Warenkorb (nur Größe & Brutto-Summe)
         if (method_exists($ctrl, 'getBasket')) {
             $b = $ctrl->getBasket();
             if (is_object($b)) {
                 $out['basket'] = [
                     'items' => method_exists($b,'getItemsCount') ? (int)$b->getItemsCount() : null,
-                    'sum'   => method_exists($b,'getPrice') && is_object($b->getPrice()) && method_exists($b->getPrice(),'getBruttoPrice')
-                        ? (float)$b->getPrice()->getBruttoPrice()
-                        : null,
+                    'sum'   => (function($b) {
+                        if (!method_exists($b,'getPrice')) return null;
+                        $price = $b->getPrice();
+                        return (is_object($price) && method_exists($price,'getBruttoPrice')) ? (float)$price->getBruttoPrice() : null;
+                    })($b),
                 ];
             }
         }
 
-        // Suche / Paginierung falls vorhanden
+        // Controller-Parameter (Getter + GET-Whitelist)
         $params = [];
+
+        // 1) Controller-Getter
         foreach (['getSearchParam','getSortOrder','getSortColumn','getListType','getActCurrency'] as $m) {
             if (method_exists($ctrl, $m)) {
                 $val = $ctrl->$m();
-                if ($val !== null && $val !== '') $params[$m] = is_scalar($val) ? $val : null;
+                if (is_scalar($val) && $val !== '') {
+                    $params[$m] = $val;
+                }
             }
         }
-        if ($params) $out['controllerParams'] = $params;
+
+        // 2) GET-Whitelist (SEO-/Listen-/Suche-Parameter)
+        $whitelist = [
+            'searchparam','cnid','mnid','anid','listtype','pgNr','sort','ldtype',
+            'searchmanufacturer','searchvendor'
+        ];
+        foreach ($whitelist as $k) {
+            if (isset($_GET[$k]) && is_scalar($_GET[$k])) {
+                $params[$k] = (string)$_GET[$k];
+            }
+        }
+
+        // Immer anlegen (evtl. leeres Array)
+        $out['controllerParams'] = $params;
 
         return $out;
     }
@@ -72,15 +90,12 @@ final class ObjectInspector
     /** @param array<string,mixed> $vd @return array<string,mixed> */
     public static function fromViewData(array $vd): array
     {
-        $out = [
-            'viewObjects' => [],
-        ];
+        $out = ['viewObjects' => []];
 
         foreach ($vd as $k => $v) {
             if (!is_object($v)) continue;
 
             $cls = get_class($v);
-            // Bekannte OXID Models grob erkennen
             if (self::endsWith($cls, '\\Model\\Article')) {
                 $out['viewObjects'][] = ['type'=>'Article'] + self::mapEntity($v, ['getId','getTitle','getArtNum','getFTitle']);
             } elseif (self::endsWith($cls, '\\Model\\Category')) {
@@ -96,10 +111,7 @@ final class ObjectInspector
             }
         }
 
-        // Duplikate vermeiden
-        if (!empty($out['viewObjects'])) {
-            $out['viewObjects'] = self::uniqueArray($out['viewObjects']);
-        } else {
+        if (empty($out['viewObjects'])) {
             unset($out['viewObjects']);
         }
 
@@ -116,7 +128,6 @@ final class ObjectInspector
                 $m[$fn] = is_scalar($val) ? $val : null;
             }
         }
-        // normalize keys
         return [
             'id'    => $m['getId']     ?? null,
             'title' => $m['getTitle']  ?? $m['getFTitle'] ?? $m['getOxtitle'] ?? null,
@@ -133,19 +144,5 @@ final class ObjectInspector
     {
         $len = strlen($needle);
         return $len === 0 || (substr($haystack, -$len) === $needle);
-    }
-
-    /** @param array<int,array<string,mixed>> $arr */
-    private static function uniqueArray(array $arr): array
-    {
-        $seen = [];
-        $out  = [];
-        foreach ($arr as $row) {
-            $key = md5(json_encode($row));
-            if (isset($seen[$key])) continue;
-            $seen[$key] = true;
-            $out[] = $row;
-        }
-        return $out;
     }
 }

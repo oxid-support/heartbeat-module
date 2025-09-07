@@ -1,44 +1,45 @@
 <?php
 declare(strict_types=1);
 
-
 namespace OxidSupport\Logger\Logger;
 
-use OxidEsales\Eshop\Core\Exception\LanguageNotFoundException;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\Eshop\Core\ShopVersion;
 
 final class RequestContext
 {
-    /**
-     * @throws RandomException
-     * @throws LanguageNotFoundException
-     */
+    /** @return array<string,mixed> */
     public static function build(): array
     {
-        $user = Registry::getSession()->getUser() ?: null;
+        $config  = Registry::getConfig();
+        $session = Registry::getSession();
+        $user    = $session?->getUser();
+
+        $scheme = $_SERVER['REQUEST_SCHEME'] ?? (($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http');
+        $host   = $_SERVER['HTTP_HOST'] ?? '';
+        $uri    = $_SERVER['REQUEST_URI'] ?? '/';
 
         return [
-            'ts'          => date('c'),
-            'shopId'      => (int) Registry::getConfig()->getShopId(),
-            'shopUrl'     => Registry::getConfig()->getShopUrl(),
-            'requestId'   => self::requestId(),
-            'sessionId'   => Registry::getSession()->getId(),
-            'userId'      => $user?->getId(),
-            'userLogin'   => $user?->oxuser__oxusername->rawValue ?? null,
-            'ip'          => $_SERVER['REMOTE_ADDR'] ?? null,
-            'method'      => $_SERVER['REQUEST_METHOD'] ?? null,
-            'uri'         => ($_SERVER['REQUEST_SCHEME'] ?? 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''),
-            'lang'        => Registry::getLang()->getLanguageAbbr(),
-            'edition'     => 'todo',
-            'php'         => PHP_VERSION,
-            'oxid'        => ShopVersion::getVersion(),
+            'ts'        => date('c'),
+            'shopId'    => (int) $config->getShopId(),
+            'shopUrl'   => (string) $config->getShopUrl(),
+            'requestId' => self::requestId(),
+            'sessionId' => $session === false ? 'no session' : $session->getId(),
+            'userId'    => $user === false ? 'no user' : $user->getId(),
+            'userLogin' => $user?->oxuser__oxusername->rawValue ?? null,
+            'ip'        => $_SERVER['REMOTE_ADDR'] ?? null,
+            'method'    => $_SERVER['REQUEST_METHOD'] ?? null,
+            'uri'       => "{$scheme}://{$host}{$uri}",
+            'lang'      => Registry::getLang()->getLanguageAbbr(),
+            'edition'   => (defined('OXID_ENTERPRISE_EDITION') ? 'EE' : (defined('OXID_PROFESSIONAL_EDITION') ? 'PE' : 'CE')),
+            'php'       => PHP_VERSION,
+            'oxid'      => '',
+            'ua'        => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            'referer'   => $_SERVER['HTTP_REFERER'] ?? null,
+            'cl'        => (string) (Registry::getRequest()->getRequestParameter('cl') ?? ''),    // nach SEO-Auflösung
+            'fnc'       => (string) (Registry::getRequest()->getRequestParameter('fnc') ?? 'render'),
         ];
     }
 
-    /**
-     * @throws RandomException
-     */
     public static function requestId(): string
     {
         static $id = null;
