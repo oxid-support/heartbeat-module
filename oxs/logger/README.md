@@ -182,6 +182,22 @@ A request usually produces three entries:
   }
 }
 ```
+### Context vs. Extra
+
+Monolog distinguishes between two namespaces for structured data:
+
+- `context`  
+  Contains everything explicitly passed at the time of logging, e.g. controller, action, parameters.
+
+- `extra`  
+  Contains information automatically added by processors or handlers.  
+  In OXS Logger, the `RequestContextProcessor` attaches the full request context here  
+  under `extra.context`.
+
+**Important:**  
+Do not confuse `context` (per-event data) with `extra.context` (global request metadata).  
+Both are written deliberately to keep Monolog’s standard separation between application payload and automatic metadata.
+
 
 ### Benefits for Developers & Support
 * Debugging: See which classes were loaded, in what order, with which controller.
