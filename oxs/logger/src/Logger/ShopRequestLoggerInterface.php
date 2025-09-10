@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Logger\Logger;
 
-interface ShopLoggerInterface
+interface ShopRequestLoggerInterface
 {
     public function create(): void;
 

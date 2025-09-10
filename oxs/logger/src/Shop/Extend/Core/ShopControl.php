@@ -6,8 +6,8 @@ namespace OxidSupport\Logger\Shop\Extend\Core;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidSupport\Logger\Logger\ShopLoggerFactory;
-use OxidSupport\Logger\Logger\ShopLoggerInterface;
+use OxidSupport\Logger\Logger\ShopRequestLoggerFactory;
+use OxidSupport\Logger\Logger\ShopRequestLoggerInterface;
 use OxidSupport\Logger\Logger\SymbolTracker;
 use OxidSupport\Logger\Sanitize\Sanitizer;
 use OxidSupport\Logger\Shop\Facade\Facts;
@@ -16,10 +16,10 @@ class ShopControl extends CoreShopControl
 {
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
-        /** @var ShopLoggerInterface $shopLogger */
+        /** @var ShopRequestLoggerInterface $shopLogger */
         $shopLogger = ContainerFactory::getInstance()
             ->getContainer()
-            ->get(ShopLoggerFactory::class);
+            ->get(ShopRequestLoggerFactory::class);
 
         $this->logstart($shopLogger);
 
@@ -45,7 +45,7 @@ class ShopControl extends CoreShopControl
         }
     }
 
-    private function logStart(ShopLoggerInterface $shopLogger): void
+    private function logStart(ShopRequestLoggerInterface $shopLogger): void
     {
         $referer   = $_SERVER['HTTP_REFERER']    ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
@@ -84,13 +84,13 @@ class ShopControl extends CoreShopControl
         ]);
     }
 
-    private function logSymbols(ShopLoggerInterface $shopLogger, array $symbols): void
+    private function logSymbols(ShopRequestLoggerInterface $shopLogger, array $symbols): void
     {
         $shopLogger->logSymbols($symbols);
     }
 
     private function logFinish(
-        ShopLoggerInterface $shopLogger,
+        ShopRequestLoggerInterface $shopLogger,
         float $calculateDurationStartTimestamp,
         float $calculateDurationStopTimestamp,
     ): void

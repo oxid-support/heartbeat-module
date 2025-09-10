@@ -7,10 +7,10 @@ use OxidSupport\Logger\Processor\RequestIdProcessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class ShopLogger implements ShopLoggerInterface
+final class ShopRequestLogger implements ShopRequestLoggerInterface
 {
     public function __construct(
-        #[Autowire(service: 'oxs.logger.request')]
+        #[Autowire(service: 'oxs.logger.channel')]
         private LoggerInterface $logger,
     ) {
     }
