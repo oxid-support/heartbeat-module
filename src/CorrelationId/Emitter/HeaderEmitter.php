@@ -13,7 +13,7 @@ class HeaderEmitter implements EmitterInterface
     public function emit(string $id): void
     {
         if (headers_sent()) {
-            return; // @todo oxideshop.log
+            return;
         }
 
         header(strtoupper($this->headerName) . ': ' . $id);
