@@ -60,8 +60,8 @@ class LoggerFactory
     private function logDirectoryPath(): string
     {
         return
-            (new LoggerFacade())->getLogsDir()
-            . Module::ID .
+            (new LoggerFacade())->getLogsDir() .
+            Module::ID .
             DIRECTORY_SEPARATOR;
     }
 
