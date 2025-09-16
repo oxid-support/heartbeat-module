@@ -8,9 +8,10 @@ use Exception;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface;
 use OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessorInterface;
 use OxidSupport\RequestLogger\Module\Module;
-use OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface;
+use OxidSupport\RequestLogger\Shop\Facade\Logger as LoggerFacade;
 
 class LoggerFactory
 {
@@ -24,8 +25,9 @@ class LoggerFactory
      */
     public function create(): Logger
     {
-        $dir = $this->logDirectoryPath();
-        $this->ensureLogDirectoryExists($dir);
+        $this->ensureLogDirectoryExists(
+            $this->logDirectoryPath()
+        );
 
         $handler = new StreamHandler(
             $this->logfilePath(
@@ -57,7 +59,10 @@ class LoggerFactory
 
     private function logDirectoryPath(): string
     {
-        return OX_BASE_PATH . 'log' . DIRECTORY_SEPARATOR;
+        return
+            (new LoggerFacade())->getLogsDir()
+            . Module::ID .
+            DIRECTORY_SEPARATOR;
     }
 
     private function ensureLogDirectoryExists(string $dir): void
@@ -68,9 +73,27 @@ class LoggerFactory
 
         // Try to create; if it fails, check again to be safe against race conditions.
         if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
-            // Emit a warning rather than suppressing; avoids failing silently.
-            // Using error_log keeps this method independent from $this->logger configuration order.
-            error_log(sprintf('ShopLogger: Failed to create log directory: %s', $dir)); //@todo
+            // Emit an error rather than suppressing; avoids failing silently.
+            // Using error_log keeps this method independent of $this->logger configuration order.
+
+            $errorMessage = sprintf(
+                'Module %s: Failed to create log directory: %s, due to missing permissions (0775).',
+                Module::ID,
+                $dir
+            );
+
+            $this->logToShopLogDir($errorMessage);
+            $this->logToPhpErrorLog($errorMessage);
         }
+    }
+
+    private function logToShopLogDir(string $message): void
+    {
+        (new LoggerFacade())->get()->error($message);
+    }
+
+    public function logToPhpErrorLog(string $message): void
+    {
+        error_log($message);
     }
 }
