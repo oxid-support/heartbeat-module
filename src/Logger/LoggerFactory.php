@@ -11,13 +11,14 @@ use Monolog\Logger;
 use OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface;
 use OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessorInterface;
 use OxidSupport\RequestLogger\Module\Module;
-use OxidSupport\RequestLogger\Shop\Facade\Logger as LoggerFacade;
+use OxidSupport\RequestLogger\Shop\Facade\FacadeInterface;
 
 class LoggerFactory
 {
     public function __construct(
         private CorrelationIdProcessorInterface $correlationIdProcessor,
         private CorrelationIdProviderInterface $correlationIdProvider,
+        private FacadeInterface $facade,
     ) {}
 
     /**
@@ -60,7 +61,7 @@ class LoggerFactory
     private function logDirectoryPath(): string
     {
         return
-            (new LoggerFacade())->getLogsDir() .
+            $this->facade->getLogsPath() .
             Module::ID .
             DIRECTORY_SEPARATOR;
     }
@@ -89,7 +90,7 @@ class LoggerFactory
 
     private function logToShopLogDir(string $message): void
     {
-        (new LoggerFacade())->get()->error($message);
+        $this->facade->getLogger()->error($message);
     }
 
     public function logToPhpErrorLog(string $message): void

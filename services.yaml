@@ -19,6 +19,10 @@ services:
         arguments:
             $logger: '@oxs.logger.channel'
 
+    OxidSupport\RequestLogger\Shop\Facade\FacadeInterface:
+        class: OxidSupport\RequestLogger\Shop\Facade\Facade
+        public: true
+
     OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorderInterface:
         alias: OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorder
         public: true

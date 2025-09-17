@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace OxidSupport\RequestLogger\Shop\Extend\Core;
 
-use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\RequestLogger\Logger\SymbolTracker;
 use OxidSupport\RequestLogger\Sanitize\Sanitizer;
-use OxidSupport\RequestLogger\Shop\Facade\Facts;
+use OxidSupport\RequestLogger\Shop\Facade\FacadeInterface;
 use OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorderInterface;
 
 class ShopControl extends CoreShopControl
 {
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
-        // Do not make it a class property to not interfere in the request lifecycle
         $recorder = ContainerFactory::getInstance()
             ->getContainer()
             ->get(ShopRequestRecorderInterface::class);
@@ -45,8 +43,14 @@ class ShopControl extends CoreShopControl
         }
     }
 
-    private function logStart(ShopRequestRecorderInterface $recorder): void
-    {
+    private function logStart(
+        ShopRequestRecorderInterface $recorder,
+    ): void {
+
+        $facade = ContainerFactory::getInstance()
+            ->getContainer()
+            ->get(FacadeInterface::class);
+
         $referer   = $_SERVER['HTTP_REFERER']    ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 
@@ -54,33 +58,31 @@ class ShopControl extends CoreShopControl
         $get  = $sanitizer->sanitize($_GET ?? []);
         $post = $sanitizer->sanitize($_POST ?? []);
 
-        $config  = Registry::getConfig();
-        $session = Registry::getSession();
-        $user    = $session?->getUser();
-
         $scheme = $_SERVER['REQUEST_SCHEME'] ?? (($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http');
         $host   = $_SERVER['HTTP_HOST'] ?? '';
         $uri    = $_SERVER['REQUEST_URI'] ?? '/';
 
         $recorder->logStart([
-            'userAgent'  => $userAgent,
+
+            'version'    => $facade->getShopVersion(),
+            'edition'    => $facade->getShopEdition(),
+            'shopId'     => $facade->getShopId(),
+            'shopUrl'    => $facade->getShopUrl(),
+
             'referer'    => $referer,
+            'uri'        => sprintf("%s://%s%s", $scheme, $host, $uri),
+            'method'     => $_SERVER['REQUEST_METHOD'] ?? null,
             'get'        => $get,
             'post'       => $post,
-            'shopId'     => (int) $config->getShopId(),
-            'shopUrl'    => (string) $config->getShopUrl(),
-            'sessionId'  => $session->getId(),
-            'userId'     => $user === false ? 'no user' : $user->getId(),
-            'userLogin'  => $user?->oxuser__oxusername->rawValue ?? null,
+            'userAgent'  => $userAgent,
+            'lang'       => $facade->getLanguageAbbreviation(),
+
+            'sessionId'  => $facade->getSessionId(),
+            'userId'     => $facade->getUserId(),
+            'username'   => $facade->getUsername(),
             'ip'         => $_SERVER['REMOTE_ADDR'] ?? null,
-            'method'     => $_SERVER['REQUEST_METHOD'] ?? null,
-            'uri'        => sprintf("%s://%s%s", $scheme, $host, $uri),
-            'lang'       => Registry::getLang()->getLanguageAbbr(),
-            'edition'    => (new Facts())->getEdition(),
+
             'php'        => PHP_VERSION,
-            'oxid'       => '',
-            'cl'         => (string) (Registry::getRequest()->getRequestParameter('cl') ?? ''),
-            'fnc'        => (string) (Registry::getRequest()->getRequestParameter('fnc') ?? 'render'),
         ]);
     }
 
