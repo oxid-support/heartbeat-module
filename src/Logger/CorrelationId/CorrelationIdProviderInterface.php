@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace OxidSupport\RequestLogger\CorrelationId;
+namespace OxidSupport\RequestLogger\Logger\CorrelationId;
 
 interface CorrelationIdProviderInterface
 {

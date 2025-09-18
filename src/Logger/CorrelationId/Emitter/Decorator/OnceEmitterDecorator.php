@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\RequestLogger\CorrelationId\Emitter\Decorator;
+namespace OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Decorator;
 
-use OxidSupport\RequestLogger\CorrelationId\Emitter\Composite\CompositeEmitter;
-use OxidSupport\RequestLogger\CorrelationId\Emitter\EmitterInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Composite\CompositeEmitter;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\EmitterInterface;
 
 class OnceEmitterDecorator implements EmitterInterface
 {

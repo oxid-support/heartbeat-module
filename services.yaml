@@ -15,7 +15,7 @@ services:
         class: Monolog\Logger
         factory: ['@OxidSupport\RequestLogger\Logger\LoggerFactory', 'create']
 
-    OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorder:
+    OxidSupport\RequestLogger\Logger\ShopRequestRecorder\ShopRequestRecorder:
         arguments:
             $logger: '@oxs.logger.channel'
 
@@ -23,54 +23,54 @@ services:
         class: OxidSupport\RequestLogger\Shop\Facade\Facade
         public: true
 
-    OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorderInterface:
-        alias: OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorder
+    OxidSupport\RequestLogger\Logger\ShopRequestRecorder\ShopRequestRecorderInterface:
+        alias: OxidSupport\RequestLogger\Logger\ShopRequestRecorder\ShopRequestRecorder
         public: true
 
-    OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface:
-        class: OxidSupport\RequestLogger\CorrelationId\CorrelationIdProvider
+    OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProviderInterface:
+        class: OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProvider
 
-    OxidSupport\RequestLogger\CorrelationId\CorrelationIdGeneratorInterface:
-        class: OxidSupport\RequestLogger\CorrelationId\CorrelationIdGenerator
+    OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdGeneratorInterface:
+        class: OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdGenerator
 
     OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessorInterface:
         class: OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessor
 
-    OxidSupport\RequestLogger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator: ~
+    OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator: ~
 
-    OxidSupport\RequestLogger\CorrelationId\Emitter\EmitterInterface:
-        alias: OxidSupport\RequestLogger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator
+    OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\EmitterInterface:
+        alias: OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator
 
-    OxidSupport\RequestLogger\CorrelationId\Emitter\CookieEmitter:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\CookieEmitter:
         arguments:
             $cookieName: '%oxs.request_logger.cookie_name%'
             $ttl: '%oxs.request_logger.ttl%'
         tags: ['oxs.cid.emitter']
 
-    OxidSupport\RequestLogger\CorrelationId\Emitter\HeaderEmitter:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\HeaderEmitter:
         arguments:
             $headerName: '%oxs.request_logger.header_name%'
         tags: ['oxs.cid.emitter']
 
-    OxidSupport\RequestLogger\CorrelationId\Emitter\Composite\CompositeEmitter:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Composite\CompositeEmitter:
         arguments:
             $emitters: !tagged_iterator 'oxs.cid.emitter'
 
-    OxidSupport\RequestLogger\CorrelationId\Resolver\ResolverInterface:
-        alias: OxidSupport\RequestLogger\CorrelationId\Resolver\Composite\CompositeResolver
+    OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\ResolverInterface:
+        alias: OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\Composite\CompositeResolver
 
-    OxidSupport\RequestLogger\CorrelationId\Resolver\CookieResolver:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\CookieResolver:
         arguments:
             $cookieName: '%oxs.request_logger.cookie_name%'
         tags:
             - { name: 'oxs.cid.resolver', priority: 100 }
 
-    OxidSupport\RequestLogger\CorrelationId\Resolver\HeaderResolver:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\HeaderResolver:
         arguments:
             $headerName: '%oxs.request_logger.header_name%'
         tags:
             - { name: 'oxs.cid.resolver', priority: 190 }
 
-    OxidSupport\RequestLogger\CorrelationId\Resolver\Composite\CompositeResolver:
+    OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\Composite\CompositeResolver:
         arguments:
             $resolvers: !tagged_iterator 'oxs.cid.resolver'

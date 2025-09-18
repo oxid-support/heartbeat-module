@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\RequestLogger\CorrelationId\Resolver\Composite;
+namespace OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\Composite;
 
-use OxidSupport\RequestLogger\CorrelationId\Resolver\ResolverInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\ResolverInterface;
 
 class CompositeResolver implements ResolverInterface
 {

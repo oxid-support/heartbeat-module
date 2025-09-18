@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\RequestLogger\CorrelationId\Emitter\Composite;
+namespace OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\Composite;
 
-use OxidSupport\RequestLogger\CorrelationId\Emitter\EmitterInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\EmitterInterface;
 
 class CompositeEmitter implements EmitterInterface
 {

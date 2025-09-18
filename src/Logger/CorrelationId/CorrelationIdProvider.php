@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\RequestLogger\CorrelationId;
+namespace OxidSupport\RequestLogger\Logger\CorrelationId;
 
-use OxidSupport\RequestLogger\CorrelationId\Emitter\EmitterInterface;
-use OxidSupport\RequestLogger\CorrelationId\Resolver\ResolverInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Emitter\EmitterInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\Resolver\ResolverInterface;
 
 final class CorrelationIdProvider implements CorrelationIdProviderInterface
 {

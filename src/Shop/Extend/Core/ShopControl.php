@@ -6,10 +6,10 @@ namespace OxidSupport\RequestLogger\Shop\Extend\Core;
 
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidSupport\RequestLogger\Logger\Security\SensitiveDataRedactor;
+use OxidSupport\RequestLogger\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use OxidSupport\RequestLogger\Logger\SymbolTracker;
-use OxidSupport\RequestLogger\Sanitize\Sanitizer;
 use OxidSupport\RequestLogger\Shop\Facade\FacadeInterface;
-use OxidSupport\RequestLogger\ShopRequestRecorder\ShopRequestRecorderInterface;
 
 class ShopControl extends CoreShopControl
 {
@@ -54,7 +54,7 @@ class ShopControl extends CoreShopControl
         $referer   = $_SERVER['HTTP_REFERER']    ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 
-        $sanitizer = new Sanitizer();
+        $sanitizer = new SensitiveDataRedactor();
         $get  = $sanitizer->sanitize($_GET ?? []);
         $post = $sanitizer->sanitize($_POST ?? []);
 

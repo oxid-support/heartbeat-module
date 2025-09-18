@@ -8,7 +8,7 @@ use Exception;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProviderInterface;
 use OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessorInterface;
 use OxidSupport\RequestLogger\Module\Module;
 use OxidSupport\RequestLogger\Shop\Facade\FacadeInterface;
@@ -50,7 +50,7 @@ class LoggerFactory
         return $logger;
     }
 
-    private function logfilePath(string $filename): string
+    private function logfilePath(string $filename): string // @todo name
     {
         $dir = $this->logDirectoryPath();
         $filename = sprintf('%s-%s.json', Module::ID, $filename);

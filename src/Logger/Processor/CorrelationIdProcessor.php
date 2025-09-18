@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\RequestLogger\Logger\Processor;
 
-use OxidSupport\RequestLogger\CorrelationId\CorrelationIdProviderInterface;
+use OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProviderInterface;
 
 final class CorrelationIdProcessor implements CorrelationIdProcessorInterface
 {

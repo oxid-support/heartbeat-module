@@ -3,13 +3,12 @@
 declare(strict_types=1);
 
 
-namespace OxidSupport\RequestLogger\Sanitize;
+namespace OxidSupport\RequestLogger\Logger\Security;
 
-class Sanitizer
+class SensitiveDataRedactor
 {
     public function sanitize(array $values): array
     {
-        // Nur was wirklich geheim ist maskieren (case-insensitive)
         $blocklistLower = [
             'lgn_pwd',
             'lgn_pwd2',
@@ -25,7 +24,7 @@ class Sanitizer
                 continue;
             }
 
-            // Arrays/Objekte vollständig als JSON (keine Limits, nichts abschneiden)
+            // Arrays/Objekte vollständig als JSON (keine Limits, nichts abschneiden) //@todo
             if (is_array($v) || is_object($v)) {
                 $json = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 $out[$key] = $json !== false ? $json : '[unserializable]';
