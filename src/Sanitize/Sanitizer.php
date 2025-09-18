@@ -9,39 +9,33 @@ class Sanitizer
 {
     public function sanitize(array $values): array
     {
-        $blocklist = [
-            'lgn_pwd'
+        // Nur was wirklich geheim ist maskieren (case-insensitive)
+        $blocklistLower = [
+            'lgn_pwd',
+            'lgn_pwd2',
         ];
 
-        $isBlocked = static fn(string $k): bool => in_array(strtolower($k), $blocklist, true);
-
-        $blocked = '[redacted]';
         $out = [];
 
         foreach ($values as $k => $v) {
-            $key = is_string($k) ? $k : (string)$k;
+            $key = (string) $k;
 
-            if ($isBlocked($key)) {
-                $out[$key] = $blocked;
+            if (in_array(strtolower($key), $blocklistLower, true)) {
+                $out[$key] = '[redacted]';
                 continue;
             }
 
-            if (is_scalar($v) || $v === null) {
-                // cut strings
-                $out[$key] = is_string($v) && strlen($v) > 500 ? substr($v, 0, 500) . '…' : $v;
-            } elseif (is_array($v)) {
-                // Arrays only the first level: key=value (max. 20)
-                $pairs = [];
-                $i = 0;
-                foreach ($v as $ak => $av) {
-                    if ($i++ >= 20) { $pairs[] = '…'; break; }
-                    $pairs[] = $ak . '=' . (is_scalar($av) || $av === null ? (string)$av : '[complex]');
-                }
-                $out[$key] = implode('&', $pairs);
-            } else {
-                $out[$key] = '[non-scalar]';
+            // Arrays/Objekte vollständig als JSON (keine Limits, nichts abschneiden)
+            if (is_array($v) || is_object($v)) {
+                $json = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $out[$key] = $json !== false ? $json : '[unserializable]';
+                continue;
             }
+
+            // Strings/Skalare/NULL: unverändert
+            $out[$key] = $v;
         }
+
         return $out;
     }
 }
