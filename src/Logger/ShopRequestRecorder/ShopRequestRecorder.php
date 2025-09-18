@@ -19,7 +19,7 @@ final class ShopRequestRecorder implements ShopRequestRecorderInterface
 
     public function logSymbols(array $record): void
     {
-        $this->logger->info('request.symbols', $record);
+        $this->logger->debug('request.symbols', $record);
     }
 
     public function logFinish(array $record): void
