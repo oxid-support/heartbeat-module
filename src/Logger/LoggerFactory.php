@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace OxidSupport\RequestLogger\Logger;
 
 use Exception;
-use Monolog\Formatter\JsonFormatter;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProviderInterface;
@@ -31,13 +31,13 @@ class LoggerFactory
         );
 
         $handler = new StreamHandler(
-            $this->logfilePath(
+            $this->logFilePath(
                 $this->correlationIdProvider->provide()
             )
         );
 
         $handler->setFormatter(
-            new JsonFormatter()
+            new LineFormatter(null, null, true, true)
         );
 
         $logger = new Logger(Module::ID);
@@ -50,10 +50,10 @@ class LoggerFactory
         return $logger;
     }
 
-    private function logfilePath(string $filename): string // @todo name
+    private function logFilePath(string $filename): string
     {
         $dir = $this->logDirectoryPath();
-        $filename = sprintf('%s-%s.json', Module::ID, $filename);
+        $filename = sprintf('%s-%s.log', Module::ID, $filename);
 
         return $dir . $filename;
     }
