@@ -10,6 +10,7 @@ use OxidEsales\Eshop\Core\Request;
 use OxidEsales\Eshop\Core\Session;
 use OxidEsales\Eshop\Core\ShopVersion;
 use OxidEsales\Facts\Facts;
+use OxidSupport\RequestLogger\Module\Module;
 use Psr\Log\LoggerInterface;
 
 class Facade implements FacadeInterface
@@ -68,6 +69,18 @@ class Facade implements FacadeInterface
     public function getRequestParameter(string $name): ?string
     {
         return $this->getRequest()->getRequestParameter($name);
+    }
+
+    public function getRequestLoggerLevel(): string
+    {
+        // Setting im Admin: oxsrequestlogger_level (Werte: DEBUG/INFO/…)
+        $level = Registry::getConfig()->getShopConfVar(
+            Module::ID . '_log-level',
+            null,
+            'module:oxsrequestlogger'
+        );
+
+        return is_string($level) && $level !== '' ? strtoupper($level) : 'INFO';
     }
 
     public function getLogger(): LoggerInterface

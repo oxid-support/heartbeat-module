@@ -2,13 +2,13 @@
 declare(strict_types=1);
 
 use OxidEsales\Eshop\Core\ShopControl;
-use OxidSupport\RequestLogger\Module\Module as LoggingFrameworkModule;
+use OxidSupport\RequestLogger\Module\Module as RequestLoggerModule;
 
 
 $sMetadataVersion = '2.1';
 
 $aModule = [
-    'id' => LoggingFrameworkModule::ID,
+    'id' => RequestLoggerModule::ID,
     'title' => 'Minimal Invasive Massive Logging',
     'description' => 'This module provides detailed request logging for OXID eShop, capturing what users do inside the shop.
 It records key request data such as visited pages, parameters, and context, making user flows and issues traceable.',
@@ -16,5 +16,22 @@ It records key request data such as visited pages, parameters, and context, maki
     'author' => 'support@oxid-esales.com',
     'extend' => [
         ShopControl::class => \OxidSupport\RequestLogger\Shop\Extend\Core\ShopControl::class,
-    ]
+    ],
+    'settings' => [
+        [
+            'group' => RequestLoggerModule::ID . '_main',
+            'name' => RequestLoggerModule::ID . '_log-level',
+            'type' => 'select',
+            'constraints' => 'debug|info',
+            'value' => 'info',
+        ], [
+            'group' => RequestLoggerModule::ID . '_main',
+            'name' => RequestLoggerModule::ID . '_redact',
+            'type' => 'arr',
+            'value' => [
+                'lgn_pwd',
+                'lgn_pwd2',
+            ],
+        ],
+    ],
 ];

@@ -12,6 +12,7 @@ use OxidSupport\RequestLogger\Logger\CorrelationId\CorrelationIdProviderInterfac
 use OxidSupport\RequestLogger\Logger\Processor\CorrelationIdProcessorInterface;
 use OxidSupport\RequestLogger\Module\Module;
 use OxidSupport\RequestLogger\Shop\Facade\FacadeInterface;
+use OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacadeInterface;
 
 class LoggerFactory
 {
@@ -19,6 +20,7 @@ class LoggerFactory
         private CorrelationIdProcessorInterface $correlationIdProcessor,
         private CorrelationIdProviderInterface $correlationIdProvider,
         private FacadeInterface $facade,
+        private ModuleSettingFacadeInterface $moduleSettingFacade
     ) {}
 
     /**
@@ -33,7 +35,8 @@ class LoggerFactory
         $handler = new StreamHandler(
             $this->logFilePath(
                 $this->correlationIdProvider->provide()
-            )
+            ),
+            $this->moduleSettingFacade->getLogLevel()
         );
 
         $handler->setFormatter(

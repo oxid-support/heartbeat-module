@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OxidSupport\RequestLogger\Shop\Facade;
+
+interface ModuleSettingFacadeInterface
+{
+    public function getLogLevel(): string;
+}

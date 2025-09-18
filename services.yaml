@@ -9,6 +9,9 @@ services:
         autowire: true
         public: false
 
+    OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacadeInterface:
+        class: OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacade
+
     OxidSupport\RequestLogger\Logger\LoggerFactory: ~
 
     oxs.logger.channel:
