@@ -29,6 +29,7 @@ It records key request data such as visited pages, parameters, and context, maki
             'name' => RequestLoggerModule::ID . '_redact',
             'type' => 'arr',
             'value' => [
+                'pwd',
                 'lgn_pwd',
                 'lgn_pwd2',
             ],
