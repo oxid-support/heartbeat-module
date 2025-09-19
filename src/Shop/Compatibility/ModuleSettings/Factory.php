@@ -22,7 +22,7 @@ class Factory
         }
 
         // v6
-        $v6 = 'OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Service\ModuleSettingServiceInterface';
+        $v6 = 'OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface';
         if (interface_exists($v6)) {
             return new Oxid6ModuleSettingsAdapter($this->container->get($v6));
         }
