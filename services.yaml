@@ -15,6 +15,7 @@ services:
 
     OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacadeInterface:
         class: OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacade
+        public: true
 
     OxidSupport\RequestLogger\Logger\LoggerFactory: ~
 

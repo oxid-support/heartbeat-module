@@ -10,5 +10,7 @@ $aLang = [
     'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level' => 'Log Level',
     'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_info' => 'INFO',
     'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_debug' => 'DEBUG',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-frontend' => 'Frontend-Anfragen protokollieren',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-admin' => 'Admin-Anfragen protokollieren',
     'SHOP_MODULE_' . RequestLoggerModule::ID . '_redact' => 'Zensieren',
 ];

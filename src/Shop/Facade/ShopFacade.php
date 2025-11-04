@@ -75,6 +75,11 @@ class ShopFacade implements ShopFacadeInterface
         return Registry::getLogger();
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->getConfig()->isAdmin();
+    }
+
     private function getConfig(): Config
     {
         return Registry::getConfig();

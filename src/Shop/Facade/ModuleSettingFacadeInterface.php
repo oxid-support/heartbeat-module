@@ -9,4 +9,8 @@ interface ModuleSettingFacadeInterface
     public function getLogLevel(): string;
 
     public function getRedactItems(): array;
+
+    public function isLogFrontendEnabled(): bool;
+
+    public function isLogAdminEnabled(): bool;
 }

@@ -5,20 +5,32 @@ declare(strict_types=1);
 namespace OxidSupport\RequestLogger\Shop\Extend\Core;
 
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\RequestLogger\Logger\Security\SensitiveDataRedactorInterface;
 use OxidSupport\RequestLogger\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use OxidSupport\RequestLogger\Logger\SymbolTracker;
 use OxidSupport\RequestLogger\Shop\Compatibility\DiContainer\Factory as DiContainerFactory;
+use OxidSupport\RequestLogger\Shop\Facade\ModuleSettingFacadeInterface;
 use OxidSupport\RequestLogger\Shop\Facade\ShopFacadeInterface;
 
 class ShopControl extends CoreShopControl
 {
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
-        $recorder = ContainerFactory::getInstance()
-            ->getContainer()
-            ->get(ShopRequestRecorderInterface::class);
+        $container = DiContainerFactory::create();
+
+        $shopFacade = $container->get(ShopFacadeInterface::class);
+        $settingsFacade = $container->get(ModuleSettingFacadeInterface::class);
+
+        $isAdmin = $shopFacade->isAdmin();
+        $shouldLog = ($isAdmin && $settingsFacade->isLogAdminEnabled())
+            || (!$isAdmin && $settingsFacade->isLogFrontendEnabled());
+
+        if (!$shouldLog) {
+            parent::start($controllerKey, $function, $parameters, $viewsChain);
+            return;
+        }
+
+        $recorder = $container->get(ShopRequestRecorderInterface::class);
 
         $this->logstart($recorder);
 

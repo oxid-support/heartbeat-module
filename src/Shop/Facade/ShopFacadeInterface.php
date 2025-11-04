@@ -29,4 +29,6 @@ interface ShopFacadeInterface
     public function getLogsPath(): string;
 
     public function getLogger(): LoggerInterface;
+
+    public function isAdmin(): bool;
 }

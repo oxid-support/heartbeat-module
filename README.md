@@ -92,7 +92,19 @@ The module provides configurable settings accessible via OXID Admin → Extensio
   - `info` - Logs request.start and request.finish (recommended for production)
   - `debug` - Additionally logs request.symbols (verbose, use for debugging)
 
-### 2. Redact
+### 2. Log Frontend Requests
+- **Type**: Boolean (checkbox)
+- **Default**: `false` (disabled)
+- **Description**: Enable logging for frontend (shop) requests. When disabled, no frontend requests will be logged, and the module will not process correlation IDs or track symbols for frontend traffic.
+
+### 3. Log Admin Requests
+- **Type**: Boolean (checkbox)
+- **Default**: `false` (disabled)
+- **Description**: Enable logging for admin panel requests. When disabled, no admin requests will be logged, and the module will not process correlation IDs or track symbols for admin traffic.
+
+**Context-Based Logging**: The module distinguishes between frontend and admin contexts using OXID's `isAdmin()` method. When both settings are disabled, the module performs no logging operations. This allows fine-grained control over which parts of your application are monitored.
+
+### 4. Redact
 - **Type**: Array
 - **Default**: `['pwd', 'lgn_pwd', 'lgn_pwd2']`
 - **Description**: List of parameter names (case-insensitive) whose values should be masked as `[redacted]` in logs. Add sensitive parameter names like passwords, tokens, API keys, etc.

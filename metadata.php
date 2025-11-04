@@ -24,7 +24,20 @@ It records key request data such as visited pages, parameters, and context, maki
             'type' => 'select',
             'constraints' => 'debug|info',
             'value' => 'info',
-        ], [
+        ],
+        [
+            'group' => RequestLoggerModule::ID . '_main',
+            'name' => RequestLoggerModule::ID . '_log-frontend',
+            'type' => 'bool',
+            'value' => false,
+        ],
+        [
+            'group' => RequestLoggerModule::ID . '_main',
+            'name' => RequestLoggerModule::ID . '_log-admin',
+            'type' => 'bool',
+            'value' => false,
+        ],
+        [
             'group' => RequestLoggerModule::ID . '_main',
             'name' => RequestLoggerModule::ID . '_redact',
             'type' => 'arr',

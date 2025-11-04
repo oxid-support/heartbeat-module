@@ -29,4 +29,20 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
                 Module::ID
             );
     }
+
+    public function isLogFrontendEnabled(): bool
+    {
+        return $this->moduleSettingPort->getBoolean(
+            Module::ID . '_log-frontend',
+            Module::ID
+        );
+    }
+
+    public function isLogAdminEnabled(): bool
+    {
+        return $this->moduleSettingPort->getBoolean(
+            Module::ID . '_log-admin',
+            Module::ID
+        );
+    }
 }
