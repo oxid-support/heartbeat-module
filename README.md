@@ -34,7 +34,7 @@ Before activating the module, clear the shop’s cache first.
 
 #### Activation
 ```bash
-./vendor/bin/oe-console o:m:a oxsrequestlogger
+./vendor/bin/oe-console o:m:ac oxsrequestlogger
 ```
 
 ## Module Information
