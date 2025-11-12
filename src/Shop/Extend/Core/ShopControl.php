@@ -144,7 +144,7 @@ class ShopControl extends CoreShopControl
         parse_str($parsedUrl['query'], $queryParams);
 
         // Parameters that should not be redacted (controller and function names)
-        $excludeFromRedaction = ['cl', 'fnc'];
+        $excludeFromRedaction = ['cl', 'fnc', 'item'];
 
         // Build query string manually to avoid double URL-encoding of [redacted]
         $queryParts = [];
