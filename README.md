@@ -41,7 +41,7 @@ Before activating the module, clear the shop's cache first.
 - **Module Title**: OXS :: Logging Framework
 - **Version**: 1.0.0
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.0+
+- **Supported OXID Versions**: 7.1+
 - **PHP Version**: 8.0 - 8.4
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-request-logger/`). No data is transmitted to external services or third parties.
