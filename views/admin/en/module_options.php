@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+use OxidSupport\LoggingFramework\Module\Module as RequestLoggerModule;
+
+$aLang = [
+    'charset' => 'UTF-8',
+    'SHOP_MODULE_GROUP_' . RequestLoggerModule::ID . '_main' => 'Settings',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level' => 'Log Level',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_standard' => 'Standard',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_detailed' => 'Detailed',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_redact-all-values' => 'Redact all values',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_redact' => 'Redact',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-frontend' => 'Log Frontend Requests',
+    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-admin' => 'Log Admin Requests',
+];

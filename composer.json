@@ -1,0 +1,32 @@
+{
+    "name": "oxid-support/logging-framework",
+    "description": "OXID eShop Logging Framework with detailed request logging, correlation ID tracking, symbol monitoring, and GraphQL remote configuration",
+    "type": "oxideshop-module",
+    "license": [
+        "proprietary"
+    ],
+    "authors": [
+        {
+            "name": "OXID Support",
+            "email": "support@oxid-esales.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0 || ^8.1 || ^8.2 || ^8.3",
+        "oxid-esales/graphql-base": "^12.0",
+        "oxid-esales/graphql-configuration-access": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OxidSupport\\LoggingFramework\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OxidSupport\\LoggingFramework\\Tests\\": "tests/"
+        }
+    }
+}

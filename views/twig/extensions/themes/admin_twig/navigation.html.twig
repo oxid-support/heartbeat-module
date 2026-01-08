@@ -1,0 +1,126 @@
+{% extends 'navigation.html.twig' %}
+
+{% block admin_navigation_menustructure %}
+    {# Inject CSS for status indicators and menu styling #}
+    <style>
+        .lf-status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .lf-status-indicator.active { background-color: #4caf50; }
+        .lf-status-indicator.inactive { background-color: #9e9e9e; }
+        /* Prevent menu items from wrapping */
+        #nav li a b { white-space: nowrap; }
+    </style>
+
+    {% for menuholder in menustructure %}
+        {% if menuholder.nodeType == constant("XML_ELEMENT_NODE") and menuholder.childNodes.length %}
+            {% set menuIndex = 0 %}
+            <h2>
+                {% if menuholder.getAttribute('url') %}
+                <a href="{{ oViewConf.getSelfLink()|raw }}&cl=navigation&amp;fnc=exturl&amp;url={{ menuholder.getAttribute('url')|escape('url') }}"
+                        target="basefrm">
+                {% endif %}
+                    {{ translate({ ident: menuholder.getAttribute('name')|default(menuholder.getAttribute('id')), noerror: true }) }}
+                {% if menuholder.getAttribute('url') %}
+                </a>
+                {% endif %}
+            </h2>
+            <ul>
+                {% apply spaceless %}
+                    {% for menuitem in menuholder.childNodes %}
+                        {% set actClass = menuitem.childNodes.length %}
+                        {% if menuitem.nodeType == constant("XML_ELEMENT_NODE") %}
+                            {% set menuIndex = menuIndex + 1 %}
+                            {% set submenuIndex = 0 %}
+                            <li class="{% if menuitem.getAttribute('active') %}exp{% endif %}"
+                                id="{{ mainMenu }}-{{ menuIndex }}">
+                                {% if menuitem.getAttribute('url') %}
+                                    <a href="{{ menuitem.getAttribute('url')|raw }}"
+                                       onclick="_navAct(this);"
+                                       class="rc"
+                                       target="{% if menuitem.getAttribute('target') %}{{ menuitem.getAttribute('target') }}{% else %}basefrm{% endif %}">
+                                        <b>
+                                            {{ translate({ ident: menuitem.getAttribute('name')|default(menuitem.getAttribute('id')), noerror: true }) }}
+                                        </b>
+                                    </a>
+                                {% elseif menuitem.getAttribute('expand') == 'none' %}
+                                    <a href="{{ menuitem.getAttribute('link')|raw }}"
+                                       onclick="_navAct(this);"
+                                       target="basefrm"
+                                       class="rc">
+                                        <b>
+                                            {{ translate({ ident: menuitem.getAttribute('name')|default(menuitem.getAttribute('id')), noerror: true }) }}
+                                        </b>
+                                    </a>
+                                {% else %}
+                                    <a href="#"
+                                       onclick="_navExp(this);return false;"
+                                       class="rc">
+                                        <b>
+                                            {{ translate({ ident: menuitem.getAttribute('name')|default(menuitem.getAttribute('id')), noerror: true }) }}
+                                        </b>
+                                    </a>
+                                {% endif %}
+                                {% if menuitem.childNodes.length %}
+                                    <ul>
+                                        {% for submenuitem in menuitem.childNodes %}
+                                            {% if submenuitem.nodeType == constant("XML_ELEMENT_NODE") %}
+                                                {% set submenuIndex = submenuIndex + 1 %}
+                                                {% if submenuitem.getAttribute('linkicon') %} {% set linkicon = submenuitem.getAttribute('linkicon') %}{% endif %}
+                                                {% set submenuCl = submenuitem.getAttribute('cl') %}
+                                                <li class="{% if submenuitem.getAttribute('active') %}act{% endif %}"
+                                                    id="{{ mainMenu }}-{{ menuIndex }}-{{ submenuIndex }}"
+                                                    name="nav_{{ submenuCl }}"
+                                                    rel="{{ mainMenu }}-{{ menuIndex }}">
+                                                    <a href="{% if submenuitem.getAttribute('url') %}{{ submenuitem.getAttribute('url')|raw }}{% else %}{{ submenuitem.getAttribute('link')|raw }}{% endif %}"
+                                                       onclick="_navAct(this);"
+                                                       target="basefrm"
+                                                       class="rc">
+                                                        <b>
+                                                            {# Status indicator for Logging Framework components #}
+                                                            {% if lfComponentStatus is defined and submenuCl in lfComponentStatus|keys %}
+                                                                <span class="lf-status-indicator {{ lfComponentStatus[submenuCl] ? 'active' : 'inactive' }}"></span>
+                                                            {% endif %}
+                                                            {% if linkicon %}
+                                                            <span class="{{ linkicon }}">
+                                                            {% endif %}
+                                                                {{ translate({ ident: submenuitem.getAttribute('name')|default(submenuitem.getAttribute('id')), noerror: true }) }}
+                                                            {% if linkicon %}
+                                                            </span>
+                                                            {% endif %}
+                                                        </b>
+                                                    </a>
+                                                </li>
+                                                {% set linkicon = '' %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endapply %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+    {# Script to restore navigation state after component toggle reload #}
+    <script>
+    (function() {
+        var expandNav = localStorage.getItem('oxs_lf_expand_nav');
+        if (expandNav) {
+            localStorage.removeItem('oxs_lf_expand_nav');
+            // Use timeout to ensure navigation functions are loaded
+            setTimeout(function() {
+                if (typeof _navExtExpActByName === 'function') {
+                    _navExtExpActByName(expandNav);
+                }
+            }, 100);
+        }
+    })();
+    </script>
+{% endblock %}

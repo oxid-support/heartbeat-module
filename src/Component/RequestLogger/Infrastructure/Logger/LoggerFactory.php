@@ -1,0 +1,157 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger;
+
+use Exception;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdProviderInterface;
+use OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\Processor\CorrelationIdProcessorInterface;
+use OxidSupport\LoggingFramework\Module\Module;
+use OxidSupport\LoggingFramework\Shop\Facade\ModuleSettingFacadeInterface;
+use OxidSupport\LoggingFramework\Shop\Facade\ShopFacadeInterface;
+
+class LoggerFactory
+{
+    private CorrelationIdProcessorInterface $correlationIdProcessor;
+    private CorrelationIdProviderInterface $correlationIdProvider;
+    private ShopFacadeInterface $facade;
+    private ModuleSettingFacadeInterface $moduleSettingFacade;
+
+    public function __construct(
+        CorrelationIdProcessorInterface $correlationIdProcessor,
+        CorrelationIdProviderInterface $correlationIdProvider,
+        ShopFacadeInterface $facade,
+        ModuleSettingFacadeInterface $moduleSettingFacade
+    ) {
+        $this->correlationIdProcessor = $correlationIdProcessor;
+        $this->correlationIdProvider = $correlationIdProvider;
+        $this->facade = $facade;
+        $this->moduleSettingFacade = $moduleSettingFacade;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function create(): Logger
+    {
+        $this->ensureLogDirectoryExists(
+            $this->logDirectoryPath()
+        );
+
+        $handler = new StreamHandler(
+            $this->logFilePath(
+                $this->correlationIdProvider->provide()
+            ),
+            $this->mapLogLevelToMonologLevel(
+                $this->moduleSettingFacade->getLogLevel()
+            )
+        );
+
+        $handler->setFormatter(
+            new LineFormatter(null, null, true, true)
+        );
+
+        $logger = new Logger(Module::ID);
+        $logger->pushHandler($handler);
+
+        $logger->pushProcessor(
+            $this->correlationIdProcessor
+        );
+
+        return $logger;
+    }
+
+    private function mapLogLevelToMonologLevel(string $level): int
+    {
+        switch ($level) {
+            case 'standard':
+                return Logger::INFO;
+            case 'detailed':
+                return Logger::DEBUG;
+            default:
+                return Logger::INFO;
+        }
+    }
+
+    private function logFilePath(string $filename): string
+    {
+        $dir = $this->logDirectoryPath();
+
+        // Security: Sanitize correlation ID to prevent path traversal attacks
+        // Only allow alphanumeric characters, hyphens, and underscores
+        $sanitizedFilename = $this->sanitizeFilename($filename);
+
+        $filename = sprintf('%s-%s.log', Module::ID, $sanitizedFilename);
+
+        return $dir . $filename;
+    }
+
+    /**
+     * Sanitizes a filename to prevent path traversal and other file system attacks.
+     * Only allows alphanumeric characters, hyphens, and underscores.
+     *
+     * @param string $filename The filename to sanitize
+     * @return string The sanitized filename
+     */
+    private function sanitizeFilename(string $filename): string
+    {
+        // Remove any path traversal sequences first
+        $filename = str_replace(['../', '..\\', '/', '\\'], '', $filename);
+
+        // Only allow safe characters: alphanumeric, hyphen, underscore
+        $sanitized = preg_replace('/[^a-zA-Z0-9\-_]/', '', $filename);
+
+        // Ensure the filename is not empty after sanitization
+        if ($sanitized === '' || $sanitized === null) {
+            // Generate a fallback using current timestamp
+            $sanitized = 'fallback-' . time();
+        }
+
+        // Limit filename length to prevent excessive path lengths
+        return substr($sanitized, 0, 64);
+    }
+
+    private function logDirectoryPath(): string
+    {
+        return
+            $this->facade->getLogsPath() .
+            Module::ID .
+            DIRECTORY_SEPARATOR;
+    }
+
+    private function ensureLogDirectoryExists(string $dir): void
+    {
+        if (is_dir($dir)) {
+            return;
+        }
+
+        // Try to create; if it fails, check again to be safe against race conditions.
+        if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
+            // Emit an error rather than suppressing; avoids failing silently.
+            // Using error_log keeps this method independent of $this->logger configuration order.
+
+            $errorMessage = sprintf(
+                'Module %s: Failed to create log directory: %s, due to missing permissions (0775).',
+                Module::ID,
+                $dir
+            );
+
+            $this->logToShopLogDir($errorMessage);
+            $this->logToPhpErrorLog($errorMessage);
+        }
+    }
+
+    private function logToShopLogDir(string $message): void
+    {
+        $this->facade->getLogger()->error($message);
+    }
+
+    public function logToPhpErrorLog(string $message): void
+    {
+        error_log($message);
+    }
+}

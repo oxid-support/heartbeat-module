@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * Copyright © OXID eSales AG. All rights reserved.
+ * See LICENSE file for license details.
+ */
+
+declare(strict_types=1);
+
+namespace OxidSupport\LoggingFramework\Tests\Unit\Component\RequestLogger\Controller\Admin;
+
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin\SettingsController;
+use OxidSupport\LoggingFramework\Module\Module;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\String\UnicodeString;
+
+#[CoversClass(SettingsController::class)]
+final class SettingsControllerTest extends TestCase
+{
+    private const SETTING_COMPONENT_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
+
+    public function testTemplateIsCorrectlySet(): void
+    {
+        $reflection = new \ReflectionClass(SettingsController::class);
+        $property = $reflection->getProperty('_sThisTemplate');
+
+        $this->assertSame(
+            '@oxsloggingframework/admin/loggingframework_requestlogger_settings',
+            $property->getDefaultValue()
+        );
+    }
+
+    #[DataProvider('componentActiveDataProvider')]
+    public function testIsComponentActiveReturnsCorrectValue(bool $expectedValue): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn($expectedValue);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+
+        $this->assertSame($expectedValue, $controller->isComponentActive());
+    }
+
+    public static function componentActiveDataProvider(): array
+    {
+        return [
+            'component is active' => [true],
+            'component is inactive' => [false],
+        ];
+    }
+
+    public function testToggleComponentFromActiveToInactive(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn(true);
+
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('saveBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, false, Module::ID);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller->toggleComponent();
+    }
+
+    public function testToggleComponentFromInactiveToActive(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn(false);
+
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('saveBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, true, Module::ID);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller->toggleComponent();
+    }
+
+    public function testGetSettingsReturnsCorrectArray(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+
+        $moduleSettingService
+            ->method('getBoolean')
+            ->willReturnMap([
+                [self::SETTING_COMPONENT_ACTIVE, Module::ID, true],
+                [Module::SETTING_REQUESTLOGGER_LOG_FRONTEND, Module::ID, true],
+                [Module::SETTING_REQUESTLOGGER_LOG_ADMIN, Module::ID, false],
+                [Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES, Module::ID, false],
+            ]);
+
+        $moduleSettingService
+            ->method('getString')
+            ->with(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, Module::ID)
+            ->willReturn(new UnicodeString('detailed'));
+
+        $moduleSettingService
+            ->method('getCollection')
+            ->with(Module::SETTING_REQUESTLOGGER_REDACT_FIELDS, Module::ID)
+            ->willReturn(['password', 'secret']);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $settings = $controller->getSettings();
+
+        $this->assertTrue($settings['componentActive']);
+        $this->assertSame('detailed', $settings['logLevel']);
+        $this->assertTrue($settings['logFrontend']);
+        $this->assertFalse($settings['logAdmin']);
+        $this->assertFalse($settings['redactAllValues']);
+        $this->assertSame(['password', 'secret'], $settings['redactFields']);
+    }
+
+    private function createControllerWithMockedService(
+        ModuleSettingServiceInterface $moduleSettingService
+    ): SettingsController {
+        $controller = $this->getMockBuilder(SettingsController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getModuleSettingService'])
+            ->getMock();
+
+        $controller
+            ->method('getModuleSettingService')
+            ->willReturn($moduleSettingService);
+
+        return $controller;
+    }
+}

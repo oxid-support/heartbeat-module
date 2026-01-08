@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OX>
+    <OXMENU id="NAVIGATION_ESHOPADMIN">
+        <!-- Logging Framework - Main Menu Entry -->
+        <MAINMENU id="mxloggingframework">
+            <!-- Request Logger Component - Settings directly -->
+            <SUBMENU id="mxloggingframework_requestlogger" cl="loggingframework_requestlogger_settings" />
+            <!-- Request Logger Remote Component - Setup directly -->
+            <SUBMENU id="mxloggingframework_remote" cl="loggingframework_remote_setup" />
+        </MAINMENU>
+    </OXMENU>
+</OX>

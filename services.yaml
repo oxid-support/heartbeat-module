@@ -1,0 +1,156 @@
+parameters:
+    oxs.request_logger.cookie_name: 'X-Correlation-Id'
+    oxs.request_logger.header_name: 'X-Correlation-Id'
+    oxs.request_logger.ttl: 2592000 # 30 days in seconds
+
+services:
+
+    _defaults:
+        autowire: true
+        public: false
+
+    # ==========================================================================
+    # Component: RequestLogger - Infrastructure/Logger
+    # ==========================================================================
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactor
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\LoggerFactory: ~
+
+    oxs.logger.channel:
+        class: Monolog\Logger
+        factory: ['@OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\LoggerFactory', 'create']
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorder:
+        arguments:
+            $logger: '@oxs.logger.channel'
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface:
+        alias: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorder
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdProviderInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdProvider
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdGeneratorInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdGenerator
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\Processor\CorrelationIdProcessorInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\Processor\CorrelationIdProcessor
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator: ~
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\EmitterInterface:
+        alias: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\CookieEmitter:
+        arguments:
+            $cookieName: '%oxs.request_logger.cookie_name%'
+            $ttl: '%oxs.request_logger.ttl%'
+        tags: ['oxs.cid.emitter']
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\HeaderEmitter:
+        arguments:
+            $headerName: '%oxs.request_logger.header_name%'
+        tags: ['oxs.cid.emitter']
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Composite\CompositeEmitter:
+        arguments:
+            $emitters: !tagged_iterator 'oxs.cid.emitter'
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Resolver\ResolverInterface:
+        alias: OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Resolver\Composite\CompositeResolver
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Resolver\CookieResolver:
+        arguments:
+            $cookieName: '%oxs.request_logger.cookie_name%'
+        tags:
+            - { name: 'oxs.cid.resolver', priority: 100 }
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Resolver\HeaderResolver:
+        arguments:
+            $headerName: '%oxs.request_logger.header_name%'
+        tags:
+            - { name: 'oxs.cid.resolver', priority: 190 }
+
+    OxidSupport\LoggingFramework\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Resolver\Composite\CompositeResolver:
+        arguments:
+            $resolvers: !tagged_iterator 'oxs.cid.resolver'
+
+    # Component: RequestLogger - Controller/Admin
+    OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin\SettingsController:
+        public: true
+        autowire: false
+        tags:
+            - { name: 'oxid.view_controller', controller_key: 'loggingframework_requestlogger_settings' }
+
+    # ==========================================================================
+    # Component: RequestLoggerRemote - Services
+    # ==========================================================================
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SettingServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SettingService
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ActivationServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ActivationService
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SetupStatusServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SetupStatusService
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserService
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGeneratorInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGenerator
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusService
+        public: true
+
+    # Component: RequestLoggerRemote - Controller/GraphQL
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\SettingController:
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\ActivationController:
+        public: true
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\PasswordController:
+        public: true
+
+    # Component: RequestLoggerRemote - Controller/Admin
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin\PasswordResetController:
+        public: true
+        autowire: false
+        tags:
+            - { name: 'oxid.view_controller', controller_key: 'loggingframework_remote_password_reset' }
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin\SetupController:
+        public: true
+        autowire: false
+        tags:
+            - { name: 'oxid.view_controller', controller_key: 'loggingframework_remote_setup' }
+
+    # Component: RequestLoggerRemote - Framework (GraphQL)
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Framework\NamespaceMapper:
+        tags: ['graphql_namespace_mapper']
+
+    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Framework\PermissionProvider:
+        public: true
+        tags: ['graphql_permission_provider']
+
+    # ==========================================================================
+    # Shop Facades
+    # ==========================================================================
+
+    OxidSupport\LoggingFramework\Shop\Facade\ModuleSettingFacadeInterface:
+        class: OxidSupport\LoggingFramework\Shop\Facade\ModuleSettingFacade
+        public: true
+
+    OxidSupport\LoggingFramework\Shop\Facade\ShopFacadeInterface:
+        class: OxidSupport\LoggingFramework\Shop\Facade\ShopFacade
+        public: true
