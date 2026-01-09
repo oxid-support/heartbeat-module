@@ -66,7 +66,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
         try {
             $queryBuilder = $this->queryBuilderFactory->create();
             $result = $queryBuilder
-                ->select('OXPASSWORD', 'OXPASSSALT')
+                ->select('OXPASSWORD')
                 ->from('oxuser')
                 ->where('OXUSERNAME = :email')
                 ->setParameter('email', Module::API_USER_EMAIL)
@@ -78,8 +78,11 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 return false;
             }
 
-            // Password is set if salt is not empty (placeholder hash has empty salt)
-            return !empty($row['OXPASSSALT']);
+            $password = $row['OXPASSWORD'] ?? '';
+
+            // Password is set if it's a valid bcrypt hash (starts with $2y$)
+            // The placeholder '---' or empty string means password not set
+            return !empty($password) && str_starts_with($password, '$2y$');
         } catch (\Exception) {
             return false;
         }

@@ -15,6 +15,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopCo
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 use OxidSupport\LoggingFramework\Module\Module;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserServiceInterface;
 use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 
 /**
@@ -29,6 +30,7 @@ class SetupController extends AdminController
 
     private ?ContextInterface $context = null;
     private ?ShopConfigurationDaoInterface $shopConfigurationDao = null;
+    private ?ApiUserServiceInterface $apiUserService = null;
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
     private ?ModuleSettingServiceInterface $moduleSettingService = null;
 
@@ -132,6 +134,13 @@ class SetupController extends AdminController
         // Generate a new setup token
         $newToken = bin2hex(random_bytes(32));
 
+        // Reset the API user password to placeholder
+        try {
+            $this->getApiUserService()->resetPasswordForApiUser();
+        } catch (\Exception) {
+            // User might not exist yet, ignore
+        }
+
         $this->getModuleSettingService()->saveString(
             Module::SETTING_APIUSER_SETUP_TOKEN,
             $newToken,
@@ -157,6 +166,16 @@ class SetupController extends AdminController
                 ->get(ShopConfigurationDaoInterface::class);
         }
         return $this->shopConfigurationDao;
+    }
+
+    protected function getApiUserService(): ApiUserServiceInterface
+    {
+        if ($this->apiUserService === null) {
+            $this->apiUserService = ContainerFactory::getInstance()
+                ->getContainer()
+                ->get(ApiUserServiceInterface::class);
+        }
+        return $this->apiUserService;
     }
 
     protected function getApiUserStatusService(): ApiUserStatusServiceInterface

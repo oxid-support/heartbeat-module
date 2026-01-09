@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Exception;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Exception;
 
 use OxidEsales\GraphQL\Base\Exception\Error;
 
-final class InvalidTokenException extends Error
+final class PasswordTooShortException extends Error
 {
     public function __construct()
     {
-        parent::__construct('Invalid or expired setup token.');
+        parent::__construct('Password must be at least 8 characters long.');
     }
 
     public function getCategory(): string
     {
-        return 'permission';
+        return 'validation';
     }
 }

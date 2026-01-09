@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Service;
 
 use OxidEsales\Eshop\Application\Model\User;
 
@@ -27,7 +27,7 @@ interface ApiUserServiceInterface
      * Set the password for the API user.
      * Throws UserNotFoundException if user cannot be loaded.
      *
-     * @throws \OxidSupport\LoggingFramework\Remote\Exception\UserNotFoundException
+     * @throws \OxidSupport\LoggingFramework\Component\ApiUser\Exception\UserNotFoundException
      */
     public function setPasswordForApiUser(string $password): void;
 
@@ -35,7 +35,7 @@ interface ApiUserServiceInterface
      * Reset the password for the API user to a placeholder value.
      * Throws UserNotFoundException if user cannot be loaded.
      *
-     * @throws \OxidSupport\LoggingFramework\Remote\Exception\UserNotFoundException
+     * @throws \OxidSupport\LoggingFramework\Component\ApiUser\Exception\UserNotFoundException
      */
     public function resetPasswordForApiUser(): void;
 }

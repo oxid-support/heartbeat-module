@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace OxidSupport\LoggingFramework\Tests\Unit\Component\RequestLoggerRemote\Security;
 
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\ActivationController;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\PasswordController;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\SettingController;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Framework\PermissionProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -19,7 +18,6 @@ use ReflectionMethod;
  */
 #[CoversClass(ActivationController::class)]
 #[CoversClass(SettingController::class)]
-#[CoversClass(PasswordController::class)]
 #[CoversClass(PermissionProvider::class)]
 class AuthorizationSecurityTest extends TestCase
 {
@@ -96,48 +94,6 @@ class AuthorizationSecurityTest extends TestCase
     }
 
     // ===========================================
-    // PASSWORD CONTROLLER AUTHORIZATION
-    // ===========================================
-
-    public function testSetPasswordUsesTokenAuthNotSessionAuth(): void
-    {
-        $reflection = new ReflectionMethod(PasswordController::class, 'requestLoggerSetPassword');
-        $attributes = $this->getAttributeNames($reflection);
-
-        // Should NOT have #[Logged] - uses token-based auth instead
-        $this->assertNotContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "requestLoggerSetPassword must NOT have #[Logged] - uses token auth"
-        );
-
-        // Must have #[Mutation] to be exposed via GraphQL
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Mutation',
-            $attributes,
-            "requestLoggerSetPassword must have #[Mutation] attribute"
-        );
-    }
-
-    public function testResetPasswordRequiresAdminAuth(): void
-    {
-        $reflection = new ReflectionMethod(PasswordController::class, 'requestLoggerResetPassword');
-        $attributes = $this->getAttributeNames($reflection);
-
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "requestLoggerResetPassword must have #[Logged] attribute"
-        );
-
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Right',
-            $attributes,
-            "requestLoggerResetPassword must have #[Right] attribute"
-        );
-    }
-
-    // ===========================================
     // PERMISSION PROVIDER TESTS
     // ===========================================
 
@@ -168,7 +124,6 @@ class AuthorizationSecurityTest extends TestCase
             'REQUEST_LOGGER_VIEW',
             'REQUEST_LOGGER_CHANGE',
             'REQUEST_LOGGER_ACTIVATE',
-            'OXSREQUESTLOGGER_PASSWORD_RESET',
         ];
 
         foreach (['oxsloggingframework_api', 'oxidadmin'] as $group) {
@@ -235,8 +190,6 @@ class AuthorizationSecurityTest extends TestCase
             [SettingController::class, 'requestLoggerLogAdminChange'],
             [SettingController::class, 'requestLoggerRedactChange'],
             [SettingController::class, 'requestLoggerRedactAllValuesChange'],
-            [PasswordController::class, 'requestLoggerSetPassword'],
-            [PasswordController::class, 'requestLoggerResetPassword'],
         ];
 
         foreach ($writeMethods as [$class, $method]) {

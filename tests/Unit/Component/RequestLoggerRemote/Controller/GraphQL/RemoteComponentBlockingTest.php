@@ -11,15 +11,12 @@ namespace OxidSupport\LoggingFramework\Tests\Unit\Component\RequestLoggerRemote\
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\ActivationController;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\PasswordController;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\SettingController;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Exception\RemoteComponentDisabledException;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ActivationServiceInterface;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusService;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SettingServiceInterface;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGeneratorInterface;
 use OxidSupport\LoggingFramework\Module\Module;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -33,7 +30,6 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(SettingController::class)]
 #[CoversClass(ActivationController::class)]
-#[CoversClass(PasswordController::class)]
 final class RemoteComponentBlockingTest extends TestCase
 {
     // ==========================================
@@ -130,26 +126,6 @@ final class RemoteComponentBlockingTest extends TestCase
     }
 
     // ==========================================
-    // PasswordController Tests
-    // ==========================================
-
-    public function testPasswordControllerSetPasswordBlocksWhenDisabled(): void
-    {
-        $controller = $this->createPasswordControllerWithDisabledComponent();
-
-        $this->expectException(RemoteComponentDisabledException::class);
-        $controller->requestLoggerSetPassword('token', 'password123');
-    }
-
-    public function testPasswordControllerResetPasswordBlocksWhenDisabled(): void
-    {
-        $controller = $this->createPasswordControllerWithDisabledComponent();
-
-        $this->expectException(RemoteComponentDisabledException::class);
-        $controller->requestLoggerResetPassword();
-    }
-
-    // ==========================================
     // Positive Tests - Component Enabled
     // ==========================================
 
@@ -221,16 +197,6 @@ final class RemoteComponentBlockingTest extends TestCase
     {
         return new ActivationController(
             $this->createStub(ActivationServiceInterface::class),
-            $this->createDisabledComponentStatusService()
-        );
-    }
-
-    private function createPasswordControllerWithDisabledComponent(): PasswordController
-    {
-        return new PasswordController(
-            $this->createStub(ApiUserServiceInterface::class),
-            $this->createStub(ModuleSettingServiceInterface::class),
-            $this->createStub(TokenGeneratorInterface::class),
             $this->createDisabledComponentStatusService()
         );
     }

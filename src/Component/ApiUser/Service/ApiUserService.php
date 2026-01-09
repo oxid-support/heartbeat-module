@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Service;
 
 use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidSupport\LoggingFramework\Module\Module;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Exception\UserNotFoundException;
+use OxidSupport\LoggingFramework\Component\ApiUser\Exception\UserNotFoundException;
 
 /**
  * Service for API user operations.

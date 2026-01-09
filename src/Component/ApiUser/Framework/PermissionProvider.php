@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Framework;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Framework;
 
 use OxidEsales\GraphQL\Base\Framework\PermissionProviderInterface;
 
@@ -16,17 +16,13 @@ final class PermissionProvider implements PermissionProviderInterface
     public function getPermissions(): array
     {
         return [
-            // Custom user group for Request Logger Remote API access
+            // Custom user group for Logging Framework API access
             'oxsloggingframework_api' => [
-                'REQUEST_LOGGER_VIEW',
-                'REQUEST_LOGGER_CHANGE',
-                'REQUEST_LOGGER_ACTIVATE',
+                'OXSLOGGINGFRAMEWORK_PASSWORD_RESET',
             ],
             // Also grant permissions to shop admins
             'oxidadmin' => [
-                'REQUEST_LOGGER_VIEW',
-                'REQUEST_LOGGER_CHANGE',
-                'REQUEST_LOGGER_ACTIVATE',
+                'OXSLOGGINGFRAMEWORK_PASSWORD_RESET',
             ],
         ];
     }

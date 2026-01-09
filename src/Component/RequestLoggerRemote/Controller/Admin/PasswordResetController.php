@@ -13,9 +13,9 @@ use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidSupport\LoggingFramework\Module\Module;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Exception\UserNotFoundException;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserServiceInterface;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGeneratorInterface;
+use OxidSupport\LoggingFramework\Component\ApiUser\Exception\UserNotFoundException;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserServiceInterface;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\TokenGeneratorInterface;
 
 /**
  * Admin controller for password reset functionality.
@@ -46,7 +46,7 @@ final class PasswordResetController extends AdminController
 
             // Save token
             $this->getModuleSettingService()->saveString(
-                Module::SETTING_REMOTE_SETUP_TOKEN,
+                Module::SETTING_APIUSER_SETUP_TOKEN,
                 $token,
                 Module::ID
             );

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Service;
 
 use OxidEsales\Eshop\Core\Registry;
 

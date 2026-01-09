@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Exception;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Exception;
 
 use OxidEsales\GraphQL\Base\Exception\Error;
 
-final class UserNotFoundException extends Error
+final class SetupNotAvailableException extends Error
 {
     public function __construct()
     {
-        parent::__construct('API user not found. Please run the module migrations first.');
+        parent::__construct('API user setup is not available. No setup token exists.');
     }
 
     public function getCategory(): string
     {
-        return 'notfound';
+        return 'permission';
     }
 }

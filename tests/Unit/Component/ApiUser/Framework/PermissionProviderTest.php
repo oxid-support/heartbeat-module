@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Tests\Unit\Component\RequestLoggerRemote\Framework;
+namespace OxidSupport\LoggingFramework\Tests\Unit\Component\ApiUser\Framework;
 
 use OxidEsales\GraphQL\Base\Framework\PermissionProviderInterface;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Framework\PermissionProvider;
+use OxidSupport\LoggingFramework\Component\ApiUser\Framework\PermissionProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -48,68 +48,36 @@ final class PermissionProviderTest extends TestCase
         $this->assertArrayHasKey('oxidadmin', $permissions);
     }
 
-    public function testApiUserGroupHasViewPermission(): void
+    public function testApiUserGroupHasPasswordResetPermission(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertContains('REQUEST_LOGGER_VIEW', $permissions['oxsloggingframework_api']);
+        $this->assertContains('OXSLOGGINGFRAMEWORK_PASSWORD_RESET', $permissions['oxsloggingframework_api']);
     }
 
-    public function testApiUserGroupHasChangePermission(): void
+    public function testAdminGroupHasPasswordResetPermission(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertContains('REQUEST_LOGGER_CHANGE', $permissions['oxsloggingframework_api']);
+        $this->assertContains('OXSLOGGINGFRAMEWORK_PASSWORD_RESET', $permissions['oxidadmin']);
     }
 
-    public function testApiUserGroupHasActivatePermission(): void
+    public function testApiUserGroupHasExactlyOnePermission(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertContains('REQUEST_LOGGER_ACTIVATE', $permissions['oxsloggingframework_api']);
+        $this->assertCount(1, $permissions['oxsloggingframework_api']);
     }
 
-    public function testAdminGroupHasViewPermission(): void
+    public function testAdminGroupHasExactlyOnePermission(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertContains('REQUEST_LOGGER_VIEW', $permissions['oxidadmin']);
-    }
-
-    public function testAdminGroupHasChangePermission(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertContains('REQUEST_LOGGER_CHANGE', $permissions['oxidadmin']);
-    }
-
-    public function testAdminGroupHasActivatePermission(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertContains('REQUEST_LOGGER_ACTIVATE', $permissions['oxidadmin']);
-    }
-
-    public function testApiUserGroupHasExactlyThreePermissions(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertCount(3, $permissions['oxsloggingframework_api']);
-    }
-
-    public function testAdminGroupHasExactlyThreePermissions(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertCount(3, $permissions['oxidadmin']);
+        $this->assertCount(1, $permissions['oxidadmin']);
     }
 
     public function testBothGroupsHaveSamePermissions(): void

@@ -94,12 +94,32 @@ services:
         class: OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusService
         public: true
 
+    OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserService
+        public: true
+
+    OxidSupport\LoggingFramework\Component\ApiUser\Service\TokenGeneratorInterface:
+        class: OxidSupport\LoggingFramework\Component\ApiUser\Service\TokenGenerator
+        public: true
+
     # Component: ApiUser - Controller/Admin
     OxidSupport\LoggingFramework\Component\ApiUser\Controller\Admin\SetupController:
         public: true
         autowire: false
         tags:
             - { name: 'oxid.view_controller', controller_key: 'loggingframework_apiuser_setup' }
+
+    # Component: ApiUser - Controller/GraphQL
+    OxidSupport\LoggingFramework\Component\ApiUser\Controller\GraphQL\PasswordController:
+        public: true
+
+    # Component: ApiUser - Framework (GraphQL)
+    OxidSupport\LoggingFramework\Component\ApiUser\Framework\NamespaceMapper:
+        tags: ['graphql_namespace_mapper']
+
+    OxidSupport\LoggingFramework\Component\ApiUser\Framework\PermissionProvider:
+        public: true
+        tags: ['graphql_permission_provider']
 
     # ==========================================================================
     # Component: RequestLoggerRemote - Services
@@ -115,14 +135,6 @@ services:
         class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SetupStatusService
         public: true
 
-    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserServiceInterface:
-        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\ApiUserService
-        public: true
-
-    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGeneratorInterface:
-        class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\TokenGenerator
-        public: true
-
     OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusServiceInterface:
         class: OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\RemoteComponentStatusService
         public: true
@@ -132,9 +144,6 @@ services:
         public: true
 
     OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\ActivationController:
-        public: true
-
-    OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\GraphQL\PasswordController:
         public: true
 
     # Component: RequestLoggerRemote - Controller/Admin

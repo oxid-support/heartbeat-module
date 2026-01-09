@@ -37,8 +37,6 @@
         .copy-code { display: inline-block; background: #e3f2fd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 11px; cursor: pointer; border: 1px solid #2196f3; word-break: break-all; }
         .copy-code:hover { background: #bbdefb; }
         .copied-msg { display: none; color: #4caf50; font-weight: bold; margin-left: 10px; }
-        .info-box { padding: 15px; background: #e3f2fd; border: 1px solid #2196f3; border-radius: 4px; margin-bottom: 20px; }
-        .info-box p { margin: 0; color: #1565c0; }
     </style>
 </head>
 <body>
@@ -58,11 +56,6 @@
     </span>
 </h1>
 <p style="color: #666; margin-bottom: 20px;">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_DESC" }) }}</p>
-
-<div class="info-box">
-    <p><strong>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_INFO_TITLE" }) }}</strong><br>
-    {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_INFO_TEXT" }) }}</p>
-</div>
 
 <div>
 {% if setupComplete %}
@@ -153,7 +146,7 @@
             <li>&#10060; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_WARNING_4" }) }}</li>
         </ul>
         <div style="margin: 15px 0 0 0; padding: 15px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px;">
-            <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" onsubmit="return confirm('{{ translate({ ident: 'OXSLOGGINGFRAMEWORK_APIUSER_CONFIRM_DIALOG' }) }}');">
+            <form method="post" action="{{ oViewConf.getSelfLink()|raw }}">
                 {{ oViewConf.getHiddenSid()|raw }}
                 <input type="hidden" name="cl" value="loggingframework_apiuser_setup">
                 <input type="hidden" name="fnc" value="resetPassword">

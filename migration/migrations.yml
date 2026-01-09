@@ -1,0 +1,4 @@
+table_storage:
+  table_name: oxmigrations_oxsloggingframework
+migrations_paths:
+  'OxidSupport\LoggingFramework\Migrations': data

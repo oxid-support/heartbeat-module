@@ -24,6 +24,11 @@ Includes GraphQL API for remote configuration and activation.',
         \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class =>
             \OxidSupport\LoggingFramework\Shared\Controller\Admin\NavigationController::class,
     ],
+    'controllers' => [
+        'loggingframework_apiuser_setup' => \OxidSupport\LoggingFramework\Component\ApiUser\Controller\Admin\SetupController::class,
+        'loggingframework_requestlogger_settings' => \OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin\SettingsController::class,
+        'loggingframework_remote_setup' => \OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin\SetupController::class,
+    ],
     'events' => [
         'onActivate' => \OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Core\ModuleEvents::class . '::onActivate',
     ],
