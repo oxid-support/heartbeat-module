@@ -14,13 +14,12 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin\SetupController;
 use OxidSupport\LoggingFramework\Module\Module;
-use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Service\SetupStatusServiceInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\String\UnicodeString;
 
 #[CoversClass(SetupController::class)]
 final class SetupControllerTest extends TestCase
@@ -61,7 +60,7 @@ final class SetupControllerTest extends TestCase
         ];
     }
 
-    public function testToggleComponentFromActiveToInactive(): void
+    public function testToggleComponentFromActiveToInactiveWhenApiUserSetupComplete(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -75,11 +74,20 @@ final class SetupControllerTest extends TestCase
             ->method('saveBoolean')
             ->with(self::SETTING_COMPONENT_ACTIVE, false, Module::ID);
 
-        $controller = $this->createControllerWithMocks(moduleSettingService: $moduleSettingService);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->expects($this->once())
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
         $controller->toggleComponent();
     }
 
-    public function testToggleComponentFromInactiveToActive(): void
+    public function testToggleComponentFromInactiveToActiveWhenApiUserSetupComplete(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -93,66 +101,80 @@ final class SetupControllerTest extends TestCase
             ->method('saveBoolean')
             ->with(self::SETTING_COMPONENT_ACTIVE, true, Module::ID);
 
-        $controller = $this->createControllerWithMocks(moduleSettingService: $moduleSettingService);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->expects($this->once())
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
         $controller->toggleComponent();
     }
 
-    public function testGetSetupTokenReturnsToken(): void
-    {
-        $expectedToken = 'abc123token';
-
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $moduleSettingService
-            ->expects($this->once())
-            ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
-            ->willReturn(new UnicodeString($expectedToken));
-
-        $controller = $this->createControllerWithMocks(moduleSettingService: $moduleSettingService);
-
-        $this->assertSame($expectedToken, $controller->getSetupToken());
-    }
-
-    public function testGetSetupTokenReturnsEmptyStringWhenNoToken(): void
+    public function testToggleComponentDoesNothingWhenApiUserSetupNotComplete(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
+            ->expects($this->never())
+            ->method('getBoolean');
+
+        $moduleSettingService
+            ->expects($this->never())
+            ->method('saveBoolean');
+
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
             ->expects($this->once())
-            ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
-            ->willReturn(new UnicodeString(''));
+            ->method('isSetupComplete')
+            ->willReturn(false);
 
-        $controller = $this->createControllerWithMocks(moduleSettingService: $moduleSettingService);
-
-        $this->assertSame('', $controller->getSetupToken());
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
+        $controller->toggleComponent();
     }
 
-    public function testIsModuleActivatedReturnsTrueWhenActivated(): void
+    public function testIsApiUserSetupCompleteReturnsTrueWhenComplete(): void
     {
-        $controller = $this->createControllerWithModuleActivationState(Module::ID, true);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->expects($this->once())
+            ->method('isSetupComplete')
+            ->willReturn(true);
 
-        $this->assertTrue($controller->isModuleActivated());
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
+
+        $this->assertTrue($controller->isApiUserSetupComplete());
     }
 
-    public function testIsModuleActivatedReturnsFalseWhenNotActivated(): void
+    public function testIsApiUserSetupCompleteReturnsFalseWhenNotComplete(): void
     {
-        $controller = $this->createControllerWithModuleActivationState(Module::ID, false);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->expects($this->once())
+            ->method('isSetupComplete')
+            ->willReturn(false);
 
-        $this->assertFalse($controller->isModuleActivated());
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
+
+        $this->assertFalse($controller->isApiUserSetupComplete());
     }
 
-    public function testIsGraphqlBaseActivatedReturnsTrueWhenActivated(): void
+    public function testIsApiUserSetupCompleteReturnsFalseOnException(): void
     {
-        $controller = $this->createControllerWithModuleActivationState('oe_graphql_base', true);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->expects($this->once())
+            ->method('isSetupComplete')
+            ->willThrowException(new \Exception('Service error'));
 
-        $this->assertTrue($controller->isGraphqlBaseActivated());
-    }
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
 
-    public function testIsGraphqlBaseActivatedReturnsFalseWhenNotActivated(): void
-    {
-        $controller = $this->createControllerWithModuleActivationState('oe_graphql_base', false);
-
-        $this->assertFalse($controller->isGraphqlBaseActivated());
+        $this->assertFalse($controller->isApiUserSetupComplete());
     }
 
     public function testIsConfigAccessActivatedReturnsTrueWhenActivated(): void
@@ -169,73 +191,35 @@ final class SetupControllerTest extends TestCase
         $this->assertFalse($controller->isConfigAccessActivated());
     }
 
-    public function testIsMigrationExecutedReturnsTrueWhenExecuted(): void
+    public function testIsConfigAccessActivatedReturnsFalseOnException(): void
     {
-        $setupStatusService = $this->createMock(SetupStatusServiceInterface::class);
-        $setupStatusService
-            ->expects($this->once())
-            ->method('isMigrationExecuted')
-            ->willReturn(true);
+        $context = $this->createMock(ContextInterface::class);
+        $context
+            ->method('getCurrentShopId')
+            ->willReturn(1);
 
-        $controller = $this->createControllerWithMocks(setupStatusService: $setupStatusService);
+        $shopConfigurationDao = $this->createMock(ShopConfigurationDaoInterface::class);
+        $shopConfigurationDao
+            ->method('get')
+            ->willThrowException(new \Exception('Configuration error'));
 
-        $this->assertTrue($controller->isMigrationExecuted());
-    }
+        $controller = $this->createControllerWithMocks(
+            context: $context,
+            shopConfigurationDao: $shopConfigurationDao,
+        );
 
-    public function testIsMigrationExecutedReturnsFalseWhenNotExecuted(): void
-    {
-        $setupStatusService = $this->createMock(SetupStatusServiceInterface::class);
-        $setupStatusService
-            ->expects($this->once())
-            ->method('isMigrationExecuted')
-            ->willReturn(false);
-
-        $controller = $this->createControllerWithMocks(setupStatusService: $setupStatusService);
-
-        $this->assertFalse($controller->isMigrationExecuted());
-    }
-
-    public function testIsMigrationExecutedReturnsFalseOnException(): void
-    {
-        $setupStatusService = $this->createMock(SetupStatusServiceInterface::class);
-        $setupStatusService
-            ->expects($this->once())
-            ->method('isMigrationExecuted')
-            ->willThrowException(new \Exception('Database error'));
-
-        $controller = $this->createControllerWithMocks(setupStatusService: $setupStatusService);
-
-        $this->assertFalse($controller->isMigrationExecuted());
-    }
-
-    public function testResetPasswordGeneratesNewToken(): void
-    {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $moduleSettingService
-            ->expects($this->once())
-            ->method('saveString')
-            ->with(
-                Module::SETTING_REMOTE_SETUP_TOKEN,
-                $this->callback(function ($token) {
-                    // Token should be 64 hex characters (32 bytes = 64 hex chars)
-                    return is_string($token) && strlen($token) === 64 && ctype_xdigit($token);
-                }),
-                Module::ID
-            );
-
-        $controller = $this->createControllerWithMocks(moduleSettingService: $moduleSettingService);
-        $controller->resetPassword();
+        $this->assertFalse($controller->isConfigAccessActivated());
     }
 
     private function createControllerWithMocks(
         ?ModuleSettingServiceInterface $moduleSettingService = null,
         ?ContextInterface $context = null,
         ?ShopConfigurationDaoInterface $shopConfigurationDao = null,
-        ?SetupStatusServiceInterface $setupStatusService = null,
+        ?ApiUserStatusServiceInterface $apiUserStatusService = null,
     ): SetupController {
         $controller = $this->getMockBuilder(SetupController::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getModuleSettingService', 'getContext', 'getShopConfigurationDao', 'getSetupStatusService'])
+            ->onlyMethods(['getModuleSettingService', 'getContext', 'getShopConfigurationDao', 'getApiUserStatusService'])
             ->getMock();
 
         $controller
@@ -251,8 +235,8 @@ final class SetupControllerTest extends TestCase
             ->willReturn($shopConfigurationDao ?? $this->createStub(ShopConfigurationDaoInterface::class));
 
         $controller
-            ->method('getSetupStatusService')
-            ->willReturn($setupStatusService ?? $this->createStub(SetupStatusServiceInterface::class));
+            ->method('getApiUserStatusService')
+            ->willReturn($apiUserStatusService ?? $this->createStub(ApiUserStatusServiceInterface::class));
 
         return $controller;
     }

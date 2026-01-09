@@ -43,7 +43,7 @@ final class PasswordController
 
         // Security: Clear token BEFORE setting password to prevent race conditions (TOCTOU)
         // This ensures a second concurrent request with the same token will fail validation
-        $this->moduleSettingService->saveString(Module::SETTING_REMOTE_SETUP_TOKEN, '', Module::ID);
+        $this->moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, '', Module::ID);
 
         // Delegate to service - no more oxNew() or direct User manipulation
         $this->apiUserService->setPasswordForApiUser($password);
@@ -69,7 +69,7 @@ final class PasswordController
         $this->apiUserService->resetPasswordForApiUser();
 
         // Save token
-        $this->moduleSettingService->saveString(Module::SETTING_REMOTE_SETUP_TOKEN, $token, Module::ID);
+        $this->moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
 
         return $token;
     }
@@ -78,7 +78,7 @@ final class PasswordController
     {
         try {
             $storedToken = (string) $this->moduleSettingService->getString(
-                Module::SETTING_REMOTE_SETUP_TOKEN,
+                Module::SETTING_APIUSER_SETUP_TOKEN,
                 Module::ID
             );
         } catch (\Throwable) {

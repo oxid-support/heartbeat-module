@@ -31,24 +31,24 @@ final class ModuleTest extends TestCase
         $this->assertNotEmpty(Module::ID);
     }
 
-    public function testSettingRemoteSetupTokenConstantIsCorrect(): void
+    public function testSettingApiUserSetupTokenConstantIsCorrect(): void
     {
-        $this->assertEquals('oxsloggingframework_remote_setup_token', Module::SETTING_REMOTE_SETUP_TOKEN);
+        $this->assertEquals('oxsloggingframework_apiuser_setup_token', Module::SETTING_APIUSER_SETUP_TOKEN);
     }
 
-    public function testSettingRemoteSetupTokenConstantIsString(): void
+    public function testSettingApiUserSetupTokenConstantIsString(): void
     {
-        $this->assertIsString(Module::SETTING_REMOTE_SETUP_TOKEN);
+        $this->assertIsString(Module::SETTING_APIUSER_SETUP_TOKEN);
     }
 
-    public function testSettingRemoteSetupTokenConstantIsNotEmpty(): void
+    public function testSettingApiUserSetupTokenConstantIsNotEmpty(): void
     {
-        $this->assertNotEmpty(Module::SETTING_REMOTE_SETUP_TOKEN);
+        $this->assertNotEmpty(Module::SETTING_APIUSER_SETUP_TOKEN);
     }
 
-    public function testSettingRemoteSetupTokenConstantStartsWithModuleId(): void
+    public function testSettingApiUserSetupTokenConstantStartsWithModuleId(): void
     {
-        $this->assertStringStartsWith(Module::ID, Module::SETTING_REMOTE_SETUP_TOKEN);
+        $this->assertStringStartsWith(Module::ID, Module::SETTING_APIUSER_SETUP_TOKEN);
     }
 
     public function testApiUserEmailConstantIsCorrect(): void
@@ -96,7 +96,7 @@ final class ModuleTest extends TestCase
         $reflection = new \ReflectionClass(Module::class);
         $constants = $reflection->getConstants();
 
-        // Module has ID + 6 request logger settings + 2 remote settings + API_USER_EMAIL = 10 constants
+        // Module has ID + 6 request logger settings + 1 API user setting + 1 remote setting + API_USER_EMAIL = 10 constants
         $this->assertCount(10, $constants);
     }
 

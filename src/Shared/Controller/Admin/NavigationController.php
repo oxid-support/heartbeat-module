@@ -11,6 +11,7 @@ namespace OxidSupport\LoggingFramework\Shared\Controller\Admin;
 
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\LoggingFramework\Module\Module;
 
 /**
@@ -47,6 +48,7 @@ class NavigationController extends NavigationController_parent
         $moduleSettingService = $this->getModuleSettingService();
 
         return [
+            'loggingframework_apiuser_setup' => $this->isApiUserSetupComplete(),
             'loggingframework_requestlogger_settings' => $moduleSettingService->getBoolean(
                 self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
@@ -58,10 +60,29 @@ class NavigationController extends NavigationController_parent
         ];
     }
 
+    /**
+     * Check if the API User setup is complete.
+     */
+    private function isApiUserSetupComplete(): bool
+    {
+        try {
+            return $this->getApiUserStatusService()->isSetupComplete();
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
     protected function getModuleSettingService(): ModuleSettingServiceInterface
     {
         return ContainerFactory::getInstance()
             ->getContainer()
             ->get(ModuleSettingServiceInterface::class);
+    }
+
+    protected function getApiUserStatusService(): ApiUserStatusServiceInterface
+    {
+        return ContainerFactory::getInstance()
+            ->getContainer()
+            ->get(ApiUserStatusServiceInterface::class);
     }
 }

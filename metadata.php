@@ -71,13 +71,14 @@ Includes GraphQL API for remote configuration and activation.',
             'type'  => 'bool',
             'value' => false,
         ],
-        // Remote component settings
+        // API User component settings
         [
             'group' => '',
-            'name'  => LoggingFrameworkModule::ID . '_remote_setup_token',
+            'name'  => LoggingFrameworkModule::ID . '_apiuser_setup_token',
             'type'  => 'str',
             'value' => '',
         ],
+        // Remote component settings
         [
             'group' => '',
             'name'  => LoggingFrameworkModule::ID . '_remote_active',

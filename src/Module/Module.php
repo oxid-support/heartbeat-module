@@ -21,9 +21,11 @@ final class Module
     public const SETTING_REQUESTLOGGER_REDACT_FIELDS = self::ID . '_requestlogger_redact_fields';
     public const SETTING_REQUESTLOGGER_REDACT_ALL_VALUES = self::ID . '_requestlogger_redact_all_values';
 
+    // API User component settings
+    public const SETTING_APIUSER_SETUP_TOKEN = self::ID . '_apiuser_setup_token';
+
     // Remote component settings
     public const SETTING_REMOTE_ACTIVE = self::ID . '_remote_active';
-    public const SETTING_REMOTE_SETUP_TOKEN = self::ID . '_remote_setup_token';
 
     public const API_USER_EMAIL = 'loggingframework-api@oxid-esales.com';
 }

@@ -31,7 +31,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString(''));
 
         $this->expectException(InvalidTokenException::class);
@@ -46,7 +46,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString('stored-token'));
 
         $this->expectException(InvalidTokenException::class);
@@ -61,7 +61,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $this->expectException(InvalidTokenException::class);
@@ -76,7 +76,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString('valid-token'));
 
         $this->expectException(PasswordTooShortException::class);
@@ -91,7 +91,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString('valid-token'));
 
         $this->expectException(PasswordTooShortException::class);
@@ -110,7 +110,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString('valid-token'));
 
         $apiUserService = $this->createMock(ApiUserServiceInterface::class);
@@ -122,7 +122,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('saveString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, '', Module::ID);
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, '', Module::ID);
 
         $result = $this->getSut(
             apiUserService: $apiUserService,
@@ -153,7 +153,7 @@ final class PasswordControllerTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('saveString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, 'generated-token-123', Module::ID);
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, 'generated-token-123', Module::ID);
 
         $result = $this->getSut(
             apiUserService: $apiUserService,

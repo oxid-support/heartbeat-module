@@ -87,6 +87,21 @@ services:
             - { name: 'oxid.view_controller', controller_key: 'loggingframework_requestlogger_settings' }
 
     # ==========================================================================
+    # Component: ApiUser - Services
+    # ==========================================================================
+
+    OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusService
+        public: true
+
+    # Component: ApiUser - Controller/Admin
+    OxidSupport\LoggingFramework\Component\ApiUser\Controller\Admin\SetupController:
+        public: true
+        autowire: false
+        tags:
+            - { name: 'oxid.view_controller', controller_key: 'loggingframework_apiuser_setup' }
+
+    # ==========================================================================
     # Component: RequestLoggerRemote - Services
     # ==========================================================================
 

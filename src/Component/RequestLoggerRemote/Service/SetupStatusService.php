@@ -18,7 +18,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInt
 final class SetupStatusService implements SetupStatusServiceInterface
 {
     private const MIGRATION_TABLE = 'oxmigrations_oxsloggingframework';
-    private const EXPECTED_MIGRATION = 'OxidSupport\\RequestLogger\\Migrations\\Version20251223000001';
+    private const EXPECTED_MIGRATION = 'OxidSupport\\LoggingFramework\\Migrations\\Version20251223000001';
 
     public function __construct(
         private readonly QueryBuilderFactoryInterface $queryBuilderFactory

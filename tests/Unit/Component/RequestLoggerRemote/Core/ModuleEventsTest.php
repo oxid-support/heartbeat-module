@@ -51,7 +51,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString(''));
 
         // Password is placeholder (not BCrypt)
@@ -75,7 +75,7 @@ final class ModuleEventsTest extends TestCase
             ->expects($this->once())
             ->method('saveString')
             ->with(
-                Module::SETTING_REMOTE_SETUP_TOKEN,
+                Module::SETTING_APIUSER_SETUP_TOKEN,
                 $this->matchesRegularExpression('/^[a-f0-9]{32}$/'),
                 Module::ID
             );
@@ -109,7 +109,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString('existing-token-12345'));
 
         // Should NOT save a new token
@@ -142,7 +142,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID)
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new UnicodeString(''));
 
         // Password is BCrypt (setup was completed)

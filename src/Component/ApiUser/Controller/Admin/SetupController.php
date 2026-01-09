@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin;
+namespace OxidSupport\LoggingFramework\Component\ApiUser\Controller\Admin;
 
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
@@ -18,15 +18,14 @@ use OxidSupport\LoggingFramework\Module\Module;
 use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 
 /**
- * Request Logger Remote setup controller for the Logging Framework.
- * Displays the component activation and requires API User to be set up first.
+ * API User setup controller for the Logging Framework.
+ * Displays the setup workflow for API user configuration.
  */
 class SetupController extends AdminController
 {
-    protected $_sThisTemplate = '@oxsloggingframework/admin/loggingframework_remote_setup';
+    protected $_sThisTemplate = '@oxsloggingframework/admin/loggingframework_apiuser_setup';
 
-    private const CONFIG_ACCESS_MODULE_ID = 'oe_graphql_configuration_access';
-    private const SETTING_COMPONENT_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
+    private const GRAPHQL_BASE_MODULE_ID = 'oe_graphql_base';
 
     private ?ContextInterface $context = null;
     private ?ShopConfigurationDaoInterface $shopConfigurationDao = null;
@@ -34,49 +33,78 @@ class SetupController extends AdminController
     private ?ModuleSettingServiceInterface $moduleSettingService = null;
 
     /**
-     * Check if the component is active.
+     * Get the setup token.
      */
-    public function isComponentActive(): bool
+    public function getSetupToken(): string
     {
-        return $this->getModuleSettingService()->getBoolean(self::SETTING_COMPONENT_ACTIVE, Module::ID);
-    }
-
-    /**
-     * Toggle component activation.
-     */
-    public function toggleComponent(): void
-    {
-        // Only allow toggling if API User setup is complete
-        if (!$this->isApiUserSetupComplete()) {
-            return;
-        }
-
-        $currentState = $this->isComponentActive();
-        $this->getModuleSettingService()->saveBoolean(
-            self::SETTING_COMPONENT_ACTIVE,
-            !$currentState,
+        return (string) $this->getModuleSettingService()->getString(
+            Module::SETTING_APIUSER_SETUP_TOKEN,
             Module::ID
         );
     }
 
     /**
-     * Check if the API User setup is complete (migration done + password set).
+     * Check if the module is activated.
      */
-    public function isApiUserSetupComplete(): bool
+    public function isModuleActivated(): bool
+    {
+        return $this->isModuleActive(Module::ID);
+    }
+
+    /**
+     * Check if GraphQL Base module is activated.
+     */
+    public function isGraphqlBaseActivated(): bool
+    {
+        return $this->isModuleActive(self::GRAPHQL_BASE_MODULE_ID);
+    }
+
+    /**
+     * Check if migrations have been executed.
+     */
+    public function isMigrationExecuted(): bool
     {
         try {
-            return $this->getApiUserStatusService()->isSetupComplete();
+            return $this->getApiUserStatusService()->isMigrationExecuted();
         } catch (\Exception) {
             return false;
         }
     }
 
     /**
-     * Check if Configuration Access module is activated.
+     * Check if the API user exists.
      */
-    public function isConfigAccessActivated(): bool
+    public function isApiUserCreated(): bool
     {
-        return $this->isModuleActive(self::CONFIG_ACCESS_MODULE_ID);
+        try {
+            return $this->getApiUserStatusService()->isApiUserCreated();
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the API user password is set (setup complete).
+     */
+    public function isApiUserPasswordSet(): bool
+    {
+        try {
+            return $this->getApiUserStatusService()->isApiUserPasswordSet();
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the complete setup is done.
+     */
+    public function isSetupComplete(): bool
+    {
+        try {
+            return $this->getApiUserStatusService()->isSetupComplete();
+        } catch (\Exception) {
+            return false;
+        }
     }
 
     /**
@@ -94,6 +122,21 @@ class SetupController extends AdminController
         } catch (\Exception) {
             return false;
         }
+    }
+
+    /**
+     * Reset the API user password (regenerate setup token).
+     */
+    public function resetPassword(): void
+    {
+        // Generate a new setup token
+        $newToken = bin2hex(random_bytes(32));
+
+        $this->getModuleSettingService()->saveString(
+            Module::SETTING_APIUSER_SETUP_TOKEN,
+            $newToken,
+            Module::ID
+        );
     }
 
     protected function getContext(): ContextInterface

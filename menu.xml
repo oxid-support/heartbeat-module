@@ -3,6 +3,8 @@
     <OXMENU id="NAVIGATION_ESHOPADMIN">
         <!-- Logging Framework - Main Menu Entry -->
         <MAINMENU id="mxloggingframework">
+            <!-- API User Component - Setup (First position, required for other components) -->
+            <SUBMENU id="mxloggingframework_apiuser" cl="loggingframework_apiuser_setup" />
             <!-- Request Logger Component - Settings directly -->
             <SUBMENU id="mxloggingframework_requestlogger" cl="loggingframework_requestlogger_settings" />
             <!-- Request Logger Remote Component - Setup directly -->

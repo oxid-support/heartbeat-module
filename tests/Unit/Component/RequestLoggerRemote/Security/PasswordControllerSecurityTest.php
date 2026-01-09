@@ -270,7 +270,7 @@ class PasswordControllerSecurityTest extends TestCase
         $this->moduleSettingService
             ->expects($this->once())
             ->method('saveString')
-            ->with(Module::SETTING_REMOTE_SETUP_TOKEN, '', Module::ID);
+            ->with(Module::SETTING_APIUSER_SETUP_TOKEN, '', Module::ID);
 
         $this->controller->requestLoggerSetPassword($validToken, 'SecurePassword123');
     }

@@ -32,7 +32,7 @@ final class ModuleEvents
         $moduleSettingService = $container->get(ModuleSettingServiceInterface::class);
 
         try {
-            $currentToken = (string) $moduleSettingService->getString(Module::SETTING_REMOTE_SETUP_TOKEN, Module::ID);
+            $currentToken = (string) $moduleSettingService->getString(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID);
         } catch (\Throwable $e) {
             $currentToken = '';
         }
@@ -49,7 +49,7 @@ final class ModuleEvents
 
         // Generate new token for first-time setup
         $token = Registry::getUtilsObject()->generateUId();
-        $moduleSettingService->saveString(Module::SETTING_REMOTE_SETUP_TOKEN, $token, Module::ID);
+        $moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
     }
 
     /**

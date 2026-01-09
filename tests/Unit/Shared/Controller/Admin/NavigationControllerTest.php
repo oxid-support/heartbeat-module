@@ -26,6 +26,7 @@ if (!class_exists(NavigationController_parent::class)) {
 namespace OxidSupport\LoggingFramework\Tests\Unit\Shared\Controller\Admin;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\LoggingFramework\Shared\Controller\Admin\NavigationController;
 use OxidSupport\LoggingFramework\Module\Module;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -40,6 +41,7 @@ final class NavigationControllerTest extends TestCase
 
     #[DataProvider('componentStatusDataProvider')]
     public function testGetLoggingFrameworkComponentStatusReturnsCorrectValues(
+        bool $apiUserSetupComplete,
         bool $requestLoggerActive,
         bool $remoteActive
     ): void {
@@ -51,9 +53,18 @@ final class NavigationControllerTest extends TestCase
                 [self::SETTING_REMOTE_ACTIVE, Module::ID, $remoteActive],
             ]);
 
-        $controller = $this->createControllerWithMock($moduleSettingService);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn($apiUserSetupComplete);
+
+        $controller = $this->createControllerWithMocks($moduleSettingService, $apiUserStatusService);
         $status = $controller->getLoggingFrameworkComponentStatus();
 
+        $this->assertSame(
+            $apiUserSetupComplete,
+            $status['loggingframework_apiuser_setup']
+        );
         $this->assertSame(
             $requestLoggerActive,
             $status['loggingframework_requestlogger_settings']
@@ -67,10 +78,14 @@ final class NavigationControllerTest extends TestCase
     public static function componentStatusDataProvider(): array
     {
         return [
-            'both active' => [true, true],
-            'both inactive' => [false, false],
-            'only request logger active' => [true, false],
-            'only remote active' => [false, true],
+            'all active' => [true, true, true],
+            'all inactive' => [false, false, false],
+            'only api user complete' => [true, false, false],
+            'only request logger active' => [false, true, false],
+            'only remote active' => [false, false, true],
+            'api user and request logger' => [true, true, false],
+            'api user and remote' => [true, false, true],
+            'request logger and remote' => [false, true, true],
         ];
     }
 
@@ -84,7 +99,12 @@ final class NavigationControllerTest extends TestCase
                 [self::SETTING_REMOTE_ACTIVE, Module::ID, false],
             ]);
 
-        $controller = $this->createControllerWithMock($moduleSettingService);
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithMocks($moduleSettingService, $apiUserStatusService);
         $template = $controller->render();
 
         $this->assertSame('navigation.html.twig', $template);
@@ -95,21 +115,45 @@ final class NavigationControllerTest extends TestCase
         $viewData = $property->getValue($controller);
 
         $this->assertArrayHasKey('lfComponentStatus', $viewData);
+        $this->assertTrue($viewData['lfComponentStatus']['loggingframework_apiuser_setup']);
         $this->assertTrue($viewData['lfComponentStatus']['loggingframework_requestlogger_settings']);
         $this->assertFalse($viewData['lfComponentStatus']['loggingframework_remote_setup']);
     }
 
-    private function createControllerWithMock(
-        ModuleSettingServiceInterface $moduleSettingService
+    public function testApiUserStatusReturnsFalseOnException(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->willReturn(false);
+
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willThrowException(new \Exception('Service error'));
+
+        $controller = $this->createControllerWithMocks($moduleSettingService, $apiUserStatusService);
+        $status = $controller->getLoggingFrameworkComponentStatus();
+
+        $this->assertFalse($status['loggingframework_apiuser_setup']);
+    }
+
+    private function createControllerWithMocks(
+        ModuleSettingServiceInterface $moduleSettingService,
+        ?ApiUserStatusServiceInterface $apiUserStatusService = null
     ): NavigationController {
         $controller = $this->getMockBuilder(NavigationController::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getModuleSettingService'])
+            ->onlyMethods(['getModuleSettingService', 'getApiUserStatusService'])
             ->getMock();
 
         $controller
             ->method('getModuleSettingService')
             ->willReturn($moduleSettingService);
+
+        $controller
+            ->method('getApiUserStatusService')
+            ->willReturn($apiUserStatusService ?? $this->createStub(ApiUserStatusServiceInterface::class));
 
         return $controller;
     }
