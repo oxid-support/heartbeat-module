@@ -1,53 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Remote - Setup</title>
-    <link rel="stylesheet" href="{{ oViewConf.getModuleUrl('oxsloggingframework', 'css/loggingframework.css') }}">
-</head>
-<body>
+{% extends "@oxsloggingframework/admin/loggingframework_base.html.twig" %}
+{% import "@oxsloggingframework/admin/loggingframework_macros.html.twig" as lf %}
 
+{% block title %}Remote - Setup{% endblock %}
+
+{% block body %}
 {% set isActive = oView.isComponentActive() %}
 {% set apiUserSetupComplete = oView.isApiUserSetupComplete() %}
 {% set configAccessActivated = oView.isConfigAccessActivated() %}
+{% set canToggle = oView.canToggle() %}
 
-<h1>
-    {{ translate({ ident: "OXSREQUESTLOGGER_LF_REMOTE_TITLE" }) }}
-    {% if not apiUserSetupComplete %}
-        <span class="component-status warning">
-            {{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_STATUS_WARNING" }) }}
-        </span>
-    {% else %}
-        <span class="component-status {{ isActive ? 'active' : 'inactive' }}">
-            {{ isActive ? translate({ ident: "OXSREQUESTLOGGER_LF_STATUS_ACTIVE" }) : translate({ ident: "OXSREQUESTLOGGER_LF_STATUS_INACTIVE" }) }}
-        </span>
-    {% endif %}
-</h1>
-<p style="color: #666; margin-bottom: 20px;">{{ translate({ ident: "OXSREQUESTLOGGER_LF_REMOTE_DESC" }) }}</p>
+{{ lf.page_header(
+    "OXSREQUESTLOGGER_LF_REMOTE_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSREQUESTLOGGER_LF_REMOTE_DESC"
+) }}
 
-{% set canActivate = apiUserSetupComplete and configAccessActivated %}
-
-<form method="post" action="{{ oViewConf.getSelfLink()|raw }}" id="toggleForm" target="_self">
-    {{ oViewConf.getHiddenSid()|raw }}
-    <input type="hidden" name="cl" value="loggingframework_remote_setup">
-    <input type="hidden" name="fnc" value="toggleComponent">
-    <input type="hidden" name="reloadFrame" value="1">
-</form>
-
-<div class="toggle-section {{ not canActivate ? 'disabled' : '' }}">
-    <div>
-        <h3>{{ translate({ ident: "OXSREQUESTLOGGER_LF_COMPONENT_ACTIVATION" }) }}</h3>
-    </div>
-    <label class="toggle-switch">
-        <input type="checkbox" {{ isActive and canActivate ? 'checked' : '' }} {{ not canActivate ? 'disabled' : '' }} onchange="submitToggleAndReload();">
-        <span class="toggle-slider {{ not canActivate ? 'disabled' : '' }}"></span>
-    </label>
-</div>
+{{ lf.toggle_section("loggingframework_remote_setup", isActive, not canToggle, "loggingframework_remote_setup") }}
 
 {% if not apiUserSetupComplete %}
     <div class="warning-notice">
         <h3>&#9888; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_WARNING_TITLE" }) }}</h3>
         <p>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_WARNING_TEXT" }) }}</p>
-        <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=loggingframework_apiuser_setup';">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_GOTO_APIUSER" }) }}</button>
+        <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=loggingframework_apiuser_setup';">
+            {{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_GOTO_APIUSER" }) }}
+        </button>
     </div>
 {% elseif not configAccessActivated %}
     <div class="prerequisite-notice">
@@ -61,29 +38,4 @@
         <p>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_REMOTE_READY_TEXT" }) }}</p>
     </div>
 {% endif %}
-
-<script>
-function submitToggleAndReload() {
-    {% if not canActivate %}
-    return false;
-    {% endif %}
-    var form = document.getElementById('toggleForm');
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (top.localStorage) {
-                top.localStorage.setItem('oxs_lf_expand_nav', 'loggingframework_remote_setup');
-            }
-            top.location.reload();
-        }
-    };
-    var formData = new FormData(form);
-    var params = new URLSearchParams(formData).toString();
-    xhr.send(params);
-}
-</script>
-
-</body>
-</html>
+{% endblock %}

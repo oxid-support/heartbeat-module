@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>API User - Setup</title>
-    <link rel="stylesheet" href="{{ oViewConf.getModuleUrl('oxsloggingframework', 'css/loggingframework.css') }}">
-</head>
-<body>
+{% extends "@oxsloggingframework/admin/loggingframework_base.html.twig" %}
+{% import "@oxsloggingframework/admin/loggingframework_macros.html.twig" as lf %}
 
+{% block title %}API User - Setup{% endblock %}
+
+{% block body %}
 {% set setupToken = oView.getSetupToken() %}
 {% set migrationExecuted = oView.isMigrationExecuted() %}
-{% set moduleActivated = oView.isModuleActivated() %}
+{% set moduleActivated = oView.isLoggingFrameworkModuleActivated() %}
 {% set graphqlBaseActivated = oView.isGraphqlBaseActivated() %}
 {% set apiUserCreated = oView.isApiUserCreated() %}
 {% set apiUserPasswordSet = oView.isApiUserPasswordSet() %}
 {% set setupComplete = oView.isSetupComplete() %}
 
-<h1>
-    {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_TITLE" }) }}
-    <span class="component-status {{ setupComplete ? 'active' : 'inactive' }}">
-        {{ setupComplete ? translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_STATUS_READY" }) : translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_STATUS_SETUP_REQUIRED" }) }}
-    </span>
-</h1>
-<p style="color: #666; margin-bottom: 20px;">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_DESC" }) }}</p>
+{{ lf.page_header(
+    "OXSLOGGINGFRAMEWORK_APIUSER_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSLOGGINGFRAMEWORK_APIUSER_DESC"
+) }}
 
 <div>
 {% if setupComplete %}
@@ -51,18 +48,11 @@
                 {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_STEP_MIGRATE" }) }}
                 {% if graphqlBaseActivated and moduleActivated %}<br>
                 <small style="font-weight: normal;">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_MIGRATION_REQUIRED_TEXT" }) }}</small><br>
-                <code id="migrationCommand" class="copy-code" onclick="
-                    var textarea = document.createElement('textarea');
-                    textarea.value = './vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsloggingframework';
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    var msg = document.getElementById('migrationCopiedMsg');
-                    msg.style.display = 'inline';
-                    setTimeout(function() { msg.style.display = 'none'; }, 2000);
-                ">&#x1F4D1; ./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsloggingframework</code>
-                <span id="migrationCopiedMsg" class="copied-msg">&#10004; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_COPIED" }) }}</span>
+                {{ lf.copy_code(
+                    "./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsloggingframework",
+                    "migration",
+                    "OXSLOGGINGFRAMEWORK_APIUSER_COPIED"
+                ) }}
                 {% endif %}
             </li>
             {% else %}
@@ -74,18 +64,7 @@
                 {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_STEP_SEND_TOKEN" }) }}
                 {% if migrationExecuted and graphqlBaseActivated and setupToken != '' and not apiUserPasswordSet %}<br>
                 <small style="font-weight: normal;">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_STEP_SEND_TOKEN_DESC" }) }}</small><br>
-                <code id="setupTokenCode" class="copy-code" onclick="
-                    var textarea = document.createElement('textarea');
-                    textarea.value = '{{ setupToken }}';
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    var msg = document.getElementById('tokenCopiedMsg');
-                    msg.style.display = 'inline';
-                    setTimeout(function() { msg.style.display = 'none'; }, 2000);
-                ">&#x1F4D1; {{ setupToken }}</code>
-                <span id="tokenCopiedMsg" class="copied-msg">&#10004; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_APIUSER_COPIED" }) }}</span>
+                {{ lf.copy_code(setupToken, "token", "OXSLOGGINGFRAMEWORK_APIUSER_COPIED") }}
                 {% endif %}
             </li>
 
@@ -136,6 +115,4 @@
     </div>
 </details>
 </div>
-
-</body>
-</html>
+{% endblock %}

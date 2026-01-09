@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ oViewConf.getModuleUrl('oxsloggingframework', 'css/loggingframework.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,133 @@
+{#
+ # OXS Logging Framework - Twig Macros
+ #
+ # Reusable UI components for consistent admin pages.
+ # Usage: {% import "loggingframework_macros.html.twig" as lf %}
+ #}
+
+{#
+ # Page Header with Status Badge
+ #
+ # @param titleKey      Translation key for the page title
+ # @param statusClass   CSS class: 'active', 'inactive', or 'warning'
+ # @param statusTextKey Translation key for the status text
+ # @param descKey       Translation key for the description
+ #}
+{% macro page_header(titleKey, statusClass, statusTextKey, descKey) %}
+<h1>
+    {{ translate({ ident: titleKey }) }}
+    <span class="component-status {{ statusClass }}">
+        {{ translate({ ident: statusTextKey }) }}
+    </span>
+</h1>
+<p style="color: #666; margin-bottom: 20px;">{{ translate({ ident: descKey }) }}</p>
+{% endmacro %}
+
+{#
+ # Toggle Section with On/Off Switch
+ #
+ # @param controller    Controller class name for form action
+ # @param isActive      Whether the toggle is currently on
+ # @param isDisabled    Whether the toggle should be disabled
+ # @param localStorageKey Key for storing nav expansion state (optional)
+ #}
+{% macro toggle_section(controller, isActive, isDisabled, localStorageKey) %}
+<form method="post" action="{{ oViewConf.getSelfLink()|raw }}" id="toggleForm" target="_self">
+    {{ oViewConf.getHiddenSid()|raw }}
+    <input type="hidden" name="cl" value="{{ controller }}">
+    <input type="hidden" name="fnc" value="toggleComponent">
+    <input type="hidden" name="reloadFrame" value="1">
+</form>
+
+<div class="toggle-section {{ isDisabled ? 'disabled' : '' }}">
+    <div>
+        <h3>{{ translate({ ident: "OXSREQUESTLOGGER_LF_COMPONENT_ACTIVATION" }) }}</h3>
+    </div>
+    <label class="toggle-switch">
+        <input type="checkbox"
+               {{ isActive and not isDisabled ? 'checked' : '' }}
+               {{ isDisabled ? 'disabled' : '' }}
+               onchange="submitToggleAndReload();">
+        <span class="toggle-slider {{ isDisabled ? 'disabled' : '' }}"></span>
+    </label>
+</div>
+
+<script>
+function submitToggleAndReload() {
+    {% if isDisabled %}
+    return false;
+    {% endif %}
+    var form = document.getElementById('toggleForm');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', form.action, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (top.localStorage) {
+                top.localStorage.setItem('oxs_lf_expand_nav', '{{ localStorageKey ?: controller }}');
+            }
+            top.location.reload();
+        }
+    };
+    var formData = new FormData(form);
+    var params = new URLSearchParams(formData).toString();
+    xhr.send(params);
+}
+</script>
+{% endmacro %}
+
+{#
+ # Notice Box for warnings, success messages, prerequisites
+ #
+ # @param type       Type: 'warning', 'ready', 'prerequisite'
+ # @param titleKey   Translation key for the title
+ # @param textKey    Translation key for the text (optional)
+ # @param text       Direct text content (optional, use instead of textKey)
+ #}
+{% macro notice_box(type, titleKey, textKey, text) %}
+<div class="{{ type }}-notice">
+    <h3>
+        {% if type == 'warning' %}&#9888;{% elseif type == 'ready' or type == 'setup-complete' %}&#10004;{% endif %}
+        {{ translate({ ident: titleKey }) }}
+    </h3>
+    {% if textKey %}
+    <p>{{ translate({ ident: textKey }) }}</p>
+    {% elseif text %}
+    <p style="margin: 0;">{{ text }}</p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{#
+ # Button (primary style)
+ #
+ # @param labelKey   Translation key for the button label
+ # @param onclick    JavaScript onclick handler
+ #}
+{% macro button_primary(labelKey, onclick) %}
+<button type="button" class="btn-primary" onclick="{{ onclick }}">
+    {{ translate({ ident: labelKey }) }}
+</button>
+{% endmacro %}
+
+{#
+ # Copyable Code Block
+ #
+ # @param code       The code/text to display and copy
+ # @param msgId      Unique ID for the "copied" message
+ # @param copiedKey  Translation key for "Copied!" message
+ #}
+{% macro copy_code(code, msgId, copiedKey) %}
+<code id="{{ msgId }}Code" class="copy-code" onclick="
+    var textarea = document.createElement('textarea');
+    textarea.value = '{{ code }}';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    var msg = document.getElementById('{{ msgId }}Msg');
+    msg.style.display = 'inline';
+    setTimeout(function() { msg.style.display = 'none'; }, 2000);
+">&#x1F4D1; {{ code }}</code>
+<span id="{{ msgId }}Msg" class="copied-msg">&#10004; {{ translate({ ident: copiedKey }) }}</span>
+{% endmacro %}

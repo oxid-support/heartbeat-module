@@ -9,30 +9,42 @@ declare(strict_types=1);
 
 namespace OxidSupport\LoggingFramework\Component\ApiUser\Controller\Admin;
 
-use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
-use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 use OxidSupport\LoggingFramework\Module\Module;
 use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserServiceInterface;
 use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\AbstractComponentController;
 
 /**
  * API User setup controller for the Logging Framework.
  * Displays the setup workflow for API user configuration.
  */
-class SetupController extends AdminController
+class SetupController extends AbstractComponentController
 {
     protected $_sThisTemplate = '@oxsloggingframework/admin/loggingframework_apiuser_setup';
 
     private const GRAPHQL_BASE_MODULE_ID = 'oe_graphql_base';
 
-    private ?ContextInterface $context = null;
-    private ?ShopConfigurationDaoInterface $shopConfigurationDao = null;
     private ?ApiUserServiceInterface $apiUserService = null;
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
-    private ?ModuleSettingServiceInterface $moduleSettingService = null;
+
+    /**
+     * API User is "active" when setup is complete.
+     */
+    public function isComponentActive(): bool
+    {
+        return $this->isSetupComplete();
+    }
+
+    /**
+     * Custom status text: setup required when not complete.
+     */
+    public function getStatusTextKey(): string
+    {
+        return $this->isSetupComplete()
+            ? 'OXSLOGGINGFRAMEWORK_APIUSER_STATUS_READY'
+            : 'OXSLOGGINGFRAMEWORK_APIUSER_STATUS_SETUP_REQUIRED';
+    }
 
     /**
      * Get the setup token.
@@ -46,11 +58,11 @@ class SetupController extends AdminController
     }
 
     /**
-     * Check if the module is activated.
+     * Check if the Logging Framework module is activated.
      */
-    public function isModuleActivated(): bool
+    public function isLoggingFrameworkModuleActivated(): bool
     {
-        return $this->isModuleActive(Module::ID);
+        return $this->isModuleActivated(Module::ID);
     }
 
     /**
@@ -58,7 +70,7 @@ class SetupController extends AdminController
      */
     public function isGraphqlBaseActivated(): bool
     {
-        return $this->isModuleActive(self::GRAPHQL_BASE_MODULE_ID);
+        return $this->isModuleActivated(self::GRAPHQL_BASE_MODULE_ID);
     }
 
     /**
@@ -110,23 +122,6 @@ class SetupController extends AdminController
     }
 
     /**
-     * Check if a specific module is activated.
-     */
-    private function isModuleActive(string $moduleId): bool
-    {
-        try {
-            $shopConfiguration = $this->getShopConfigurationDao()->get(
-                $this->getContext()->getCurrentShopId()
-            );
-            return $shopConfiguration
-                ->getModuleConfiguration($moduleId)
-                ->isActivated();
-        } catch (\Exception) {
-            return false;
-        }
-    }
-
-    /**
      * Reset the API user password (regenerate setup token).
      */
     public function resetPassword(): void
@@ -148,26 +143,6 @@ class SetupController extends AdminController
         );
     }
 
-    protected function getContext(): ContextInterface
-    {
-        if ($this->context === null) {
-            $this->context = ContainerFactory::getInstance()
-                ->getContainer()
-                ->get(ContextInterface::class);
-        }
-        return $this->context;
-    }
-
-    protected function getShopConfigurationDao(): ShopConfigurationDaoInterface
-    {
-        if ($this->shopConfigurationDao === null) {
-            $this->shopConfigurationDao = ContainerFactory::getInstance()
-                ->getContainer()
-                ->get(ShopConfigurationDaoInterface::class);
-        }
-        return $this->shopConfigurationDao;
-    }
-
     protected function getApiUserService(): ApiUserServiceInterface
     {
         if ($this->apiUserService === null) {
@@ -186,15 +161,5 @@ class SetupController extends AdminController
                 ->get(ApiUserStatusServiceInterface::class);
         }
         return $this->apiUserStatusService;
-    }
-
-    protected function getModuleSettingService(): ModuleSettingServiceInterface
-    {
-        if ($this->moduleSettingService === null) {
-            $this->moduleSettingService = ContainerFactory::getInstance()
-                ->getContainer()
-                ->get(ModuleSettingServiceInterface::class);
-        }
-        return $this->moduleSettingService;
     }
 }

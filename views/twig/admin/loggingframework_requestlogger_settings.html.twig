@@ -1,59 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Request Logger - Settings</title>
-    <link rel="stylesheet" href="{{ oViewConf.getModuleUrl('oxsloggingframework', 'css/loggingframework.css') }}">
-</head>
-<body>
+{% extends "@oxsloggingframework/admin/loggingframework_base.html.twig" %}
+{% import "@oxsloggingframework/admin/loggingframework_macros.html.twig" as lf %}
 
+{% block title %}Request Logger - Settings{% endblock %}
+
+{% block body %}
 {% set settings = oView.getSettings() %}
 {% set isActive = settings.componentActive %}
 
-<h1>
-    {{ translate({ ident: "OXSREQUESTLOGGER_LF_REQUESTLOGGER_TITLE" }) }}
-    <span class="component-status {{ isActive ? 'active' : 'inactive' }}">
-        {{ isActive ? translate({ ident: "OXSREQUESTLOGGER_LF_STATUS_ACTIVE" }) : translate({ ident: "OXSREQUESTLOGGER_LF_STATUS_INACTIVE" }) }}
-    </span>
-</h1>
-<p style="color: #666; margin-bottom: 20px;">{{ translate({ ident: "OXSREQUESTLOGGER_LF_REQUESTLOGGER_DESC" }) }}</p>
+{{ lf.page_header(
+    "OXSREQUESTLOGGER_LF_REQUESTLOGGER_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSREQUESTLOGGER_LF_REQUESTLOGGER_DESC"
+) }}
 
-<form method="post" action="{{ oViewConf.getSelfLink()|raw }}" id="toggleForm" target="_self">
-    {{ oViewConf.getHiddenSid()|raw }}
-    <input type="hidden" name="cl" value="loggingframework_requestlogger_settings">
-    <input type="hidden" name="fnc" value="toggleComponent">
-    <input type="hidden" name="reloadFrame" value="1">
-</form>
-
-<div class="toggle-section">
-    <div>
-        <h3>{{ translate({ ident: "OXSREQUESTLOGGER_LF_COMPONENT_ACTIVATION" }) }}</h3>
-    </div>
-    <label class="toggle-switch">
-        <input type="checkbox" {{ isActive ? 'checked' : '' }} onchange="submitToggleAndReload();">
-        <span class="toggle-slider"></span>
-    </label>
-</div>
-
-<script>
-function submitToggleAndReload() {
-    var form = document.getElementById('toggleForm');
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            // Store current controller to expand menu after reload
-            if (top.localStorage) {
-                top.localStorage.setItem('oxs_lf_expand_nav', 'loggingframework_requestlogger_settings');
-            }
-            top.location.reload();
-        }
-    };
-    var formData = new FormData(form);
-    var params = new URLSearchParams(formData).toString();
-    xhr.send(params);
-}
-</script>
+{{ lf.toggle_section("loggingframework_requestlogger_settings", isActive, false, "loggingframework_requestlogger_settings") }}
 
 <div>
     <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" id="settingsForm">
@@ -117,7 +78,9 @@ function submitToggleAndReload() {
         <button type="submit" class="btn-save" id="saveBtn">{{ translate({ ident: "OXSREQUESTLOGGER_LF_SETTINGS_SAVE" }) }}</button>
     </form>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 (function() {
     var form = document.getElementById('settingsForm');
@@ -126,7 +89,6 @@ function submitToggleAndReload() {
     var unsavedText = '{{ translate({ ident: "OXSREQUESTLOGGER_LF_SETTINGS_SAVE" }) }} *';
     var savedText = '{{ translate({ ident: "OXSREQUESTLOGGER_LF_SETTINGS_SAVE" }) }}';
 
-    // Store original values on page load
     function storeOriginalValues() {
         var inputs = form.querySelectorAll('input, textarea, select');
         inputs.forEach(function(input) {
@@ -139,7 +101,6 @@ function submitToggleAndReload() {
         });
     }
 
-    // Check if form has changes
     function hasChanges() {
         var inputs = form.querySelectorAll('input, textarea, select');
         for (var i = 0; i < inputs.length; i++) {
@@ -154,7 +115,6 @@ function submitToggleAndReload() {
         return false;
     }
 
-    // Update button state
     function updateButtonState() {
         if (hasChanges()) {
             saveBtn.classList.add('unsaved');
@@ -165,14 +125,9 @@ function submitToggleAndReload() {
         }
     }
 
-    // Initialize
     storeOriginalValues();
-
-    // Listen for changes
     form.addEventListener('change', updateButtonState);
     form.addEventListener('input', updateButtonState);
 })();
 </script>
-
-</body>
-</html>
+{% endblock %}

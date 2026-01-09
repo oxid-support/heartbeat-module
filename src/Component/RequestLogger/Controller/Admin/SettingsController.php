@@ -9,39 +9,44 @@ declare(strict_types=1);
 
 namespace OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin;
 
-use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidSupport\LoggingFramework\Module\Module;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\AbstractComponentController;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\TogglableComponentInterface;
 
 /**
  * Request Logger settings controller for the Logging Framework.
  * Allows configuration of the Request Logger component.
  */
-class SettingsController extends AdminController
+class SettingsController extends AbstractComponentController implements TogglableComponentInterface
 {
     protected $_sThisTemplate = '@oxsloggingframework/admin/loggingframework_requestlogger_settings';
 
-    /**
-     * Check if the component is active.
-     */
     public function isComponentActive(): bool
     {
-        return $this->getModuleSettingService()->getBoolean(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID);
-    }
-
-    /**
-     * Toggle component activation.
-     */
-    public function toggleComponent(): void
-    {
-        $currentState = $this->isComponentActive();
-        $this->getModuleSettingService()->saveBoolean(
+        return $this->getModuleSettingService()->getBoolean(
             Module::SETTING_REQUESTLOGGER_ACTIVE,
-            !$currentState,
             Module::ID
         );
+    }
+
+    public function toggleComponent(): void
+    {
+        if (!$this->canToggle()) {
+            return;
+        }
+
+        $this->getModuleSettingService()->saveBoolean(
+            Module::SETTING_REQUESTLOGGER_ACTIVE,
+            !$this->isComponentActive(),
+            Module::ID
+        );
+    }
+
+    public function canToggle(): bool
+    {
+        // Request Logger has no prerequisites
+        return true;
     }
 
     /**
@@ -111,12 +116,5 @@ class SettingsController extends AdminController
                 $moduleId
             );
         }
-    }
-
-    protected function getModuleSettingService(): ModuleSettingServiceInterface
-    {
-        return ContainerFactory::getInstance()
-            ->getContainer()
-            ->get(ModuleSettingServiceInterface::class);
     }
 }
