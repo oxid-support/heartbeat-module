@@ -12,6 +12,8 @@ namespace OxidSupport\LoggingFramework\Tests\Unit\Component\RequestLogger\Contro
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin\SettingsController;
 use OxidSupport\LoggingFramework\Module\Module;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\ComponentControllerInterface;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\TogglableComponentInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -124,6 +126,72 @@ final class SettingsControllerTest extends TestCase
         $this->assertFalse($settings['logAdmin']);
         $this->assertFalse($settings['redactAllValues']);
         $this->assertSame(['password', 'secret'], $settings['redactFields']);
+    }
+
+    public function testCanToggleAlwaysReturnsTrue(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+
+        $this->assertTrue($controller->canToggle());
+    }
+
+    public function testImplementsTogglableComponentInterface(): void
+    {
+        $this->assertTrue(
+            is_subclass_of(SettingsController::class, TogglableComponentInterface::class)
+        );
+    }
+
+    public function testImplementsComponentControllerInterface(): void
+    {
+        $this->assertTrue(
+            is_subclass_of(SettingsController::class, ComponentControllerInterface::class)
+        );
+    }
+
+    #[DataProvider('statusClassDataProvider')]
+    public function testGetStatusClassReturnsCorrectValue(bool $isActive, string $expectedClass): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn($isActive);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+
+        $this->assertSame($expectedClass, $controller->getStatusClass());
+    }
+
+    public static function statusClassDataProvider(): array
+    {
+        return [
+            'active returns active class' => [true, 'active'],
+            'inactive returns inactive class' => [false, 'inactive'],
+        ];
+    }
+
+    #[DataProvider('statusTextKeyDataProvider')]
+    public function testGetStatusTextKeyReturnsCorrectValue(bool $isActive, string $expectedKey): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn($isActive);
+
+        $controller = $this->createControllerWithMockedService($moduleSettingService);
+
+        $this->assertSame($expectedKey, $controller->getStatusTextKey());
+    }
+
+    public static function statusTextKeyDataProvider(): array
+    {
+        return [
+            'active returns active key' => [true, 'OXSREQUESTLOGGER_LF_STATUS_ACTIVE'],
+            'inactive returns inactive key' => [false, 'OXSREQUESTLOGGER_LF_STATUS_INACTIVE'],
+        ];
     }
 
     private function createControllerWithMockedService(

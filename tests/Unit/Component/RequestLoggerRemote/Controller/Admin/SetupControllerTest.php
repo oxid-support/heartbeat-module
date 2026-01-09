@@ -17,6 +17,8 @@ use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 use OxidSupport\LoggingFramework\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\LoggingFramework\Component\RequestLoggerRemote\Controller\Admin\SetupController;
 use OxidSupport\LoggingFramework\Module\Module;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\ComponentControllerInterface;
+use OxidSupport\LoggingFramework\Shared\Controller\Admin\TogglableComponentInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +62,7 @@ final class SetupControllerTest extends TestCase
         ];
     }
 
-    public function testToggleComponentFromActiveToInactiveWhenApiUserSetupComplete(): void
+    public function testToggleComponentFromActiveToInactiveWhenCanToggle(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -76,18 +78,19 @@ final class SetupControllerTest extends TestCase
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
         $apiUserStatusService
-            ->expects($this->once())
             ->method('isSetupComplete')
             ->willReturn(true);
 
-        $controller = $this->createControllerWithMocks(
-            moduleSettingService: $moduleSettingService,
-            apiUserStatusService: $apiUserStatusService
+        $controller = $this->createControllerWithModuleActivationStateAndApiUserAndSettings(
+            'oe_graphql_configuration_access',
+            true,
+            $apiUserStatusService,
+            $moduleSettingService
         );
         $controller->toggleComponent();
     }
 
-    public function testToggleComponentFromInactiveToActiveWhenApiUserSetupComplete(): void
+    public function testToggleComponentFromInactiveToActiveWhenCanToggle(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -103,31 +106,27 @@ final class SetupControllerTest extends TestCase
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
         $apiUserStatusService
-            ->expects($this->once())
             ->method('isSetupComplete')
             ->willReturn(true);
 
-        $controller = $this->createControllerWithMocks(
-            moduleSettingService: $moduleSettingService,
-            apiUserStatusService: $apiUserStatusService
+        $controller = $this->createControllerWithModuleActivationStateAndApiUserAndSettings(
+            'oe_graphql_configuration_access',
+            true,
+            $apiUserStatusService,
+            $moduleSettingService
         );
         $controller->toggleComponent();
     }
 
-    public function testToggleComponentDoesNothingWhenApiUserSetupNotComplete(): void
+    public function testToggleComponentDoesNothingWhenCannotToggle(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $moduleSettingService
-            ->expects($this->never())
-            ->method('getBoolean');
-
         $moduleSettingService
             ->expects($this->never())
             ->method('saveBoolean');
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
         $apiUserStatusService
-            ->expects($this->once())
             ->method('isSetupComplete')
             ->willReturn(false);
 
@@ -211,6 +210,155 @@ final class SetupControllerTest extends TestCase
         $this->assertFalse($controller->isConfigAccessActivated());
     }
 
+    public function testCanToggleReturnsTrueWhenAllPrerequisitesMet(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
+            'oe_graphql_configuration_access',
+            true,
+            $apiUserStatusService
+        );
+
+        $this->assertTrue($controller->canToggle());
+    }
+
+    public function testCanToggleReturnsFalseWhenApiUserNotSetUp(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(false);
+
+        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
+            'oe_graphql_configuration_access',
+            true,
+            $apiUserStatusService
+        );
+
+        $this->assertFalse($controller->canToggle());
+    }
+
+    public function testCanToggleReturnsFalseWhenConfigAccessNotActivated(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
+            'oe_graphql_configuration_access',
+            false,
+            $apiUserStatusService
+        );
+
+        $this->assertFalse($controller->canToggle());
+    }
+
+    public function testGetStatusClassReturnsWarningWhenApiUserNotSetUp(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(false);
+
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
+
+        $this->assertSame(ComponentControllerInterface::STATUS_CLASS_WARNING, $controller->getStatusClass());
+    }
+
+    public function testGetStatusClassReturnsActiveWhenApiUserSetUpAndComponentActive(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
+
+        $this->assertSame(ComponentControllerInterface::STATUS_CLASS_ACTIVE, $controller->getStatusClass());
+    }
+
+    public function testGetStatusClassReturnsInactiveWhenApiUserSetUpAndComponentInactive(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn(false);
+
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
+
+        $this->assertSame(ComponentControllerInterface::STATUS_CLASS_INACTIVE, $controller->getStatusClass());
+    }
+
+    public function testGetStatusTextKeyReturnsWarningKeyWhenApiUserNotSetUp(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(false);
+
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
+
+        $this->assertSame('OXSLOGGINGFRAMEWORK_REMOTE_STATUS_WARNING', $controller->getStatusTextKey());
+    }
+
+    public function testGetStatusTextKeyReturnsActiveKeyWhenApiUserSetUpAndActive(): void
+    {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn(true);
+
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->method('getBoolean')
+            ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
+            ->willReturn(true);
+
+        $controller = $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            apiUserStatusService: $apiUserStatusService
+        );
+
+        $this->assertSame('OXSREQUESTLOGGER_LF_STATUS_ACTIVE', $controller->getStatusTextKey());
+    }
+
+    public function testImplementsTogglableComponentInterface(): void
+    {
+        $this->assertTrue(
+            is_subclass_of(SetupController::class, TogglableComponentInterface::class)
+        );
+    }
+
+    public function testImplementsComponentControllerInterface(): void
+    {
+        $this->assertTrue(
+            is_subclass_of(SetupController::class, ComponentControllerInterface::class)
+        );
+    }
+
     private function createControllerWithMocks(
         ?ModuleSettingServiceInterface $moduleSettingService = null,
         ?ContextInterface $context = null,
@@ -270,6 +418,76 @@ final class SetupControllerTest extends TestCase
         return $this->createControllerWithMocks(
             context: $context,
             shopConfigurationDao: $shopConfigurationDao,
+        );
+    }
+
+    private function createControllerWithModuleActivationStateAndApiUser(
+        string $moduleId,
+        bool $isActivated,
+        ApiUserStatusServiceInterface $apiUserStatusService
+    ): SetupController {
+        $moduleConfiguration = $this->createMock(ModuleConfiguration::class);
+        $moduleConfiguration
+            ->method('isActivated')
+            ->willReturn($isActivated);
+
+        $shopConfiguration = $this->createMock(ShopConfiguration::class);
+        $shopConfiguration
+            ->method('getModuleConfiguration')
+            ->with($moduleId)
+            ->willReturn($moduleConfiguration);
+
+        $context = $this->createMock(ContextInterface::class);
+        $context
+            ->method('getCurrentShopId')
+            ->willReturn(1);
+
+        $shopConfigurationDao = $this->createMock(ShopConfigurationDaoInterface::class);
+        $shopConfigurationDao
+            ->method('get')
+            ->with(1)
+            ->willReturn($shopConfiguration);
+
+        return $this->createControllerWithMocks(
+            context: $context,
+            shopConfigurationDao: $shopConfigurationDao,
+            apiUserStatusService: $apiUserStatusService,
+        );
+    }
+
+    private function createControllerWithModuleActivationStateAndApiUserAndSettings(
+        string $moduleId,
+        bool $isActivated,
+        ApiUserStatusServiceInterface $apiUserStatusService,
+        ModuleSettingServiceInterface $moduleSettingService
+    ): SetupController {
+        $moduleConfiguration = $this->createMock(ModuleConfiguration::class);
+        $moduleConfiguration
+            ->method('isActivated')
+            ->willReturn($isActivated);
+
+        $shopConfiguration = $this->createMock(ShopConfiguration::class);
+        $shopConfiguration
+            ->method('getModuleConfiguration')
+            ->with($moduleId)
+            ->willReturn($moduleConfiguration);
+
+        $context = $this->createMock(ContextInterface::class);
+        $context
+            ->method('getCurrentShopId')
+            ->willReturn(1);
+
+        $shopConfigurationDao = $this->createMock(ShopConfigurationDaoInterface::class);
+        $shopConfigurationDao
+            ->method('get')
+            ->with(1)
+            ->willReturn($shopConfiguration);
+
+        return $this->createControllerWithMocks(
+            moduleSettingService: $moduleSettingService,
+            context: $context,
+            shopConfigurationDao: $shopConfigurationDao,
+            apiUserStatusService: $apiUserStatusService,
         );
     }
 }
