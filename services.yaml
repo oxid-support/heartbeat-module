@@ -79,6 +79,11 @@ services:
         arguments:
             $resolvers: !tagged_iterator 'oxs.cid.resolver'
 
+    # Component: RequestLogger - Service
+    OxidSupport\LoggingFramework\Component\RequestLogger\Service\LogPathProvider:
+        tags:
+            - { name: 'oxs.logsender.provider' }
+
     # Component: RequestLogger - Controller/Admin
     OxidSupport\LoggingFramework\Component\RequestLogger\Controller\Admin\SettingsController:
         public: true
