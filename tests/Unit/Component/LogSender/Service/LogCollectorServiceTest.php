@@ -163,23 +163,88 @@ final class LogCollectorServiceTest extends TestCase
         $this->assertEquals('testprovider', $sources[0]->providerId);
     }
 
-    public function testGetSourcesSkipsInactiveProviders(): void
+    public function testGetSourcesIncludesInactiveProvidersAsUnavailable(): void
     {
         $this->moduleSettingService
             ->method('getCollection')
             ->willReturn([]);
 
+        $logPath = new LogPath(
+            path: $this->testDir,
+            type: LogPathType::DIRECTORY,
+            name: 'Inactive Logs',
+        );
+
         $provider = $this->createMockProvider(
             'inactive',
             'Inactive Provider',
             'Description',
-            [],
+            [$logPath],
             false // isActive = false
         );
 
         $service = $this->createService([$provider]);
+        $sources = $service->getSources();
 
-        $this->assertEquals([], $service->getSources());
+        $this->assertCount(1, $sources);
+        $this->assertEquals('provider_inactive', $sources[0]->id);
+        $this->assertFalse($sources[0]->available);
+    }
+
+    public function testGetSourcesIncludesInactiveProviderWithMissingPathAsUnavailable(): void
+    {
+        $this->moduleSettingService
+            ->method('getCollection')
+            ->willReturn([]);
+
+        $logPath = new LogPath(
+            path: '/nonexistent/path',
+            type: LogPathType::DIRECTORY,
+            name: 'Missing Logs',
+        );
+
+        $provider = $this->createMockProvider(
+            'inactive_missing',
+            'Inactive Missing Provider',
+            'Description',
+            [$logPath],
+            false // isActive = false
+        );
+
+        $service = $this->createService([$provider]);
+        $sources = $service->getSources();
+
+        $this->assertCount(1, $sources);
+        $this->assertEquals('provider_inactive_missing', $sources[0]->id);
+        $this->assertFalse($sources[0]->available);
+        $this->assertCount(1, $sources[0]->paths);
+    }
+
+    public function testGetSourcesMarksActiveProviderWithExistingPathAsAvailable(): void
+    {
+        $this->moduleSettingService
+            ->method('getCollection')
+            ->willReturn([]);
+
+        $logPath = new LogPath(
+            path: $this->testDir,
+            type: LogPathType::DIRECTORY,
+            name: 'Existing Logs',
+        );
+
+        $provider = $this->createMockProvider(
+            'active_existing',
+            'Active Existing Provider',
+            'Description',
+            [$logPath],
+            true // isActive = true
+        );
+
+        $service = $this->createService([$provider]);
+        $sources = $service->getSources();
+
+        $this->assertCount(1, $sources);
+        $this->assertTrue($sources[0]->available);
     }
 
     public function testGetSourcesMarksProviderUnavailableWhenPathDoesNotExist(): void

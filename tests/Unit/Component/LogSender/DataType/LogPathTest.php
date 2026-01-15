@@ -154,6 +154,104 @@ final class LogPathTest extends TestCase
         $this->assertEquals('Test Log', $array['name']);
         $this->assertEquals('Description', $array['description']);
         $this->assertEquals('*.log', $array['filePattern']);
+        $this->assertArrayHasKey('validation', $array);
+    }
+
+    // getValidation() tests
+
+    public function testGetValidationReturnsPathNotFoundForNonExistentFile(): void
+    {
+        $logPath = new LogPath('/nonexistent/path/file.log', LogPathType::FILE, 'Test');
+
+        $validation = $logPath->getValidation();
+
+        $this->assertFalse($validation['exists']);
+        $this->assertFalse($validation['readable']);
+        $this->assertEquals('error', $validation['status']);
+        $this->assertEquals('PATH_NOT_FOUND', $validation['error']);
+    }
+
+    public function testGetValidationReturnsPathNotFoundForNonExistentDirectory(): void
+    {
+        $logPath = new LogPath('/nonexistent/path/', LogPathType::DIRECTORY, 'Test');
+
+        $validation = $logPath->getValidation();
+
+        $this->assertFalse($validation['exists']);
+        $this->assertFalse($validation['readable']);
+        $this->assertEquals('error', $validation['status']);
+        $this->assertEquals('PATH_NOT_FOUND', $validation['error']);
+    }
+
+    public function testGetValidationReturnsOkStatusForExistingReadableDirectory(): void
+    {
+        $logPath = new LogPath(sys_get_temp_dir(), LogPathType::DIRECTORY, 'Temp');
+
+        $validation = $logPath->getValidation();
+
+        $this->assertTrue($validation['exists']);
+        $this->assertTrue($validation['readable']);
+        $this->assertEquals('ok', $validation['status']);
+        $this->assertNull($validation['error']);
+        $this->assertIsInt($validation['fileCount']);
+        $this->assertNull($validation['fileSize']);
+    }
+
+    public function testGetValidationReturnsOkStatusForExistingReadableFile(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'logpath_test_');
+        file_put_contents($tempFile, 'test content');
+
+        try {
+            $logPath = new LogPath($tempFile, LogPathType::FILE, 'Test');
+
+            $validation = $logPath->getValidation();
+
+            $this->assertTrue($validation['exists']);
+            $this->assertTrue($validation['readable']);
+            $this->assertEquals('ok', $validation['status']);
+            $this->assertNull($validation['error']);
+            $this->assertNull($validation['fileCount']);
+            $this->assertEquals(12, $validation['fileSize']); // 'test content' = 12 bytes
+        } finally {
+            unlink($tempFile);
+        }
+    }
+
+    public function testGetValidationReturnsFileCountForDirectory(): void
+    {
+        $tempDir = sys_get_temp_dir() . '/logpath_test_' . uniqid();
+        mkdir($tempDir);
+        touch($tempDir . '/file1.log');
+        touch($tempDir . '/file2.log');
+
+        try {
+            $logPath = new LogPath($tempDir, LogPathType::DIRECTORY, 'Test');
+
+            $validation = $logPath->getValidation();
+
+            $this->assertEquals(2, $validation['fileCount']);
+        } finally {
+            unlink($tempDir . '/file1.log');
+            unlink($tempDir . '/file2.log');
+            rmdir($tempDir);
+        }
+    }
+
+    public function testGetValidationReturnsFileSizeForFile(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'logpath_test_');
+        file_put_contents($tempFile, str_repeat('x', 1024)); // 1KB
+
+        try {
+            $logPath = new LogPath($tempFile, LogPathType::FILE, 'Test');
+
+            $validation = $logPath->getValidation();
+
+            $this->assertEquals(1024, $validation['fileSize']);
+        } finally {
+            unlink($tempFile);
+        }
     }
 
     public function testClassIsFinal(): void

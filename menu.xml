@@ -9,8 +9,8 @@
             <SUBMENU id="mxheartbeat_requestlogger" cl="heartbeat_requestlogger_settings" />
             <!-- Request Logger Remote Component - Setup directly -->
             <SUBMENU id="mxheartbeat_remote" cl="heartbeat_remote_setup" />
-            <!-- Log Sender Component - Setup -->
-            <SUBMENU id="mxheartbeat_logsender" cl="heartbeat_logsender_setup" />
+            <!-- Log Sender Component - Manage -->
+            <SUBMENU id="mxheartbeat_logsender" cl="heartbeat_logsender_manage" />
         </MAINMENU>
     </OXMENU>
 </OX>

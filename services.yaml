@@ -79,6 +79,11 @@ services:
         arguments:
             $resolvers: !tagged_iterator 'oxs.heartbeat.cid.resolver'
 
+    # Component: RequestLogger - Service (LogPathProvider for LogSender)
+    OxidSupport\Heartbeat\Component\RequestLogger\Service\LogPathProvider:
+        tags:
+            - { name: 'oxs.heartbeat.provider' }
+
     # Component: RequestLogger - Controller/Admin
     OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController:
         public: true
@@ -191,11 +196,11 @@ services:
             - { name: 'oxs.heartbeat.provider' }
 
     # Component: LogSender - Controller/Admin
-    OxidSupport\Heartbeat\Component\LogSender\Controller\Admin\SetupController:
+    OxidSupport\Heartbeat\Component\LogSender\Controller\Admin\ManageController:
         public: true
         autowire: false
         tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_logsender_setup' }
+            - { name: 'oxid.view_controller', controller_key: 'heartbeat_logsender_manage' }
 
     # Component: LogSender - Controller/GraphQL
     OxidSupport\Heartbeat\Component\LogSender\Controller\GraphQL\LogController:

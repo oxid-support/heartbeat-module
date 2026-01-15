@@ -24,7 +24,7 @@ $aLang = [
     'mxheartbeat_remote' => 'Request Logger Remote',
     'tbclheartbeat_remote_setup' => 'Setup',
     'mxheartbeat_logsender' => 'Log Sender',
-    'tbclheartbeat_logsender_setup' => 'Setup',
+    'tbclheartbeat_logsender_manage' => 'Manage',
 
     // Heartbeat Component Status
     'OXSHEARTBEAT_LF_STATUS_ACTIVE' => 'Active',
@@ -148,4 +148,8 @@ $aLang = [
     'OXSHEARTBEAT_LOGSENDER_FILES_FOUND' => 'files found',
     'OXSHEARTBEAT_LOGSENDER_SIZE' => 'Size',
     'OXSHEARTBEAT_LOGSENDER_TOGGLE_SOURCE' => 'Enable/disable log source for sending',
+    'OXSHEARTBEAT_LOGSENDER_REFRESH' => 'Refresh',
+    'OXSHEARTBEAT_LOGSENDER_REFRESH_TITLE' => 'Reload log sources (clear cache)',
+    'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH' => 'Refresh Button',
+    'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH_DESC' => 'Reloads the list of log sources by clearing the DI container cache. Use this if new providers are not showing up.',
 ];

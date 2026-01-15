@@ -60,12 +60,8 @@ final class LogCollectorService implements LogCollectorServiceInterface
 
         // 2. Provider paths from DI-tagged services
         foreach ($this->providers as $provider) {
-            if (!$provider->isActive()) {
-                continue;
-            }
-
             $paths = $provider->getLogPaths();
-            $allAvailable = $this->checkAllPathsAvailable($paths);
+            $pathsAvailable = $this->checkAllPathsAvailable($paths);
 
             $sources[] = new LogSource(
                 id: 'provider_' . $provider->getProviderId(),
@@ -74,7 +70,7 @@ final class LogCollectorService implements LogCollectorServiceInterface
                 origin: LogSource::ORIGIN_PROVIDER,
                 providerId: $provider->getProviderId(),
                 paths: $paths,
-                available: $allAvailable,
+                available: $provider->isActive() && $pathsAvailable,
             );
         }
 

@@ -16,6 +16,8 @@ use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
 
 class LoggerFactory
 {
+    private const LOG_DIRECTORY_NAME = 'oxs-request-logger';
+
     private CorrelationIdProcessorInterface $correlationIdProcessor;
     private CorrelationIdProviderInterface $correlationIdProvider;
     private ShopFacadeInterface $facade;
@@ -85,7 +87,7 @@ class LoggerFactory
         // Only allow alphanumeric characters, hyphens, and underscores
         $sanitizedFilename = $this->sanitizeFilename($filename);
 
-        $filename = sprintf('%s-%s.log', Module::ID, $sanitizedFilename);
+        $filename = sprintf('%s-%s.log', self::LOG_DIRECTORY_NAME, $sanitizedFilename);
 
         return $dir . $filename;
     }
@@ -119,7 +121,7 @@ class LoggerFactory
     {
         return
             $this->facade->getLogsPath() .
-            Module::ID .
+            self::LOG_DIRECTORY_NAME .
             DIRECTORY_SEPARATOR;
     }
 

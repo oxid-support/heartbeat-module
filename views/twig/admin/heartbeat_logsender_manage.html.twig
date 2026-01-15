@@ -1,7 +1,7 @@
 {% extends "@oxsheartbeat/admin/heartbeat_base.html.twig" %}
 {% import "@oxsheartbeat/admin/heartbeat_macros.html.twig" as lf %}
 
-{% block title %}Log Sender - Setup{% endblock %}
+{% block title %}Log Sender - Manage{% endblock %}
 
 {% block body %}
 {% set isActive = oView.isComponentActive() %}
@@ -18,7 +18,7 @@
     "OXSHEARTBEAT_LOGSENDER_DESC"
 ) }}
 
-{{ lf.toggle_section("heartbeat_logsender_setup", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+{{ lf.toggle_section("heartbeat_logsender_manage", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
 
 {% if not apiUserSetupComplete %}
     <div class="warning-notice">
@@ -37,7 +37,15 @@
 
 {# Log Sources Overview with integrated validation #}
 <div class="settings-group">
-    <h3>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_SOURCES_TITLE" }) }} ({{ availableCount }}/{{ totalCount }})</h3>
+    <div class="settings-group-header-with-action">
+        <h3>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_SOURCES_TITLE" }) }} ({{ availableCount }}/{{ totalCount }})</h3>
+        <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" class="header-action-form">
+            {{ oViewConf.getHiddenSid()|raw }}
+            <input type="hidden" name="cl" value="heartbeat_logsender_manage">
+            <input type="hidden" name="fnc" value="refreshSources">
+            <button type="submit" class="btn-refresh" title="{{ translate({ ident: 'OXSHEARTBEAT_LOGSENDER_REFRESH_TITLE' }) }}">&#8635;</button>
+        </form>
+    </div>
 
     {% if logSources|length > 0 %}
         <div class="log-sources-list">
@@ -55,7 +63,7 @@
                         <span class="log-source-origin">({{ source.origin == 'provider' ? 'Provider' : 'Static' }})</span>
                         <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" class="source-toggle-form" id="toggle-form-{{ source.id }}">
                             {{ oViewConf.getHiddenSid()|raw }}
-                            <input type="hidden" name="cl" value="heartbeat_logsender_setup">
+                            <input type="hidden" name="cl" value="heartbeat_logsender_manage">
                             <input type="hidden" name="fnc" value="toggleSource">
                             <input type="hidden" name="sourceId" value="{{ source.id }}">
                             <button type="submit" class="source-toggle-btn {{ source.enabled ? 'enabled' : '' }}" {% if not source.available %}disabled{% endif %} title="{{ translate({ ident: 'OXSHEARTBEAT_LOGSENDER_TOGGLE_SOURCE' }) }}">
@@ -108,7 +116,7 @@
 
     <form method="post" action="{{ oViewConf.getSelfLink()|raw }}">
         {{ oViewConf.getHiddenSid()|raw }}
-        <input type="hidden" name="cl" value="heartbeat_logsender_setup">
+        <input type="hidden" name="cl" value="heartbeat_logsender_manage">
         <input type="hidden" name="fnc" value="saveStaticPaths">
 
         <div class="form-group">
@@ -131,6 +139,7 @@
             <ul>
                 <li><strong>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_PROVIDER" }) }}:</strong> {{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_PROVIDER_DESC" }) }}</li>
                 <li><strong>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_STATIC" }) }}:</strong> {{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_STATIC_DESC" }) }}</li>
+                <li><strong>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH" }) }}:</strong> {{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH_DESC" }) }}</li>
             </ul>
         </div>
     </details>

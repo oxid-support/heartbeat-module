@@ -58,7 +58,7 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_REMOTE_ACTIVE,
                 Module::ID
             ),
-            'heartbeat_logsender_setup' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),
+            'heartbeat_logsender_manage' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),
         ];
     }
 

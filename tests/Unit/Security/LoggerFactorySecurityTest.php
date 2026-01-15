@@ -161,11 +161,11 @@ class LoggerFactorySecurityTest extends TestCase
     // LOG FILE PATH TESTS
     // ===========================================
 
-    public function testLogFilePathContainsModuleId(): void
+    public function testLogFilePathContainsLogDirectoryName(): void
     {
         $logFilePath = $this->invokeLogFilePath('test-correlation-id');
 
-        $this->assertStringContainsString(Module::ID, $logFilePath);
+        $this->assertStringContainsString('oxs-request-logger', $logFilePath);
     }
 
     public function testLogFilePathEndsWithLogExtension(): void

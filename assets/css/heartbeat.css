@@ -854,3 +854,47 @@ input:checked + .toggle-slider:before {
 .validation-info {
     color: #666;
 }
+
+/* ==========================================================================
+   Settings Group Header with Action
+   ========================================================================== */
+
+.settings-group-header-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.settings-group-header-with-action h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.header-action-form {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-refresh {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    background: #fff;
+    color: #1976d2;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+    background: #e3f2fd;
+}
