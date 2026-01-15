@@ -1,0 +1,138 @@
+{% extends "@oxsloggingframework/admin/loggingframework_base.html.twig" %}
+{% import "@oxsloggingframework/admin/loggingframework_macros.html.twig" as lf %}
+
+{% block title %}Log Sender - Setup{% endblock %}
+
+{% block body %}
+{% set isActive = oView.isComponentActive() %}
+{% set apiUserSetupComplete = oView.isApiUserSetupComplete() %}
+{% set canToggle = oView.canToggle() %}
+{% set logSources = oView.getLogSources() %}
+{% set availableCount = oView.getAvailableSourceCount() %}
+{% set totalCount = oView.getTotalSourceCount() %}
+
+{{ lf.page_header(
+    "OXSLOGGINGFRAMEWORK_LOGSENDER_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSLOGGINGFRAMEWORK_LOGSENDER_DESC"
+) }}
+
+{{ lf.toggle_section("loggingframework_logsender_setup", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+
+{% if not apiUserSetupComplete %}
+    <div class="warning-notice">
+        <h3>&#9888; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TEXT" }) }}</p>
+        <a href="{{ oViewConf.getSelfLink()|raw }}&cl=loggingframework_apiuser_setup" target="basefrm" class="btn-primary">
+            {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_GOTO_APIUSER" }) }}
+        </a>
+    </div>
+{% elseif isActive %}
+    <div class="ready-notice">
+        <h3>&#10004; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TEXT" }) }}</p>
+    </div>
+{% endif %}
+
+{# Log Sources Overview with integrated validation #}
+<div class="settings-group">
+    <h3>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_SOURCES_TITLE" }) }} ({{ availableCount }}/{{ totalCount }})</h3>
+
+    {% if logSources|length > 0 %}
+        <div class="log-sources-list">
+            {% for source in logSources %}
+                <div class="log-source-item status-{{ source.available ? 'ok' : 'error' }} {{ source.enabled ? 'enabled' : 'disabled' }}">
+                    <div class="log-source-header">
+                        <span class="log-source-icon">
+                            {% if source.available %}
+                                &#10004;
+                            {% else %}
+                                &#10008;
+                            {% endif %}
+                        </span>
+                        <span class="log-source-name">{{ source.name }}</span>
+                        <span class="log-source-origin">({{ source.origin == 'provider' ? 'Provider' : 'Static' }})</span>
+                        <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" class="source-toggle-form" id="toggle-form-{{ source.id }}">
+                            {{ oViewConf.getHiddenSid()|raw }}
+                            <input type="hidden" name="cl" value="loggingframework_logsender_setup">
+                            <input type="hidden" name="fnc" value="toggleSource">
+                            <input type="hidden" name="sourceId" value="{{ source.id }}">
+                            <button type="submit" class="source-toggle-btn {{ source.enabled ? 'enabled' : '' }}" {% if not source.available %}disabled{% endif %} title="{{ translate({ ident: 'OXSLOGGINGFRAMEWORK_LOGSENDER_TOGGLE_SOURCE' }) }}">
+                                <span class="source-toggle-slider {% if not source.available %}disabled{% endif %}"></span>
+                                <span class="source-toggle-knob"></span>
+                            </button>
+                        </form>
+                    </div>
+                    {% if source.description %}
+                        <div class="log-source-description">{{ source.description }}</div>
+                    {% endif %}
+                    {% for path in source.paths %}
+                        {% set validation = path.validation %}
+                        <div class="log-source-path status-{{ validation.status }}">
+                            <div class="log-source-path-main">
+                                <span class="log-source-type-icon" title="{{ path.type == 'directory' ? translate({ ident: 'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_DIRECTORY' }) : translate({ ident: 'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_FILE' }) }}">{{ path.type == 'directory' ? '&#128193;' : '&#128196;' }}</span>
+                                <code>{{ path.path }}</code>
+                                {% if path.filePattern %}
+                                    <span class="log-source-pattern">Pattern: {{ path.filePattern }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="log-source-path-validation">
+                                {% if validation.error == 'PATH_NOT_FOUND' %}
+                                    <span class="validation-error">&#10008; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_FOUND" }) }}</span>
+                                {% elseif validation.error == 'NOT_READABLE' %}
+                                    <span class="validation-error">&#10008; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_READABLE" }) }}</span>
+                                {% elseif validation.error == 'CANNOT_LIST_DIRECTORY' %}
+                                    <span class="validation-warning">&#9888; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_CANNOT_LIST" }) }}</span>
+                                {% else %}
+                                    {% if path.type == 'directory' %}
+                                        <span class="validation-info">&#10004; {{ validation.fileCount }} {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_FILES_FOUND" }) }}</span>
+                                    {% else %}
+                                        <span class="validation-info">&#10004; {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_SIZE" }) }}: {{ (validation.fileSize / 1024)|number_format(1) }} KB</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-sources">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_NO_SOURCES" }) }}</p>
+    {% endif %}
+</div>
+
+{# Static Paths Configuration with inline help #}
+<div class="settings-group">
+    <h3>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_TITLE" }) }}</h3>
+
+    <form method="post" action="{{ oViewConf.getSelfLink()|raw }}">
+        {{ oViewConf.getHiddenSid()|raw }}
+        <input type="hidden" name="cl" value="loggingframework_logsender_setup">
+        <input type="hidden" name="fnc" value="saveStaticPaths">
+
+        <div class="form-group">
+            <textarea
+                name="staticPaths"
+                id="staticPaths"
+                class="static-paths-textarea"
+                rows="4"
+                placeholder="{{ translate({ ident: 'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_PLACEHOLDER' }) }}"
+            >{{ oView.getStaticPathsText() }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_SAVE" }) }}</button>
+    </form>
+
+    <details class="howto-section">
+        <summary><span class="help-icon">[?]</span> {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TITLE" }) }}</summary>
+        <div class="howto-content">
+            <p>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TEXT" }) }}</p>
+            <ul>
+                <li><strong>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER" }) }}:</strong> {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER_DESC" }) }}</li>
+                <li><strong>{{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC" }) }}:</strong> {{ translate({ ident: "OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC_DESC" }) }}</li>
+            </ul>
+        </div>
+    </details>
+</div>
+{% endblock %}

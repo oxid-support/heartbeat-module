@@ -23,6 +23,8 @@ $aLang = [
     'tbclloggingframework_requestlogger_settings' => 'Settings',
     'mxloggingframework_remote' => 'Request Logger Remote',
     'tbclloggingframework_remote_setup' => 'Setup',
+    'mxloggingframework_logsender' => 'Log Sender',
+    'tbclloggingframework_logsender_setup' => 'Setup',
 
     // Logging Framework Component Status
     'OXSREQUESTLOGGER_LF_STATUS_ACTIVE' => 'Active',
@@ -103,4 +105,47 @@ $aLang = [
     'OXSLOGGINGFRAMEWORK_REMOTE_CONFIG_ACCESS_REQUIRED_TEXT' => 'This component requires the GraphQL Configuration Access module. Please activate it:',
     'OXSLOGGINGFRAMEWORK_REMOTE_READY_TITLE' => 'Remote Access Activated',
     'OXSLOGGINGFRAMEWORK_REMOTE_READY_TEXT' => 'OXID Support can now access the Request Logger settings.',
+
+    // ==========================================================================
+    // Log Sender Component
+    // ==========================================================================
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TITLE' => 'Log Sender',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_DESC' => 'Collects log files and provides them to the Heartbeat Monitor.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATUS_WARNING' => 'Setup Required',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TITLE' => 'API User Required',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TEXT' => 'This component requires a configured API User. Please set up the API User first.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_GOTO_APIUSER' => 'Go to API User Setup',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TITLE' => 'Log Sender Activated',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TEXT' => 'The Heartbeat Monitor can now access the log sources.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SOURCES_TITLE' => 'Recognized Log Sources',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_NO_SOURCES' => 'No log sources configured. Register providers via DI tags or configure static paths.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TITLE' => 'Adding Log Sources',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TEXT' => 'There are two ways to register log sources:',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER' => 'DI Tag Provider',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER_DESC' => 'Services implement LogPathProviderInterface and are registered with the tag "oxs.logsender.provider".',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC' => 'Static Paths',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC_DESC' => 'Paths are configured directly in the module settings (for third-party logs).',
+
+    // Log Sender - Static Paths Configuration
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_TITLE' => 'Static Log Paths',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_DESC' => 'Configure additional log files or directories to be monitored here.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_LABEL' => 'Log Paths (one path per line)',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_PLACEHOLDER' => '/var/log/myapp.log
+/var/log/custom/',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_HELP' => 'Enter absolute paths. Paths ending with "/" are treated as directories, all others as files.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SAVE' => 'Save',
+
+    // Log Sender - Path Validation
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_VALIDATION_TITLE' => 'Path Validation',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_FILE' => 'File',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_DIRECTORY' => 'Directory',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_FOUND' => 'Path does not exist',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_READABLE' => 'Path not readable (missing permissions)',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_TYPE_MISMATCH' => 'Type mismatch',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_CANNOT_LIST' => 'Cannot list directory contents',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_EXPECTED' => 'Expected',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_FOUND' => 'Found',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_FILES_FOUND' => 'files found',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SIZE' => 'Size',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TOGGLE_SOURCE' => 'Enable/disable log source for sending',
 ];

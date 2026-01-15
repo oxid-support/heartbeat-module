@@ -2,13 +2,13 @@
 	"info": {
 		"_postman_id": "oxs-logging-framework-graphql",
 		"name": "OXID Logging Framework - GraphQL API",
-		"description": "GraphQL API Endpoints für das OXID Logging Framework Modul.\n\n## Authentifizierung\n\nDie meisten Endpunkte erfordern eine JWT-Authentifizierung. Verwenden Sie zuerst die OXID GraphQL Base `token`-Mutation, um ein Token zu erhalten.\n\n## Komponenten\n\n- **ApiUser**: API-Benutzer Setup und Passwort-Verwaltung\n- **RequestLoggerRemote**: Remote-Steuerung des Request Loggers",
+		"description": "GraphQL API Endpoints für das OXID Logging Framework Modul.\n\n## Authentifizierung\n\nDie meisten Endpunkte erfordern eine JWT-Authentifizierung. Verwenden Sie zuerst die OXID GraphQL Base `token`-Query, um ein Token zu erhalten.\n\n## Komponenten\n\n- **ApiUser**: API-Benutzer Setup und Passwort-Verwaltung\n- **RequestLoggerRemote**: Remote-Steuerung des Request Loggers\n- **LogSender**: Abruf von Log-Dateien vom Shop",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "https://your-shop.local/graphql",
+			"value": "http://localhost.local/graphql",
 			"type": "string",
 			"description": "Die GraphQL Endpoint URL Ihres OXID Shops"
 		},
@@ -20,9 +20,9 @@
 		},
 		{
 			"key": "apiUsername",
-			"value": "oxsloggingframework_api@oxid-esales.local",
+			"value": "loggingframework-api@oxid-esales.com",
 			"type": "string",
-			"description": "API-Benutzer E-Mail (Standard: oxsloggingframework_api@oxid-esales.local)"
+			"description": "API-Benutzer E-Mail (Standard: loggingframework-api@oxid-esales.com)"
 		},
 		{
 			"key": "apiPassword",
@@ -578,6 +578,66 @@
 							]
 						},
 						"description": "Aktiviert/Deaktiviert das Schwärzen aller Werte.\n\n**Erfordert:** `REQUEST_LOGGER_CHANGE` Berechtigung"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LogSender - Sources & Content",
+			"description": "Log Sender API für den Abruf von Log-Dateien vom Shop.\n\n**Voraussetzungen:**\n- Log Sender Komponente muss aktiviert sein\n- Log-Quellen müssen im Admin aktiviert sein\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung",
+			"item": [
+				{
+					"name": "Get All Enabled Sources",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query LogSenderSources {\n    logSenderSources {\n        id\n        name\n        description\n        origin\n        available\n        paths {\n            path\n            type\n            name\n            description\n            exists\n            readable\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Gibt alle aktivierten Log-Quellen zurück.\n\nNur Quellen, die im Admin explizit aktiviert wurden, werden zurückgegeben.\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Source Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query LogSenderContent($sourceId: String!, $maxBytes: Int) {\n    logSenderContent(sourceId: $sourceId, maxBytes: $maxBytes) {\n        sourceId\n        sourceName\n        path\n        content\n        size\n        modified\n        truncated\n    }\n}",
+								"variables": "{\n    \"sourceId\": \"oxid_core\",\n    \"maxBytes\": 1048576\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Gibt den Inhalt einer bestimmten Log-Quelle zurück.\n\n**Parameter:**\n- sourceId: Die ID der Log-Quelle (z.B. \"oxid_core\")\n- maxBytes: Optionale maximale Bytes (Standard: Moduleinstellung)\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
 					},
 					"response": []
 				}

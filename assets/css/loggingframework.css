@@ -519,3 +519,338 @@ input:checked + .toggle-slider:before {
     font-weight: bold;
     margin-left: 10px;
 }
+
+/* ==========================================================================
+   Log Sender - Log Sources List (with integrated validation)
+   ========================================================================== */
+
+.log-sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.log-source-item {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.log-source-item.status-ok {
+    background: #f9fff9;
+    border-color: #c8e6c9;
+}
+
+.log-source-item.status-warning {
+    background: #fffaf5;
+    border-color: #ffe0b2;
+}
+
+.log-source-item.status-error {
+    background: #fff5f5;
+    border-color: #ffcdd2;
+}
+
+.log-source-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+/* Source Toggle Switch - positioned on the right */
+.source-toggle-form {
+    display: inline-flex;
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+}
+
+/* Source Toggle Button */
+.source-toggle-btn {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.source-toggle-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.source-toggle-btn .source-toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.source-toggle-btn .source-toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: 18px;
+    width: 18px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.source-toggle-btn.enabled .source-toggle-slider {
+    background-color: #4caf50;
+}
+
+.source-toggle-btn.enabled .source-toggle-knob {
+    left: 23px;
+}
+
+.source-toggle-slider.disabled {
+    opacity: 0.5;
+}
+
+/* Styling for sources not enabled for sending */
+.log-source-item.disabled .log-source-name,
+.log-source-item.disabled .log-source-description,
+.log-source-item.disabled .log-source-origin {
+    color: #888;
+}
+
+.log-source-item.disabled .log-source-path {
+    opacity: 0.6;
+}
+
+/* Keep toggle always fully visible and interactive */
+.log-source-item.disabled .source-toggle-form {
+    opacity: 1;
+}
+
+.log-source-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+}
+
+.log-source-item.status-ok .log-source-icon {
+    color: #4caf50;
+}
+
+.log-source-item.status-warning .log-source-icon {
+    color: #ff9800;
+}
+
+.log-source-item.status-error .log-source-icon {
+    color: #f44336;
+}
+
+.log-source-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.log-source-origin {
+    font-size: 11px;
+    color: #888;
+}
+
+.log-source-description {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    padding-left: 28px;
+}
+
+.log-source-path {
+    margin-top: 8px;
+    padding: 8px;
+    padding-left: 28px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.log-source-path.status-ok {
+    background: #e8f5e9;
+}
+
+.log-source-path.status-warning {
+    background: #fff3e0;
+}
+
+.log-source-path.status-error {
+    background: #ffebee;
+}
+
+.log-source-path-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.log-source-type-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.log-source-path code {
+    background: rgba(255,255,255,0.7);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #333;
+    word-break: break-all;
+}
+
+.log-source-pattern {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+
+.log-source-path-validation {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.log-source-path.status-ok .log-source-path-validation {
+    color: #2e7d32;
+}
+
+.log-source-path.status-warning .log-source-path-validation {
+    color: #e65100;
+}
+
+.log-source-path.status-error .log-source-path-validation {
+    color: #c62828;
+}
+
+.no-sources {
+    color: #888;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Log Sender - Static Paths Configuration
+   ========================================================================== */
+
+.static-paths-textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.static-paths-textarea:focus {
+    border-color: #2196f3;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.help-text {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   Log Sender - Howto Section (collapsible)
+   ========================================================================== */
+
+.howto-section {
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.howto-section summary {
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.howto-section summary::-webkit-details-marker {
+    display: none;
+}
+
+
+.howto-section summary:hover {
+    color: #333;
+}
+
+.howto-section .help-icon {
+    color: #999;
+    font-size: 11px;
+    margin-right: 6px;
+}
+
+.howto-content {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #555;
+}
+
+.howto-content p {
+    margin: 0 0 8px 0;
+}
+
+.howto-content ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.howto-content li {
+    margin: 4px 0;
+}
+
+.howto-content li strong {
+    color: #333;
+}
+
+/* ==========================================================================
+   Validation Messages (shared)
+   ========================================================================== */
+
+.validation-error {
+    color: #f44336;
+}
+
+.validation-warning {
+    color: #e65100;
+}
+
+.validation-info {
+    color: #666;
+}

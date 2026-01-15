@@ -173,6 +173,48 @@ services:
         tags: ['graphql_permission_provider']
 
     # ==========================================================================
+    # Component: LogSender - Services
+    # ==========================================================================
+
+    OxidSupport\LoggingFramework\Component\LogSender\Service\LogSenderStatusServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\LogSender\Service\LogSenderStatusService
+        public: true
+
+    OxidSupport\LoggingFramework\Component\LogSender\Service\LogReaderServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\LogSender\Service\LogReaderService
+        public: true
+
+    OxidSupport\LoggingFramework\Component\LogSender\Service\LogCollectorServiceInterface:
+        class: OxidSupport\LoggingFramework\Component\LogSender\Service\LogCollectorService
+        public: true
+        arguments:
+            $providers: !tagged_iterator 'oxs.logsender.provider'
+
+    # Component: LogSender - Built-in Providers
+    OxidSupport\LoggingFramework\Component\LogSender\Service\OxidCoreLogPathProvider:
+        tags:
+            - { name: 'oxs.logsender.provider' }
+
+    # Component: LogSender - Controller/Admin
+    OxidSupport\LoggingFramework\Component\LogSender\Controller\Admin\SetupController:
+        public: true
+        autowire: false
+        tags:
+            - { name: 'oxid.view_controller', controller_key: 'loggingframework_logsender_setup' }
+
+    # Component: LogSender - Controller/GraphQL
+    OxidSupport\LoggingFramework\Component\LogSender\Controller\GraphQL\LogController:
+        public: true
+
+    # Component: LogSender - Framework (GraphQL)
+    OxidSupport\LoggingFramework\Component\LogSender\Framework\NamespaceMapper:
+        tags: ['graphql_namespace_mapper']
+
+    OxidSupport\LoggingFramework\Component\LogSender\Framework\PermissionProvider:
+        public: true
+        tags: ['graphql_permission_provider']
+
+    # ==========================================================================
     # Shop Facades
     # ==========================================================================
 

@@ -23,6 +23,8 @@ $aLang = [
     'tbclloggingframework_requestlogger_settings' => 'Einstellungen',
     'mxloggingframework_remote' => 'Request Logger Remote',
     'tbclloggingframework_remote_setup' => 'Einrichtung',
+    'mxloggingframework_logsender' => 'Log Sender',
+    'tbclloggingframework_logsender_setup' => 'Einrichtung',
 
     // Logging Framework Component Status
     'OXSREQUESTLOGGER_LF_STATUS_ACTIVE' => 'Aktiv',
@@ -103,4 +105,47 @@ $aLang = [
     'OXSLOGGINGFRAMEWORK_REMOTE_CONFIG_ACCESS_REQUIRED_TEXT' => 'Diese Komponente benötigt das GraphQL Configuration Access Modul. Bitte aktivieren Sie es:',
     'OXSLOGGINGFRAMEWORK_REMOTE_READY_TITLE' => 'Remote-Zugriff aktiviert',
     'OXSLOGGINGFRAMEWORK_REMOTE_READY_TEXT' => 'Der OXID Support kann nun auf die Request Logger Einstellungen zugreifen.',
+
+    // ==========================================================================
+    // Log Sender Component
+    // ==========================================================================
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TITLE' => 'Log Sender',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_DESC' => 'Sammelt Log-Dateien und stellt sie dem Heartbeat Monitor zur Verfügung.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATUS_WARNING' => 'Einrichtung erforderlich',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TITLE' => 'API User erforderlich',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_WARNING_TEXT' => 'Diese Komponente benötigt einen eingerichteten API User. Bitte richten Sie zuerst den API User ein.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_GOTO_APIUSER' => 'Zur API User Einrichtung',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TITLE' => 'Log Sender aktiviert',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_READY_TEXT' => 'Der Heartbeat Monitor kann nun auf die Log-Quellen zugreifen.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SOURCES_TITLE' => 'Erkannte Log-Quellen',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_NO_SOURCES' => 'Keine Log-Quellen konfiguriert. Registrieren Sie Provider über DI-Tags oder konfigurieren Sie statische Pfade.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TITLE' => 'Log-Quellen hinzufügen',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_TEXT' => 'Es gibt zwei Wege, Log-Quellen zu registrieren:',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER' => 'DI Tag Provider',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_PROVIDER_DESC' => 'Services implementieren LogPathProviderInterface und werden mit dem Tag "oxs.logsender.provider" registriert.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC' => 'Statische Pfade',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_HOWTO_STATIC_DESC' => 'Pfade werden direkt in den Modul-Settings konfiguriert (für Drittanbieter-Logs).',
+
+    // Log Sender - Static Paths Configuration
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_TITLE' => 'Statische Log-Pfade',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_DESC' => 'Konfigurieren Sie hier zusätzliche Log-Dateien oder -Verzeichnisse, die überwacht werden sollen.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_LABEL' => 'Log-Pfade (ein Pfad pro Zeile)',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_PLACEHOLDER' => '/var/log/myapp.log
+/var/log/custom/',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_STATIC_PATHS_HELP' => 'Geben Sie absolute Pfade an. Pfade mit "/" am Ende werden als Verzeichnis behandelt, alle anderen als Datei.',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SAVE' => 'Speichern',
+
+    // Log Sender - Path Validation
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_VALIDATION_TITLE' => 'Pfad-Validierung',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_FILE' => 'Datei',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TYPE_DIRECTORY' => 'Verzeichnis',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_FOUND' => 'Pfad existiert nicht',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_NOT_READABLE' => 'Pfad nicht lesbar (fehlende Berechtigungen)',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_TYPE_MISMATCH' => 'Typ-Konflikt',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_ERROR_CANNOT_LIST' => 'Verzeichnis kann nicht aufgelistet werden',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_EXPECTED' => 'Erwartet',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_FOUND' => 'Gefunden',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_FILES_FOUND' => 'Dateien gefunden',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_SIZE' => 'Größe',
+    'OXSLOGGINGFRAMEWORK_LOGSENDER_TOGGLE_SOURCE' => 'Log-Quelle zum Senden aktivieren/deaktivieren',
 ];

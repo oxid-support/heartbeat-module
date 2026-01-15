@@ -27,5 +27,11 @@ final class Module
     // Remote component settings
     public const SETTING_REMOTE_ACTIVE = self::ID . '_remote_active';
 
+    // Log Sender component settings
+    public const SETTING_LOGSENDER_ACTIVE = self::ID . '_logsender_active';
+    public const SETTING_LOGSENDER_STATIC_PATHS = self::ID . '_logsender_static_paths';
+    public const SETTING_LOGSENDER_MAX_BYTES = self::ID . '_logsender_max_bytes';
+    public const SETTING_LOGSENDER_ENABLED_SOURCES = self::ID . '_logsender_enabled_sources';
+
     public const API_USER_EMAIL = 'loggingframework-api@oxid-esales.com';
 }

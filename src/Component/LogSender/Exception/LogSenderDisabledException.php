@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * Copyright © OXID eSales AG. All rights reserved.
+ * See LICENSE file for license details.
+ */
+
+declare(strict_types=1);
+
+namespace OxidSupport\LoggingFramework\Component\LogSender\Exception;
+
+use Exception;
+
+final class LogSenderDisabledException extends Exception
+{
+    public function __construct()
+    {
+        parent::__construct('Log Sender component is disabled.');
+    }
+}

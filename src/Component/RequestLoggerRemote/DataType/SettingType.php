@@ -12,7 +12,7 @@ namespace OxidSupport\LoggingFramework\Component\RequestLoggerRemote\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
-#[Type]
+#[Type(name: 'RequestLoggerSettingType')]
 final class SettingType
 {
     public function __construct(

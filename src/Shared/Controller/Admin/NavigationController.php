@@ -24,6 +24,7 @@ class NavigationController extends NavigationController_parent
 {
     private const SETTING_REQUESTLOGGER_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
     private const SETTING_REMOTE_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
+    private const SETTING_LOGSENDER_ACTIVE = Module::SETTING_LOGSENDER_ACTIVE;
 
     /**
      * @inheritDoc
@@ -57,6 +58,7 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_REMOTE_ACTIVE,
                 Module::ID
             ),
+            'loggingframework_logsender_setup' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),
         ];
     }
 
@@ -68,6 +70,21 @@ class NavigationController extends NavigationController_parent
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
         } catch (\Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Get Log Sender component status.
+     */
+    private function getLogSenderStatus(ModuleSettingServiceInterface $moduleSettingService): bool
+    {
+        try {
+            return $moduleSettingService->getBoolean(
+                self::SETTING_LOGSENDER_ACTIVE,
+                Module::ID
+            );
+        } catch (\Throwable) {
             return false;
         }
     }
