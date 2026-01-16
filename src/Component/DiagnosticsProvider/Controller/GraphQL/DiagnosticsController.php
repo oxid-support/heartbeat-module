@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL;
 
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider;
@@ -22,5 +24,9 @@ final class DiagnosticsController {
     #[Logged]
     public function getDiagnostics() : array{
         return $this->diagnostics_provider->getDiagnostics();
+    }
+    #[Query]
+    public function getTestDiagnostics () : string {
+        return "success";
     }
 }
