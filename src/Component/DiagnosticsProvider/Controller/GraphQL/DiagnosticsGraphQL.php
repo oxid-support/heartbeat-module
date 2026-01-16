@@ -16,7 +16,9 @@ final class DiagnosticsGraphQL {
     /**
      * @Query()
      */
+    #[Query]
+    #[Logged]
     public function Diagnostics() : array{
-        $this->diagnostics_provider->getDiagnostics();
+        return $this->diagnostics_provider->getDiagnostics();
     }
 }
