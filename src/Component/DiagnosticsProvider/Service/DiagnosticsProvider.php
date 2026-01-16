@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service;
 
 use OxidEsales\Eshop\Application\Model\Diagnostics;
-use OxidEsales\Eshop\Core\Di\ContainerFacade; 
+use OxidEsales\EshopCommunity\Core\Di\ContainerFacade; 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridgeInterface;
+use OxidEsales\Eshop\Core\Module\Module;
+use OxidEsales\Eshop\Core\Registry;
 
 class DiagnosticsProvider implements DiagnosticsProviderInterface {
-    private Diagnostics $diagnostics;
+    private ?Diagnostics $diagnostics = null;
     public function getDiagnosticsModel(): Diagnostics
     {
         if($this->diagnostics) {

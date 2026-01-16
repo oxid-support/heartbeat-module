@@ -1,32 +1,41 @@
 <?php
 
+/**
+ * Copyright © OXID eSales AG. All rights reserved.
+ * See LICENSE file for license details.
+ */
+
 declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL;
 
-use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider;
+use OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType\DiagnosticsType;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface;
 use TheCodingMachine\GraphQLite\Annotations\Query;
-use TheCodingMachine\GraphQLite\Annotations\Logged;
 
-final class DiagnosticsController {
-    private DiagnosticsProviderInterface $diagnostics_provider;
-
-    public function __construct(DiagnosticsProviderInterface $diagnosticsProvider)
-    {
-        $this->diagnostics_provider = $diagnosticsProvider;
+final class DiagnosticsController
+{
+    public function __construct(
+        private readonly DiagnosticsProviderInterface $diagnosticsProvider
+    ) {
     }
 
     /**
-     * Get Array of Diagnostics - Array
+     * Get comprehensive diagnostics information about the shop
      */
     #[Query]
-    #[Logged]
-    public function getDiagnostics() : array{
-        return $this->diagnostics_provider->getDiagnostics();
+    public function getDiagnostics(): DiagnosticsType
+    {
+        $diagnosticsArray = $this->diagnosticsProvider->getDiagnostics();
+        return DiagnosticsType::fromDiagnosticsArray($diagnosticsArray);
     }
+
+    /**
+     * Test query to verify GraphQL endpoint is working
+     */
     #[Query]
-    public function getTestDiagnostics () : string {
+    public function getTestDiagnostics(): string
+    {
         return "success";
     }
 }

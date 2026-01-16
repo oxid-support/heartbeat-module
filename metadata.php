@@ -25,10 +25,6 @@ Includes GraphQL API for remote configuration and activation.',
             \OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController::class,
     ],
     'controllers' => [
-        'heartbeat_apiuser_setup' => \OxidSupport\Heartbeat\Component\ApiUser\Controller\Admin\SetupController::class,
-        'heartbeat_requestlogger_settings' => \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController::class,
-        'heartbeat_remote_setup' => \OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\Admin\SetupController::class,
-        'heartbeat_logsender_manage' => \OxidSupport\Heartbeat\Component\LogSender\Controller\Admin\ManageController::class,
     ],
     'events' => [
         'onActivate' => \OxidSupport\Heartbeat\Component\RequestLoggerRemote\Core\ModuleEvents::class . '::onActivate',

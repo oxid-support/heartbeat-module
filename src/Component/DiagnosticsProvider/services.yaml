@@ -12,3 +12,7 @@ services:
 
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\NamespaceMapper:
     tags: ['graphql_namespace_mapper']
+  
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\PermissionProvider:
+    public: true
+    tags: ['graphql_permission_provider']
