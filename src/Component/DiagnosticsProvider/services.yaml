@@ -7,5 +7,8 @@ services:
     class: OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider
     public: true
 
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL\DiagnosticsController:
+    public: true
+
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\NamespaceMapper:
     tags: ['graphql_namespace_mapper']
