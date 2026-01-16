@@ -6,3 +6,6 @@ services:
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface:
     class: OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider
     public: true
+
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\NamespaceMapper:
+    tags: ['graphql_namespace_mapper']
