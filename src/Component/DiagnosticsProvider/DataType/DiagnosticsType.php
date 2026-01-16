@@ -1,6 +1,6 @@
 <?php
 
-namespace OxidSupport\LoggingFramework\Component\DiagnosticsProvider\DataType;
+namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType;
 
 class DiagnosticsType {
     

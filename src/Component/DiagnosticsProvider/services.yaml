@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    public: false
+    autowire: true
+
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface:
+    class: OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider
+    public: true
