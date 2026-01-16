@@ -3,6 +3,9 @@ parameters:
     oxs.heartbeat.header_name: 'X-Correlation-Id'
     oxs.heartbeat.ttl: 2592000 # 30 days in seconds
 
+imports:
+    - {resource: src/Component/DiagnosticsProvider/services.yaml}
+
 services:
 
     _defaults:

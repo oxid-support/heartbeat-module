@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace OxidSupport\LoggingFramework\Component\DiagnosticsProvider\Service;
+namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service;
 
 use OxidEsales\Eshop\Application\Model\Diagnostics;
 

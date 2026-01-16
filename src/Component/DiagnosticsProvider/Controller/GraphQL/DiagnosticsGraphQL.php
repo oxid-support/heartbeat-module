@@ -1,8 +1,8 @@
 <?php
 
-namespace OxidSupport\LoggingFramework\Component\DiagnosticsProvider\Controller\GraphQL;
+namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL;
 
-use OxidSupport\LoggingFramework\Component\DiagnosticsProvider\Service\DiagnosticsProvider;
+use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider;
 use TheCodingMachine\GraphQLite\Annotations\Query;
 
 final class DiagnosticsGraphQL {
