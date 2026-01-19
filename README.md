@@ -12,7 +12,7 @@ Logs are **minimally invasive**, stored locally on server, and produce **structu
 
 ### Live
 ```bash
-composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/lf-request-logging
+composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
 composer require oxid-support/heartbeat
 ```
 
