@@ -11,7 +11,7 @@ namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType;
 
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
-
+use OxidEsales\Eshop\Core\Module\Module;
 /**
  * Represents a diagnostics section with multiple key-value pairs
  */
@@ -57,6 +57,9 @@ final class DiagnosticsSectionType
                 $value = $value ? 'true' : 'false';
             } elseif ($value === null) {
                 $value = 'null';
+            } elseif (is_a($value, Module::class)) {
+                $oldvalue = $value;
+                $value = $oldvalue->getTitle();
             } else {
                 $value = (string) $value;
             }

@@ -52,6 +52,8 @@ final class DiagnosticsType
         // Extract PHP decoder separately as it's a string, not an array
         $phpDecoder = $diagnostics['sPhpDecoder'] ?? '';
 
+        
+
         // Convert each array section to DiagnosticsSectionType
         $arrayKeys = ['aShopDetails', 'aModuleList', 'aInfo', 'aCollations', 'aPhpConfigparams', 'aServerInfo'];
 
