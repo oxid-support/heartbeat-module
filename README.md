@@ -18,7 +18,7 @@ composer require oxid-support/heartbeat
 
 ### Dev
 ```bash
-git clone https://github.com/oxid-support/lf-request-logging.git repo/oxs/heartbeat
+git clone https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
