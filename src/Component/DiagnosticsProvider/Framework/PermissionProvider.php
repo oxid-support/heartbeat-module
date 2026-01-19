@@ -16,6 +16,14 @@ final class PermissionProvider implements PermissionProviderInterface
     public function getPermissions(): array
     {
         return [
+                        // Custom user group for Log Sender API access
+            'oxsheartbeat_api' => [
+                'LOG_SENDER_VIEW',
+            ],
+            // Also grant permissions to shop admins
+            'oxidadmin' => [
+                'LOG_SENDER_VIEW',
+            ],
         ];
     }
 }

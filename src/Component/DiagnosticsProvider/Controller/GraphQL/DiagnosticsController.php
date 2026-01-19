@@ -11,7 +11,9 @@ namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL
 
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType\DiagnosticsType;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface;
+use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Query;
+use TheCodingMachine\GraphQLite\Annotations\Right;
 
 final class DiagnosticsController
 {
@@ -24,6 +26,8 @@ final class DiagnosticsController
      * Get comprehensive diagnostics information about the shop
      */
     #[Query]
+    #[Logged]
+    #[Right('LOG_SENDER_VIEW')]
     public function getDiagnostics(): DiagnosticsType
     {
         $diagnosticsArray = $this->diagnosticsProvider->getDiagnostics();
