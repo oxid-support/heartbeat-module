@@ -291,7 +291,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetAllSettings {\n    requestLoggerSettings {\n        name\n        value\n        type\n    }\n}",
+								"query": "query GetAllSettings {\n    requestLoggerSettings {\n        name\n        type\n        supported\n    }\n}",
 								"variables": ""
 							}
 						},
