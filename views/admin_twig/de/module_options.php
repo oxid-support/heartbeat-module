@@ -25,6 +25,8 @@ $aLang = [
     'tbclheartbeat_remote_setup' => 'Einrichtung',
     'mxheartbeat_logsender' => 'Log Sender',
     'tbclheartbeat_logsender_manage' => 'Verwalten',
+    'mxheartbeat_diagnosticsprovider' => 'Diagnostics Provider',
+    'tbclheartbeat_diagnosticsprovider_manage' => 'Verwalten',
 
     // Heartbeat Component Status
     'OXSHEARTBEAT_LF_STATUS_ACTIVE' => 'Aktiv',
@@ -152,4 +154,23 @@ $aLang = [
     'OXSHEARTBEAT_LOGSENDER_REFRESH_TITLE' => 'Log-Quellen neu laden (Cache leeren)',
     'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH' => 'Aktualisieren-Button',
     'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH_DESC' => 'Lädt die Liste der Log-Quellen neu, indem der DI-Container-Cache geleert wird. Nutzen Sie dies, wenn neue Provider nicht angezeigt werden.',
+
+    // ==========================================================================
+    // Diagnostics Provider Component
+    // ==========================================================================
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_TITLE' => 'Diagnostics Provider',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_DESC' => 'Stellt Shop-Diagnoseinformationen über die GraphQL-API bereit.',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_STATUS_WARNING' => 'Einrichtung erforderlich',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_WARNING_TITLE' => 'API User erforderlich',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_WARNING_TEXT' => 'Diese Komponente benötigt einen eingerichteten API User. Bitte richten Sie zuerst den API User ein.',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_GOTO_APIUSER' => 'Zur API User Einrichtung',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_READY_TITLE' => 'Diagnostics Provider aktiviert',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_READY_TEXT' => 'Der Heartbeat Monitor kann nun auf die Diagnoseinformationen zugreifen.',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_TITLE' => 'Bereitgestellte Informationen',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_TEXT' => 'Diese Komponente stellt folgende Diagnoseinformationen über die GraphQL-API bereit:',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SHOPDETAILS' => 'Shop-Details (URL, Edition, Version, Statistiken)',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_MODULES' => 'Installierte Module',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SYSTEM' => 'System-Informationen',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_PHP' => 'PHP-Konfiguration',
+    'OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SERVER' => 'Server-Informationen',
 ];

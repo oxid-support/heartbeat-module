@@ -3,16 +3,30 @@ services:
     public: false
     autowire: true
 
+  # Service Layer
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface:
     class: OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider
     public: true
 
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusServiceInterface:
+    class: OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusService
+    public: true
+
+  # Controller - GraphQL
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL\DiagnosticsController:
     public: true
 
+  # Controller - Admin
+  OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\Admin\ManageController:
+    public: true
+    autowire: false
+    tags:
+      - { name: 'oxid.view_controller', controller_key: 'heartbeat_diagnosticsprovider_manage' }
+
+  # Framework (GraphQL)
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\NamespaceMapper:
     tags: ['graphql_namespace_mapper']
-  
+
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\PermissionProvider:
     public: true
     tags: ['graphql_permission_provider']

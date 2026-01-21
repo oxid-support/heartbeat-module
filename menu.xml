@@ -11,6 +11,8 @@
             <SUBMENU id="mxheartbeat_remote" cl="heartbeat_remote_setup" />
             <!-- Log Sender Component - Manage -->
             <SUBMENU id="mxheartbeat_logsender" cl="heartbeat_logsender_manage" />
+            <!-- Diagnostics Provider Component - Manage -->
+            <SUBMENU id="mxheartbeat_diagnosticsprovider" cl="heartbeat_diagnosticsprovider_manage" />
         </MAINMENU>
     </OXMENU>
 </OX>

@@ -813,7 +813,8 @@ input:checked + .toggle-slider:before {
     margin-right: 6px;
 }
 
-.howto-content {
+.howto-content,
+.info-content {
     margin-top: 10px;
     padding: 10px;
     background: #fafafa;
@@ -822,20 +823,24 @@ input:checked + .toggle-slider:before {
     color: #555;
 }
 
-.howto-content p {
+.howto-content p,
+.info-content p {
     margin: 0 0 8px 0;
 }
 
-.howto-content ul {
+.howto-content ul,
+.info-content ul {
     margin: 0;
     padding-left: 18px;
 }
 
-.howto-content li {
+.howto-content li,
+.info-content li {
     margin: 4px 0;
 }
 
-.howto-content li strong {
+.howto-content li strong,
+.info-content li strong {
     color: #333;
 }
 

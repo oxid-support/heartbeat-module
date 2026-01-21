@@ -166,22 +166,18 @@ final class DiagnosticsProviderTest extends TestCase
     }
 
     /**
-     * Test class has no constructor (uses default constructor)
+     * Test class has constructor with required dependency
      */
-    public function testClassHasNoExplicitConstructor(): void
+    public function testClassHasConstructorWithDependency(): void
     {
         $reflection = new \ReflectionClass(DiagnosticsProvider::class);
         $constructor = $reflection->getConstructor();
 
-        // Class should have no explicit constructor or an inherited one
-        if ($constructor !== null) {
-            $this->assertEquals(
-                'ReflectionClass',
-                $constructor->getDeclaringClass()->getName() === DiagnosticsProvider::class ? 'DiagnosticsProvider' : 'Parent'
-            );
-        } else {
-            $this->assertNull($constructor);
-        }
+        $this->assertNotNull($constructor);
+        $this->assertEquals(1, $constructor->getNumberOfParameters());
+
+        $parameter = $constructor->getParameters()[0];
+        $this->assertEquals('shopConfigurationDaoBridge', $parameter->getName());
     }
 
     /**
@@ -209,6 +205,11 @@ final class DiagnosticsProviderTest extends TestCase
         foreach ($publicMethods as $method) {
             // Skip inherited methods
             if ($method->getDeclaringClass()->getName() !== DiagnosticsProvider::class) {
+                continue;
+            }
+
+            // Skip constructor (constructors don't have return types in PHP)
+            if ($method->isConstructor()) {
                 continue;
             }
 

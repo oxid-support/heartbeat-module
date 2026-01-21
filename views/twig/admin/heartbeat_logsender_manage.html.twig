@@ -24,9 +24,9 @@
     <div class="warning-notice">
         <h3>&#9888; {{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_WARNING_TITLE" }) }}</h3>
         <p>{{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_WARNING_TEXT" }) }}</p>
-        <a href="{{ oViewConf.getSelfLink()|raw }}&cl=heartbeat_apiuser_setup" target="basefrm" class="btn-primary">
+        <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=heartbeat_apiuser_setup';">
             {{ translate({ ident: "OXSHEARTBEAT_LOGSENDER_GOTO_APIUSER" }) }}
-        </a>
+        </button>
     </div>
 {% elseif isActive %}
     <div class="ready-notice">

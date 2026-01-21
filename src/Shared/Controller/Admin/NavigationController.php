@@ -25,6 +25,7 @@ class NavigationController extends NavigationController_parent
     private const SETTING_REQUESTLOGGER_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
     private const SETTING_REMOTE_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
     private const SETTING_LOGSENDER_ACTIVE = Module::SETTING_LOGSENDER_ACTIVE;
+    private const SETTING_DIAGNOSTICSPROVIDER_ACTIVE = Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE;
 
     /**
      * @inheritDoc
@@ -59,6 +60,7 @@ class NavigationController extends NavigationController_parent
                 Module::ID
             ),
             'heartbeat_logsender_manage' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),
+            'heartbeat_diagnosticsprovider_manage' => $this->isApiUserSetupComplete() && $this->getDiagnosticsProviderStatus($moduleSettingService),
         ];
     }
 
@@ -82,6 +84,21 @@ class NavigationController extends NavigationController_parent
         try {
             return $moduleSettingService->getBoolean(
                 self::SETTING_LOGSENDER_ACTIVE,
+                Module::ID
+            );
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Get Diagnostics Provider component status.
+     */
+    private function getDiagnosticsProviderStatus(ModuleSettingServiceInterface $moduleSettingService): bool
+    {
+        try {
+            return $moduleSettingService->getBoolean(
+                self::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
                 Module::ID
             );
         } catch (\Throwable) {

@@ -33,5 +33,8 @@ final class Module
     public const SETTING_LOGSENDER_MAX_BYTES = self::ID . '_logsender_max_bytes';
     public const SETTING_LOGSENDER_ENABLED_SOURCES = self::ID . '_logsender_enabled_sources';
 
+    // Diagnostics Provider component settings
+    public const SETTING_DIAGNOSTICSPROVIDER_ACTIVE = self::ID . '_diagnosticsprovider_active';
+
     public const API_USER_EMAIL = 'heartbeat-api@oxid-esales.com';
 }

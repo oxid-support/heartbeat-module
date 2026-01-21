@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "oxs-heartbeat-graphql",
 		"name": "OXID Heartbeat - GraphQL API",
-		"description": "GraphQL API Endpoints für das OXID Heartbeat Modul.\n\n## Authentifizierung\n\nDie meisten Endpunkte erfordern eine JWT-Authentifizierung. Verwenden Sie zuerst die OXID GraphQL Base `token`-Query, um ein Token zu erhalten.\n\n## Komponenten\n\n- **ApiUser**: API-Benutzer Setup und Passwort-Verwaltung\n- **RequestLoggerRemote**: Remote-Steuerung des Request Loggers\n- **LogSender**: Abruf von Log-Dateien vom Shop",
+		"description": "GraphQL API Endpoints für das OXID Heartbeat Modul.\n\n## Authentifizierung\n\nDie meisten Endpunkte erfordern eine JWT-Authentifizierung. Verwenden Sie zuerst die OXID GraphQL Base `token`-Query, um ein Token zu erhalten.\n\n## Komponenten\n\n- **ApiUser**: API-Benutzer Setup und Passwort-Verwaltung\n- **RequestLoggerRemote**: Remote-Steuerung des Request Loggers\n- **LogSender**: Abruf von Log-Dateien vom Shop\n- **DiagnosticsProvider**: Shop-Diagnoseinformationen abrufen",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -638,6 +638,93 @@
 							]
 						},
 						"description": "Gibt den Inhalt einer bestimmten Log-Quelle zurück.\n\n**Parameter:**\n- sourceId: Die ID der Log-Quelle (z.B. \"oxid_core\")\n- maxBytes: Optionale maximale Bytes (Standard: Moduleinstellung)\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DiagnosticsProvider - Shop Diagnostics",
+			"description": "Diagnostics Provider API für den Abruf von Shop-Diagnoseinformationen.\n\n**Voraussetzungen:**\n- Diagnostics Provider Komponente muss aktiviert sein\n- API User muss eingerichtet sein\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung",
+			"item": [
+				{
+					"name": "Get Diagnostics",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Diagnostics {\n    diagnostics {\n        phpDecoder\n        sections {\n            name\n            items {\n                key\n                value\n            }\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Gibt umfassende Diagnoseinformationen über den Shop zurück.\n\n**Rückgabe:**\n- `phpDecoder`: PHP-Decoder Information\n- `sections`: Array von Diagnose-Abschnitten\n  - Shop Details (URL, Edition, Version, Statistiken)\n  - Module List (Installierte Module)\n  - System Information\n  - Database Collations\n  - PHP Configuration\n  - Server Information\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Diagnostics (Shop Details Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query DiagnosticsShopDetails {\n    diagnostics {\n        sections {\n            name\n            items {\n                key\n                value\n            }\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Gibt die Diagnoseinformationen zurück, gefiltert auf die Sections.\n\nNützlich wenn nur bestimmte Informationen benötigt werden.\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Diagnostics (Minimal)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query DiagnosticsMinimal {\n    diagnostics {\n        phpDecoder\n        sections {\n            name\n        }\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Gibt eine minimale Übersicht der verfügbaren Diagnose-Sections zurück.\n\nNützlich um zu prüfen welche Sections verfügbar sind.\n\n**Erfordert:** `LOG_SENDER_VIEW` Berechtigung"
 					},
 					"response": []
 				}

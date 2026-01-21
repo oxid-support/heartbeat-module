@@ -112,5 +112,12 @@ Includes GraphQL API for remote configuration and activation.',
             'type'  => 'arr',
             'value' => [],
         ],
+        // Diagnostics Provider component settings
+        [
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_diagnosticsprovider_active',
+            'type'  => 'bool',
+            'value' => false,
+        ],
     ],
 ];

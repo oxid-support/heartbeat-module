@@ -1,0 +1,48 @@
+{% extends "@oxsheartbeat/admin/heartbeat_base.html.twig" %}
+{% import "@oxsheartbeat/admin/heartbeat_macros.html.twig" as lf %}
+
+{% block title %}Diagnostics Provider - Manage{% endblock %}
+
+{% block body %}
+{% set isActive = oView.isComponentActive() %}
+{% set apiUserSetupComplete = oView.isApiUserSetupComplete() %}
+{% set canToggle = oView.canToggle() %}
+
+{{ lf.page_header(
+    "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_DESC"
+) }}
+
+{{ lf.toggle_section("heartbeat_diagnosticsprovider_manage", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+
+{% if not apiUserSetupComplete %}
+    <div class="warning-notice">
+        <h3>&#9888; {{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_WARNING_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_WARNING_TEXT" }) }}</p>
+        <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=heartbeat_apiuser_setup';">
+            {{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_GOTO_APIUSER" }) }}
+        </button>
+    </div>
+{% elseif isActive %}
+    <div class="ready-notice">
+        <h3>&#10004; {{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_READY_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_READY_TEXT" }) }}</p>
+    </div>
+{% endif %}
+
+<div class="settings-group">
+    <h3>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_TITLE" }) }}</h3>
+    <div class="info-content">
+        <p>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_TEXT" }) }}</p>
+        <ul>
+            <li>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SHOPDETAILS" }) }}</li>
+            <li>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_MODULES" }) }}</li>
+            <li>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SYSTEM" }) }}</li>
+            <li>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_PHP" }) }}</li>
+            <li>{{ translate({ ident: "OXSHEARTBEAT_DIAGNOSTICSPROVIDER_INFO_SERVER" }) }}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

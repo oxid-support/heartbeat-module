@@ -11,6 +11,7 @@ namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\GraphQL
 
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType\DiagnosticsType;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface;
+use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusServiceInterface;
 use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Query;
 use TheCodingMachine\GraphQLite\Annotations\Right;
@@ -18,7 +19,8 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 final class DiagnosticsController
 {
     public function __construct(
-        private readonly DiagnosticsProviderInterface $diagnosticsProvider
+        private readonly DiagnosticsProviderInterface $diagnosticsProvider,
+        private readonly DiagnosticsProviderStatusServiceInterface $statusService
     ) {
     }
 
@@ -28,18 +30,11 @@ final class DiagnosticsController
     #[Query]
     #[Logged]
     #[Right('LOG_SENDER_VIEW')]
-    public function getDiagnostics(): DiagnosticsType
+    public function diagnostics(): DiagnosticsType
     {
+        $this->statusService->assertComponentActive();
+
         $diagnosticsArray = $this->diagnosticsProvider->getDiagnostics();
         return DiagnosticsType::fromDiagnosticsArray($diagnosticsArray);
-    }
-
-    /**
-     * Test query to verify GraphQL endpoint is working
-     */
-    #[Query]
-    public function getTestDiagnostics(): string
-    {
-        return "success";
     }
 }

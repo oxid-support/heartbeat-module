@@ -10,25 +10,34 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service;
 
 use OxidEsales\Eshop\Application\Model\Diagnostics;
-use OxidEsales\EshopCommunity\Core\Di\ContainerFacade; 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ShopConfigurationDaoBridgeInterface;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Registry;
 
-class DiagnosticsProvider implements DiagnosticsProviderInterface {
+class DiagnosticsProvider implements DiagnosticsProviderInterface
+{
     private ?Diagnostics $diagnostics = null;
+
+    public function __construct(
+        private readonly ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge
+    ) {
+    }
+
     public function getDiagnosticsModel(): Diagnostics
     {
-        if($this->diagnostics) {
+        if ($this->diagnostics) {
             return $this->diagnostics;
         }
         $this->diagnostics = oxNew(Diagnostics::class);
         return $this->diagnostics;
     }
 
-    public function getModuleList() : array {
-        $shopConfiguration = ContainerFacade::get(ShopConfigurationDaoBridgeInterface::class)
-            ->get();
+    /**
+     * @return array<string, Module>
+     */
+    public function getModuleList(): array
+    {
+        $shopConfiguration = $this->shopConfigurationDaoBridge->get();
 
         $modules = [];
 
@@ -41,7 +50,11 @@ class DiagnosticsProvider implements DiagnosticsProviderInterface {
         return $modules;
     }
 
-    public function getDiagnostics () : array{
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDiagnostics(): array
+    {
         $aResults = [];
         $oDiagnostics = $this->getDiagnosticsModel();
         $oSysReq = oxNew(\OxidEsales\Eshop\Core\SystemRequirements::class);
