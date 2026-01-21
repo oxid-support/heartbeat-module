@@ -10,31 +10,47 @@ Logs are **minimally invasive**, stored locally on server, and produce **structu
 
 ## Installation
 
-### Live
+### Step 1: Install via Composer
+
+#### Live
 ```bash
 composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
 composer require oxid-support/heartbeat
 ```
 
-### Dev
+#### Dev
 ```bash
 git clone https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
 
-### General
+> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies.
 
-**Important!**
-Before activating the module, clear the shop's cache first.
+### Step 2: Run Database Migrations
+
 ```bash
-./vendor/bin/oe-console o:c:c
+./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oe_graphql_base
+./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
 ```
 
-#### Activation
+### Step 3: Clear Shop Cache
+
 ```bash
+./vendor/bin/oe-console oe:c:c
+```
+
+### Step 4: Activate Modules
+
+**Important**: The GraphQL modules must be activated **before** activating the Heartbeat module.
+
+```bash
+./vendor/bin/oe-console oe:module:activate oe_graphql_base
+./vendor/bin/oe-console oe:module:activate oe_graphql_configuration_access
 ./vendor/bin/oe-console oe:module:activate oxsheartbeat
 ```
+
+For more details on OXID GraphQL installation, see the [official documentation](https://docs.oxid-esales.com/interfaces/graphql/en/latest/install.html).
 
 ## Module Information
 
