@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\LogSender\Controller\GraphQL;
 
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogContentType;
+use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSource;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSourceType;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogCollectorServiceInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogReaderServiceInterface;
@@ -83,27 +84,21 @@ final class LogController
             );
         }
 
-        // Get the first available path from the source
-        $path = null;
-        foreach ($source->paths as $logPath) {
-            if ($logPath->exists() && $logPath->isReadable() && !$logPath->isDirectory()) {
-                $path = $logPath;
-                break;
-            }
-        }
+        // Get the first available file from the source
+        $filePath = $this->findFirstReadableFile($source);
 
-        if ($path === null) {
+        if ($filePath === null) {
             throw new \InvalidArgumentException("No readable file found in source '{$sourceId}'.");
         }
 
-        $content = $this->logReaderService->readFile($path->path, $maxBytes);
-        $fileInfo = $this->logReaderService->getFileInfo($path->path);
+        $content = $this->logReaderService->readFile($filePath, $maxBytes);
+        $fileInfo = $this->logReaderService->getFileInfo($filePath);
         $truncated = str_starts_with($content, '[...truncated...]');
 
         return new LogContentType(
             $source->id,
             $source->name,
-            $path->path,
+            $filePath,
             $content,
             $fileInfo['size'],
             $fileInfo['modified'],
@@ -125,5 +120,47 @@ final class LogController
         } catch (\Throwable) {
             return [];
         }
+    }
+
+    /**
+     * Find the first readable file from a log source.
+     * Handles both FILE and DIRECTORY type paths.
+     * For directories, returns the most recently modified file matching the pattern.
+     */
+    private function findFirstReadableFile(LogSource $source): ?string
+    {
+        foreach ($source->paths as $logPath) {
+            if (!$logPath->exists() || !$logPath->isReadable()) {
+                continue;
+            }
+
+            // For file paths, return directly
+            if (!$logPath->isDirectory()) {
+                return $logPath->path;
+            }
+
+            // For directory paths, find files matching the pattern
+            $pattern = $logPath->filePattern ?? '*';
+            $directory = rtrim($logPath->path, '/\\');
+            $globPattern = $directory . DIRECTORY_SEPARATOR . $pattern;
+
+            $files = glob($globPattern);
+            if ($files === false || empty($files)) {
+                continue;
+            }
+
+            // Filter to only actual files (not directories) that are readable
+            $readableFiles = array_filter($files, fn($f) => is_file($f) && is_readable($f));
+            if (empty($readableFiles)) {
+                continue;
+            }
+
+            // Sort by modification time descending (newest first)
+            usort($readableFiles, fn($a, $b) => filemtime($b) <=> filemtime($a));
+
+            return $readableFiles[0];
+        }
+
+        return null;
     }
 }
