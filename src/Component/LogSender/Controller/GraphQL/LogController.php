@@ -84,26 +84,37 @@ final class LogController
         }
 
         // Get the first available path from the source
-        $path = null;
+        $filePath = null;
         foreach ($source->paths as $logPath) {
-            if ($logPath->exists() && $logPath->isReadable() && !$logPath->isDirectory()) {
-                $path = $logPath;
+            if (!$logPath->exists() || !$logPath->isReadable()) {
+                continue;
+            }
+
+            if ($logPath->isDirectory()) {
+                // Handle directory: find the newest matching file
+                $filePath = $this->getNewestFileFromDirectory($logPath);
+                if ($filePath !== null) {
+                    break;
+                }
+            } else {
+                // Handle direct file path
+                $filePath = $logPath->path;
                 break;
             }
         }
 
-        if ($path === null) {
+        if ($filePath === null) {
             throw new \InvalidArgumentException("No readable file found in source '{$sourceId}'.");
         }
 
-        $content = $this->logReaderService->readFile($path->path, $maxBytes);
-        $fileInfo = $this->logReaderService->getFileInfo($path->path);
+        $content = $this->logReaderService->readFile($filePath, $maxBytes);
+        $fileInfo = $this->logReaderService->getFileInfo($filePath);
         $truncated = str_starts_with($content, '[...truncated...]');
 
         return new LogContentType(
             $source->id,
             $source->name,
-            $path->path,
+            $filePath,
             $content,
             $fileInfo['size'],
             $fileInfo['modified'],
@@ -125,5 +136,45 @@ final class LogController
         } catch (\Throwable) {
             return [];
         }
+    }
+
+    /**
+     * Get the newest file from a directory based on modification time.
+     * Respects the filePattern if specified (e.g., "*.log").
+     *
+     * @param \OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath $logPath
+     * @return string|null The absolute path to the newest file, or null if no files found
+     */
+    private function getNewestFileFromDirectory(\OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath $logPath): ?string
+    {
+        $directory = rtrim($logPath->path, '/\\');
+
+        if (!is_dir($directory) || !is_readable($directory)) {
+            return null;
+        }
+
+        $pattern = $logPath->filePattern ?? '*';
+        $globPattern = $directory . DIRECTORY_SEPARATOR . $pattern;
+
+        $files = glob($globPattern);
+        if ($files === false || empty($files)) {
+            return null;
+        }
+
+        // Filter out directories, keep only readable files
+        $files = array_filter($files, function ($file) {
+            return is_file($file) && is_readable($file);
+        });
+
+        if (empty($files)) {
+            return null;
+        }
+
+        // Sort by modification time (newest first)
+        usort($files, function ($a, $b) {
+            return filemtime($b) <=> filemtime($a);
+        });
+
+        return $files[0];
     }
 }
