@@ -37,7 +37,7 @@ composer require oxid-support/heartbeat:@dev
 ### Step 3: Clear Shop Cache
 
 ```bash
-./vendor/bin/oe-console oe:c:c
+./vendor/bin/oe-console oe:cache:clear
 ```
 
 ### Step 4: Activate Modules
