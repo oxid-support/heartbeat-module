@@ -17,7 +17,8 @@
         "oxid-esales/graphql-configuration-access": "^1.1 || ^2.0 || ^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^11.0",
+        "oxid-esales/oxideshop-ce": "^7.0"
     },
     "autoload": {
         "psr-4": {
@@ -27,6 +28,12 @@
     "autoload-dev": {
         "psr-4": {
             "OxidSupport\\Heartbeat\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "oxid-esales/oxideshop-unified-namespace-generator": true,
+            "oxid-esales/oxideshop-composer-plugin": true
         }
     }
 }

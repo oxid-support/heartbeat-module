@@ -108,7 +108,7 @@ final class NavigationControllerTest extends TestCase
         $controller = $this->createControllerWithMocks($moduleSettingService, $apiUserStatusService);
         $template = $controller->render();
 
-        $this->assertSame('nav_frame', $template);
+        $this->assertSame('navigation.html.twig', $template);
 
         $reflection = new \ReflectionClass($controller);
         $property = $reflection->getProperty('_aViewData');

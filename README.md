@@ -260,10 +260,24 @@ The Request Logger Remote component provides a GraphQL API for remote management
 
 ## Testing
 
-**Run tests from module directory:**
+Tests run standalone without requiring a full OXID shop installation. The module uses `oxideshop-ce` as a dev dependency to provide the necessary framework interfaces.
+
+### Setup
+
+```bash
+cd repo/oxs/heartbeat
+composer install
+```
+
+### Run Tests
+
 ```bash
 ./vendor/bin/phpunit --configuration tests/phpunit.xml
 ```
+
+### Test Coverage
+
+The test suite includes unit tests for all components. Some integration tests (e.g., `ModuleEvents`) are skipped in standalone mode as they require a full shop context.
 
 ---
 
