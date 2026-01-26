@@ -50,7 +50,7 @@
             "@phpmd"
         ],
 
-        "tests-unit": "phpunit -c tests/phpunit.xml --testsuite=Unit",
+        "tests-unit": "phpunit -c tests/phpunit.xml --testsuite='Unit Tests'",
         "tests-coverage": "XDEBUG_MODE=coverage phpunit -c tests/phpunit.xml --coverage-text --coverage-html=tests/Reports/CoverageHtml"
     },
     "config": {
