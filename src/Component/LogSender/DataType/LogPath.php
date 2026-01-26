@@ -18,16 +18,12 @@ final class LogPath
     public function __construct(
         /** Absolute path to the file or directory */
         public readonly string $path,
-
         /** Type: FILE or DIRECTORY */
         public readonly LogPathType $type,
-
         /** Display name for UI/API */
         public readonly string $name,
-
         /** Optional description */
         public readonly string $description = '',
-
         /** Optional glob pattern for directories (e.g., "*.log") */
         public readonly ?string $filePattern = null,
     ) {

@@ -139,7 +139,7 @@ final class AbstractComponentControllerTest extends TestCase
 
     private function createControllerWithActiveState(bool $isActive): AbstractComponentController
     {
-        return new class($isActive) extends AbstractComponentController {
+        return new class ($isActive) extends AbstractComponentController {
             public function __construct(private bool $active)
             {
             }
@@ -166,7 +166,7 @@ final class AbstractComponentControllerTest extends TestCase
             ->with($shopId)
             ->willReturn($shopConfiguration);
 
-        return new class($context, $shopConfigurationDao) extends AbstractComponentController {
+        return new class ($context, $shopConfigurationDao) extends AbstractComponentController {
             public function __construct(
                 private ContextInterface $contextMock,
                 private ShopConfigurationDaoInterface $shopConfigurationDaoMock

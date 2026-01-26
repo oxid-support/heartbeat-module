@@ -105,7 +105,7 @@ class CompositeResolverTest extends TestCase
 
     public function testResolveWithGenerator(): void
     {
-        $generator = function() {
+        $generator = function () {
             $resolver1 = $this->createMock(ResolverInterface::class);
             $resolver1->expects($this->once())->method('resolve')->willReturn(null);
             yield $resolver1;
@@ -127,13 +127,13 @@ class CompositeResolverTest extends TestCase
         $callCount = 0;
 
         $resolver1 = $this->createMock(ResolverInterface::class);
-        $resolver1->expects($this->once())->method('resolve')->willReturnCallback(function() use (&$callCount) {
+        $resolver1->expects($this->once())->method('resolve')->willReturnCallback(function () use (&$callCount) {
             $callCount++;
             return null;
         });
 
         $resolver2 = $this->createMock(ResolverInterface::class);
-        $resolver2->expects($this->once())->method('resolve')->willReturnCallback(function() use (&$callCount) {
+        $resolver2->expects($this->once())->method('resolve')->willReturnCallback(function () use (&$callCount) {
             $callCount++;
             return 'matched';
         });

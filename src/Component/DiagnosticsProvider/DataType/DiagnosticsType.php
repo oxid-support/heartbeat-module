@@ -58,7 +58,7 @@ final class DiagnosticsType
         foreach ($arrayKeys as $key) {
             if (isset($diagnostics[$key]) && is_array($diagnostics[$key])) {
                 // Convert key to readable name
-                $sectionName = match($key) {
+                $sectionName = match ($key) {
                     'aShopDetails' => 'Shop Details',
                     'aModuleList' => 'Module List',
                     'aInfo' => 'System Information',

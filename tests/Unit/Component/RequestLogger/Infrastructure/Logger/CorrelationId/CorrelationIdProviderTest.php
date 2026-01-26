@@ -104,7 +104,7 @@ class CorrelationIdProviderTest extends TestCase
             ->expects($this->once())
             ->method('emit')
             ->with('test-id')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'emit';
             });
 
@@ -156,7 +156,7 @@ class CorrelationIdProviderTest extends TestCase
         $this->resolver
             ->expects($this->once())
             ->method('resolve')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'resolve';
                 return null;
             });
@@ -164,7 +164,7 @@ class CorrelationIdProviderTest extends TestCase
         $this->generator
             ->expects($this->once())
             ->method('generate')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'generate';
                 return 'generated';
             });
@@ -172,7 +172,7 @@ class CorrelationIdProviderTest extends TestCase
         $this->emitter
             ->expects($this->once())
             ->method('emit')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'emit';
             });
 
@@ -226,7 +226,7 @@ class CorrelationIdProviderTest extends TestCase
         $this->emitter
             ->expects($this->once())
             ->method('emit')
-            ->willReturnCallback(function($id) {
+            ->willReturnCallback(function ($id) {
                 $this->assertIsString($id);
                 $this->assertSame(32, strlen($id));
             });

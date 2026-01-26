@@ -110,7 +110,7 @@ class OnceEmitterDecoratorTest extends TestCase
         $compositeEmitter = $this->createMock(CompositeEmitter::class);
         $compositeEmitter->expects($this->once())
             ->method('emit')
-            ->willReturnCallback(function() use (&$callCount) {
+            ->willReturnCallback(function () use (&$callCount) {
                 $callCount++;
             });
 

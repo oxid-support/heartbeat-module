@@ -43,7 +43,6 @@ class ShopControl extends CoreShopControl
         try {
             parent::start($controllerKey, $function, $parameters, $viewsChain);
         } finally {
-
             $calculateDurationTimestampStop = microtime(true);
 
             $this->logSymbols(
@@ -67,7 +66,7 @@ class ShopControl extends CoreShopControl
         $redactor = ContainerFacade::get(SensitiveDataRedactorInterface::class);
         $settingsFacade = ContainerFacade::get(ModuleSettingFacadeInterface::class);
 
-        $referer   = $_SERVER['HTTP_REFERER']    ?? null;
+        $referer   = $_SERVER['HTTP_REFERER'] ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 
         $get  = $redactor->redact($_GET ?? []);
@@ -120,8 +119,7 @@ class ShopControl extends CoreShopControl
         ShopRequestRecorderInterface $recorder,
         float $calculateDurationStartTimestamp,
         float $calculateDurationStopTimestamp
-    ): void
-    {
+    ): void {
         $duration = (int) round(
             ($calculateDurationStopTimestamp - $calculateDurationStartTimestamp) * 1000
         );

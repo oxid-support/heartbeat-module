@@ -17,7 +17,6 @@ use OxidSupport\Heartbeat\Module\Module;
 
 final class ModuleEvents
 {
-
     /**
      * Called on module activation.
      * Generates a setup token only if:
