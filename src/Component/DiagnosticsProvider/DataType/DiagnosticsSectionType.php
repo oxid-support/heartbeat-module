@@ -59,7 +59,14 @@ final class DiagnosticsSectionType
                 $value = 'null';
             } elseif (is_a($value, Module::class)) {
                 $oldvalue = $value;
-                $value = $oldvalue->getTitle();
+                $oldvalue = 
+                    [
+                        $oldvalue->isActive(),
+                        $oldvalue->getTitle(),
+                        $oldvalue->getInfo('version'),
+                        $oldvalue->getInfo('author'),
+                    ];
+                $value = json_encode($oldvalue);    
             } else {
                 $value = (string) $value;
             }
