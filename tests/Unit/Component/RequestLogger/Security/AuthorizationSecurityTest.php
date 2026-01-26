@@ -1,0 +1,218 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Security;
+
+use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\ActivationController;
+use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController;
+use OxidSupport\Heartbeat\Component\RequestLogger\Framework\PermissionProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+
+/**
+ * Security tests for Authorization
+ * Verifies all endpoints have proper authentication and authorization attributes
+ */
+#[CoversClass(ActivationController::class)]
+#[CoversClass(SettingController::class)]
+#[CoversClass(PermissionProvider::class)]
+class AuthorizationSecurityTest extends TestCase
+{
+    // ===========================================
+    // ACTIVATION CONTROLLER AUTHORIZATION
+    // ===========================================
+
+    #[DataProvider('activationControllerMethodsProvider')]
+    public function testActivationControllerMethodsRequireAuth(string $method): void
+    {
+        $reflection = new ReflectionMethod(ActivationController::class, $method);
+        $attributes = $this->getAttributeNames($reflection);
+
+        $this->assertContains(
+            'TheCodingMachine\GraphQLite\Annotations\Logged',
+            $attributes,
+            "$method must have #[Logged] attribute"
+        );
+
+        $this->assertContains(
+            'TheCodingMachine\GraphQLite\Annotations\Right',
+            $attributes,
+            "$method must have #[Right] attribute"
+        );
+    }
+
+    public static function activationControllerMethodsProvider(): array
+    {
+        return [
+            ['requestLoggerIsActive'],
+            ['requestLoggerActivate'],
+            ['requestLoggerDeactivate'],
+        ];
+    }
+
+    // ===========================================
+    // SETTING CONTROLLER AUTHORIZATION
+    // ===========================================
+
+    #[DataProvider('settingControllerMethodsProvider')]
+    public function testSettingControllerMethodsRequireAuth(string $method): void
+    {
+        $reflection = new ReflectionMethod(SettingController::class, $method);
+        $attributes = $this->getAttributeNames($reflection);
+
+        $this->assertContains(
+            'TheCodingMachine\GraphQLite\Annotations\Logged',
+            $attributes,
+            "$method must have #[Logged] attribute"
+        );
+
+        $this->assertContains(
+            'TheCodingMachine\GraphQLite\Annotations\Right',
+            $attributes,
+            "$method must have #[Right] attribute"
+        );
+    }
+
+    public static function settingControllerMethodsProvider(): array
+    {
+        return [
+            ['requestLoggerSettings'],
+            ['requestLoggerLogLevel'],
+            ['requestLoggerLogFrontend'],
+            ['requestLoggerLogAdmin'],
+            ['requestLoggerRedact'],
+            ['requestLoggerRedactAllValues'],
+            ['requestLoggerLogLevelChange'],
+            ['requestLoggerLogFrontendChange'],
+            ['requestLoggerLogAdminChange'],
+            ['requestLoggerRedactChange'],
+            ['requestLoggerRedactAllValuesChange'],
+        ];
+    }
+
+    // ===========================================
+    // PERMISSION PROVIDER TESTS
+    // ===========================================
+
+    public function testPermissionsAreDefinedForApiUserGroup(): void
+    {
+        $provider = new PermissionProvider();
+        $permissions = $provider->getPermissions();
+
+        $this->assertArrayHasKey('oxsheartbeat_api', $permissions);
+        $this->assertNotEmpty($permissions['oxsheartbeat_api']);
+    }
+
+    public function testPermissionsAreDefinedForAdminGroup(): void
+    {
+        $provider = new PermissionProvider();
+        $permissions = $provider->getPermissions();
+
+        $this->assertArrayHasKey('oxidadmin', $permissions);
+        $this->assertNotEmpty($permissions['oxidadmin']);
+    }
+
+    public function testAllRequiredPermissionsExist(): void
+    {
+        $provider = new PermissionProvider();
+        $permissions = $provider->getPermissions();
+
+        $requiredPermissions = [
+            'REQUEST_LOGGER_VIEW',
+            'REQUEST_LOGGER_CHANGE',
+            'REQUEST_LOGGER_ACTIVATE',
+        ];
+
+        foreach (['oxsheartbeat_api', 'oxidadmin'] as $group) {
+            foreach ($requiredPermissions as $permission) {
+                $this->assertContains(
+                    $permission,
+                    $permissions[$group],
+                    "Permission $permission must be defined for group $group"
+                );
+            }
+        }
+    }
+
+    public function testNoExcessivePermissionsGranted(): void
+    {
+        $provider = new PermissionProvider();
+        $permissions = $provider->getPermissions();
+
+        // Verify no wildcard or overly broad permissions
+        foreach ($permissions as $group => $perms) {
+            foreach ($perms as $perm) {
+                $this->assertNotEquals('*', $perm, "Wildcard permissions are not allowed");
+                $this->assertStringNotContainsString('ADMIN', $perm, "Should not grant general ADMIN permissions");
+                $this->assertStringNotContainsString('SUPER', $perm, "Should not grant SUPER permissions");
+            }
+        }
+    }
+
+    // ===========================================
+    // MUTATION VS QUERY SEGREGATION
+    // ===========================================
+
+    public function testReadOperationsAreQueries(): void
+    {
+        $readMethods = [
+            [ActivationController::class, 'requestLoggerIsActive'],
+            [SettingController::class, 'requestLoggerSettings'],
+            [SettingController::class, 'requestLoggerLogLevel'],
+            [SettingController::class, 'requestLoggerLogFrontend'],
+            [SettingController::class, 'requestLoggerLogAdmin'],
+            [SettingController::class, 'requestLoggerRedact'],
+            [SettingController::class, 'requestLoggerRedactAllValues'],
+        ];
+
+        foreach ($readMethods as [$class, $method]) {
+            $reflection = new ReflectionMethod($class, $method);
+            $attributes = $this->getAttributeNames($reflection);
+
+            $this->assertContains(
+                'TheCodingMachine\GraphQLite\Annotations\Query',
+                $attributes,
+                "$class::$method should be a Query, not a Mutation"
+            );
+        }
+    }
+
+    public function testWriteOperationsAreMutations(): void
+    {
+        $writeMethods = [
+            [ActivationController::class, 'requestLoggerActivate'],
+            [ActivationController::class, 'requestLoggerDeactivate'],
+            [SettingController::class, 'requestLoggerLogLevelChange'],
+            [SettingController::class, 'requestLoggerLogFrontendChange'],
+            [SettingController::class, 'requestLoggerLogAdminChange'],
+            [SettingController::class, 'requestLoggerRedactChange'],
+            [SettingController::class, 'requestLoggerRedactAllValuesChange'],
+        ];
+
+        foreach ($writeMethods as [$class, $method]) {
+            $reflection = new ReflectionMethod($class, $method);
+            $attributes = $this->getAttributeNames($reflection);
+
+            $this->assertContains(
+                'TheCodingMachine\GraphQLite\Annotations\Mutation',
+                $attributes,
+                "$class::$method should be a Mutation, not a Query"
+            );
+        }
+    }
+
+    // ===========================================
+    // HELPER METHODS
+    // ===========================================
+
+    private function getAttributeNames(ReflectionMethod $reflection): array
+    {
+        return array_map(
+            fn($attr) => $attr->getName(),
+            $reflection->getAttributes()
+        );
+    }
+}
