@@ -64,14 +64,6 @@ final class PermissionProviderTest extends TestCase
         $this->assertContains('REQUEST_LOGGER_CHANGE', $permissions['oxsheartbeat_api']);
     }
 
-    public function testApiUserGroupHasActivatePermission(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertContains('REQUEST_LOGGER_ACTIVATE', $permissions['oxsheartbeat_api']);
-    }
-
     public function testAdminGroupHasViewPermission(): void
     {
         $provider = new PermissionProvider();
@@ -88,28 +80,20 @@ final class PermissionProviderTest extends TestCase
         $this->assertContains('REQUEST_LOGGER_CHANGE', $permissions['oxidadmin']);
     }
 
-    public function testAdminGroupHasActivatePermission(): void
+    public function testApiUserGroupHasExactlyTwoPermissions(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertContains('REQUEST_LOGGER_ACTIVATE', $permissions['oxidadmin']);
+        $this->assertCount(2, $permissions['oxsheartbeat_api']);
     }
 
-    public function testApiUserGroupHasExactlyThreePermissions(): void
+    public function testAdminGroupHasExactlyTwoPermissions(): void
     {
         $provider = new PermissionProvider();
         $permissions = $provider->getPermissions();
 
-        $this->assertCount(3, $permissions['oxsheartbeat_api']);
-    }
-
-    public function testAdminGroupHasExactlyThreePermissions(): void
-    {
-        $provider = new PermissionProvider();
-        $permissions = $provider->getPermissions();
-
-        $this->assertCount(3, $permissions['oxidadmin']);
+        $this->assertCount(2, $permissions['oxidadmin']);
     }
 
     public function testBothGroupsHaveSamePermissions(): void

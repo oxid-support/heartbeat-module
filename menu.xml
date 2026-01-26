@@ -7,8 +7,6 @@
             <SUBMENU id="mxheartbeat_apiuser" cl="heartbeat_apiuser_setup" />
             <!-- Request Logger Component - Settings directly -->
             <SUBMENU id="mxheartbeat_requestlogger" cl="heartbeat_requestlogger_settings" />
-            <!-- Request Logger Remote Component - Setup directly -->
-            <SUBMENU id="mxheartbeat_requestlogger_remote" cl="heartbeat_requestlogger_remote_setup" />
             <!-- Log Sender Component - Manage -->
             <SUBMENU id="mxheartbeat_logsender" cl="heartbeat_logsender_manage" />
             <!-- Diagnostics Provider Component - Manage -->

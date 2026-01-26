@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Security;
 
-use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\ActivationController;
 use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController;
 use OxidSupport\Heartbeat\Component\RequestLogger\Framework\PermissionProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -16,43 +15,10 @@ use ReflectionMethod;
  * Security tests for Authorization
  * Verifies all endpoints have proper authentication and authorization attributes
  */
-#[CoversClass(ActivationController::class)]
 #[CoversClass(SettingController::class)]
 #[CoversClass(PermissionProvider::class)]
 class AuthorizationSecurityTest extends TestCase
 {
-    // ===========================================
-    // ACTIVATION CONTROLLER AUTHORIZATION
-    // ===========================================
-
-    #[DataProvider('activationControllerMethodsProvider')]
-    public function testActivationControllerMethodsRequireAuth(string $method): void
-    {
-        $reflection = new ReflectionMethod(ActivationController::class, $method);
-        $attributes = $this->getAttributeNames($reflection);
-
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "$method must have #[Logged] attribute"
-        );
-
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Right',
-            $attributes,
-            "$method must have #[Right] attribute"
-        );
-    }
-
-    public static function activationControllerMethodsProvider(): array
-    {
-        return [
-            ['requestLoggerIsActive'],
-            ['requestLoggerActivate'],
-            ['requestLoggerDeactivate'],
-        ];
-    }
-
     // ===========================================
     // SETTING CONTROLLER AUTHORIZATION
     // ===========================================
@@ -123,7 +89,6 @@ class AuthorizationSecurityTest extends TestCase
         $requiredPermissions = [
             'REQUEST_LOGGER_VIEW',
             'REQUEST_LOGGER_CHANGE',
-            'REQUEST_LOGGER_ACTIVATE',
         ];
 
         foreach (['oxsheartbeat_api', 'oxidadmin'] as $group) {
@@ -159,7 +124,6 @@ class AuthorizationSecurityTest extends TestCase
     public function testReadOperationsAreQueries(): void
     {
         $readMethods = [
-            [ActivationController::class, 'requestLoggerIsActive'],
             [SettingController::class, 'requestLoggerSettings'],
             [SettingController::class, 'requestLoggerLogLevel'],
             [SettingController::class, 'requestLoggerLogFrontend'],
@@ -183,8 +147,6 @@ class AuthorizationSecurityTest extends TestCase
     public function testWriteOperationsAreMutations(): void
     {
         $writeMethods = [
-            [ActivationController::class, 'requestLoggerActivate'],
-            [ActivationController::class, 'requestLoggerDeactivate'],
             [SettingController::class, 'requestLoggerLogLevelChange'],
             [SettingController::class, 'requestLoggerLogFrontendChange'],
             [SettingController::class, 'requestLoggerLogAdminChange'],

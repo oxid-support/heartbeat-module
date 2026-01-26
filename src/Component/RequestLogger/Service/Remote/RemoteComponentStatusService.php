@@ -22,7 +22,7 @@ final readonly class RemoteComponentStatusService implements RemoteComponentStat
 
     public function isActive(): bool
     {
-        return $this->moduleSettingService->getBoolean(Module::SETTING_REMOTE_ACTIVE, Module::ID);
+        return $this->moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID);
     }
 
     public function assertComponentActive(): void

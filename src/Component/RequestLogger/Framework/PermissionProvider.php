@@ -19,12 +19,10 @@ final class PermissionProvider implements PermissionProviderInterface
             'oxsheartbeat_api' => [
                 'REQUEST_LOGGER_VIEW',
                 'REQUEST_LOGGER_CHANGE',
-                'REQUEST_LOGGER_ACTIVATE',
             ],
             'oxidadmin' => [
                 'REQUEST_LOGGER_VIEW',
                 'REQUEST_LOGGER_CHANGE',
-                'REQUEST_LOGGER_ACTIVATE',
             ],
         ];
     }

@@ -10,10 +10,8 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Controller\GraphQL;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
-use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\ActivationController;
 use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\RemoteComponentDisabledException;
-use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\ActivationServiceInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusService;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusServiceInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SettingServiceInterface;
@@ -25,11 +23,10 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests that GraphQL controllers block requests when remote component is disabled.
  *
- * When remote_active = false, all GraphQL endpoints should throw RemoteComponentDisabledException.
+ * When requestlogger_active = false, all GraphQL endpoints should throw RemoteComponentDisabledException.
  * This allows customers to disable external support access while keeping admin configuration accessible.
  */
 #[CoversClass(SettingController::class)]
-#[CoversClass(ActivationController::class)]
 final class RemoteComponentBlockingTest extends TestCase
 {
     // ==========================================
@@ -98,34 +95,6 @@ final class RemoteComponentBlockingTest extends TestCase
     }
 
     // ==========================================
-    // ActivationController Tests
-    // ==========================================
-
-    public function testActivationControllerIsActiveBlocksWhenDisabled(): void
-    {
-        $controller = $this->createActivationControllerWithDisabledComponent();
-
-        $this->expectException(RemoteComponentDisabledException::class);
-        $controller->requestLoggerIsActive();
-    }
-
-    public function testActivationControllerActivateBlocksWhenDisabled(): void
-    {
-        $controller = $this->createActivationControllerWithDisabledComponent();
-
-        $this->expectException(RemoteComponentDisabledException::class);
-        $controller->requestLoggerActivate();
-    }
-
-    public function testActivationControllerDeactivateBlocksWhenDisabled(): void
-    {
-        $controller = $this->createActivationControllerWithDisabledComponent();
-
-        $this->expectException(RemoteComponentDisabledException::class);
-        $controller->requestLoggerDeactivate();
-    }
-
-    // ==========================================
     // Positive Tests - Component Enabled
     // ==========================================
 
@@ -144,21 +113,6 @@ final class RemoteComponentBlockingTest extends TestCase
         $this->assertSame('standard', $result);
     }
 
-    public function testActivationControllerAllowsQueriesWhenEnabled(): void
-    {
-        $activationService = $this->createMock(ActivationServiceInterface::class);
-        $activationService->method('isActive')->willReturn(true);
-
-        $controller = new ActivationController(
-            $activationService,
-            $this->createEnabledComponentStatusService()
-        );
-
-        // Should not throw
-        $result = $controller->requestLoggerIsActive();
-        $this->assertTrue($result);
-    }
-
     // ==========================================
     // Helper Methods
     // ==========================================
@@ -168,7 +122,7 @@ final class RemoteComponentBlockingTest extends TestCase
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
         return new RemoteComponentStatusService($moduleSettingService);
@@ -179,7 +133,7 @@ final class RemoteComponentBlockingTest extends TestCase
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 
         return new RemoteComponentStatusService($moduleSettingService);
@@ -189,14 +143,6 @@ final class RemoteComponentBlockingTest extends TestCase
     {
         return new SettingController(
             $this->createStub(SettingServiceInterface::class),
-            $this->createDisabledComponentStatusService()
-        );
-    }
-
-    private function createActivationControllerWithDisabledComponent(): ActivationController
-    {
-        return new ActivationController(
-            $this->createStub(ActivationServiceInterface::class),
             $this->createDisabledComponentStatusService()
         );
     }

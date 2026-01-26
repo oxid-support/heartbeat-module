@@ -16,7 +16,7 @@
     "OXSHEARTBEAT_LF_REMOTE_DESC"
 ) }}
 
-{{ lf.toggle_section("heartbeat_requestlogger_remote_setup", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+{{ lf.toggle_section("heartbeat_requestlogger_setup", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
 
 {% if not apiUserSetupComplete %}
     <div class="warning-notice">

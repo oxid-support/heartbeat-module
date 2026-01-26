@@ -17,7 +17,7 @@ use OxidSupport\Heartbeat\Shared\Controller\Admin\TogglableComponentInterface;
 
 class RemoteSetupController extends AbstractComponentController implements TogglableComponentInterface
 {
-    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_remote_setup';
+    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_setup';
 
     private const CONFIG_ACCESS_MODULE_ID = 'oe_graphql_configuration_access';
 
@@ -26,7 +26,7 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
     public function isComponentActive(): bool
     {
         return $this->getModuleSettingService()->getBoolean(
-            Module::SETTING_REMOTE_ACTIVE,
+            Module::SETTING_REQUESTLOGGER_ACTIVE,
             Module::ID
         );
     }
@@ -54,7 +54,7 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
         }
 
         $this->getModuleSettingService()->saveBoolean(
-            Module::SETTING_REMOTE_ACTIVE,
+            Module::SETTING_REQUESTLOGGER_ACTIVE,
             !$this->isComponentActive(),
             Module::ID
         );

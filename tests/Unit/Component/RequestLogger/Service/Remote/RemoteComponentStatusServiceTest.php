@@ -34,7 +34,7 @@ final class RemoteComponentStatusServiceTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 
         $service = new RemoteComponentStatusService($moduleSettingService);
@@ -48,7 +48,7 @@ final class RemoteComponentStatusServiceTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
         $service = new RemoteComponentStatusService($moduleSettingService);
@@ -61,7 +61,7 @@ final class RemoteComponentStatusServiceTest extends TestCase
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 
         $service = new RemoteComponentStatusService($moduleSettingService);
@@ -76,7 +76,7 @@ final class RemoteComponentStatusServiceTest extends TestCase
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
-            ->with(Module::SETTING_REMOTE_ACTIVE, Module::ID)
+            ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
         $service = new RemoteComponentStatusService($moduleSettingService);
@@ -114,6 +114,6 @@ final class RemoteComponentStatusServiceTest extends TestCase
     public function testUsesCorrectSettingConstant(): void
     {
         // Verify the service uses the correct module setting constant
-        $this->assertSame('oxsheartbeat_remote_active', Module::SETTING_REMOTE_ACTIVE);
+        $this->assertSame('oxsheartbeat_requestlogger_active', Module::SETTING_REQUESTLOGGER_ACTIVE);
     }
 }

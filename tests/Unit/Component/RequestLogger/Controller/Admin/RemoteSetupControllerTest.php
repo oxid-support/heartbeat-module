@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(RemoteSetupController::class)]
 final class RemoteSetupControllerTest extends TestCase
 {
-    private const SETTING_COMPONENT_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
+    private const SETTING_COMPONENT_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
 
     public function testTemplateIsCorrectlySet(): void
     {
@@ -34,7 +34,7 @@ final class RemoteSetupControllerTest extends TestCase
         $property = $reflection->getProperty('_sThisTemplate');
 
         $this->assertSame(
-            '@oxsheartbeat/admin/heartbeat_requestlogger_remote_setup',
+            '@oxsheartbeat/admin/heartbeat_requestlogger_setup',
             $property->getDefaultValue()
         );
     }
