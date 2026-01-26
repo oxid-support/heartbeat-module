@@ -109,7 +109,7 @@ final class SettingsControllerTest extends TestCase
         $moduleSettingService
             ->method('getString')
             ->with(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, Module::ID)
-            ->willReturn('detailed');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('detailed'));
 
         $moduleSettingService
             ->method('getCollection')

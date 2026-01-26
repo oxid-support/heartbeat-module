@@ -51,7 +51,7 @@ final class ModuleEventsTest extends TestCase
             ->expects($this->once())
             ->method('getString')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         // Password is placeholder (not BCrypt)
         $result = $this->createMock(Result::class);
@@ -109,7 +109,7 @@ final class ModuleEventsTest extends TestCase
             ->expects($this->once())
             ->method('getString')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
-            ->willReturn('existing-token-12345');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('existing-token-12345'));
 
         // Should NOT save a new token
         $moduleSettingService
@@ -142,7 +142,7 @@ final class ModuleEventsTest extends TestCase
             ->expects($this->once())
             ->method('getString')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         // Password is BCrypt (setup was completed)
         $result = $this->createMock(Result::class);
@@ -193,7 +193,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
         $result->expects($this->once())
@@ -238,7 +238,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
         $result->expects($this->once())
@@ -332,7 +332,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
         $queryBuilderFactory->method('create')
@@ -369,7 +369,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         // User not found - returns null/empty
         $result = $this->createMock(Result::class);
@@ -418,7 +418,7 @@ final class ModuleEventsTest extends TestCase
         $moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('');
+            ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
         $result->expects($this->once())

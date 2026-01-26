@@ -31,7 +31,7 @@ class ModuleSettingFacadeTest extends TestCase
             ->expects($this->once())
             ->method('getString')
             ->with('oxsheartbeat_requestlogger_log_level', 'oxsheartbeat')
-            ->willReturn('debug');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('debug'));
 
         $result = $this->facade->getLogLevel();
 
@@ -43,7 +43,7 @@ class ModuleSettingFacadeTest extends TestCase
         $this->moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('info');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('info'));
 
         $result = $this->facade->getLogLevel();
 
@@ -55,7 +55,7 @@ class ModuleSettingFacadeTest extends TestCase
         $this->moduleSettingService
             ->expects($this->once())
             ->method('getString')
-            ->willReturn('warning');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('warning'));
 
         $result = $this->facade->getLogLevel();
 
@@ -120,9 +120,9 @@ class ModuleSettingFacadeTest extends TestCase
             ->expects($this->exactly(3))
             ->method('getString')
             ->willReturnOnConsecutiveCalls(
-                'debug',
-                'info',
-                'error'
+                new \Symfony\Component\String\UnicodeString('debug'),
+                new \Symfony\Component\String\UnicodeString('info'),
+                new \Symfony\Component\String\UnicodeString('error')
             );
 
         $result1 = $this->facade->getLogLevel();
@@ -159,7 +159,7 @@ class ModuleSettingFacadeTest extends TestCase
                 }),
                 'oxsheartbeat'
             )
-            ->willReturn('info');
+            ->willReturn(new \Symfony\Component\String\UnicodeString('info'));
 
         $this->facade->getLogLevel();
     }
