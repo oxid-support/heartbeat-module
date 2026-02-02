@@ -17,6 +17,14 @@ use OxidSupport\Heartbeat\Module\Module;
 
 final class ModuleEvents
 {
+    /**
+     * Called on module activation.
+     * Generates a setup token only if:
+     * - Token doesn't exist yet, AND
+     * - Password is not yet set (still placeholder)
+     *
+     * This prevents generating a new token when reactivating after successful setup.
+     */
     public static function onActivate(): void
     {
         $container = ContainerFactory::getInstance()->getContainer();

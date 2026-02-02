@@ -71,8 +71,8 @@ class DiagnosticsProvider implements DiagnosticsProviderInterface
 
         $aResults['aInfo'] = $oSysReq->getSystemInfo();
         $aResults['aCollations'] = $oSysReq->checkCollation();
-        
-        
+
+
         $aResults['aPhpConfigparams'] = $oDiagnostics->getPhpSelection();
 
         $aResults['sPhpDecoder'] = $oDiagnostics->getPhpDecoder();

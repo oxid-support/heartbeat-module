@@ -205,7 +205,7 @@ class ShopRequestRecorderTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('info')
-            ->with('request.start', $this->callback(function($record) use ($originalRecord) {
+            ->with('request.start', $this->callback(function ($record) use ($originalRecord) {
                 return $record === $originalRecord;
             }));
 

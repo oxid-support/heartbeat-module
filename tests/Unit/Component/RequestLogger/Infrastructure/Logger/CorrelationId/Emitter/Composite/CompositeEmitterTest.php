@@ -50,7 +50,7 @@ class CompositeEmitterTest extends TestCase
         $emitter1->expects($this->once())
             ->method('emit')
             ->with('test-id')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'emitter1';
             });
 
@@ -58,7 +58,7 @@ class CompositeEmitterTest extends TestCase
         $emitter2->expects($this->once())
             ->method('emit')
             ->with('test-id')
-            ->willReturnCallback(function() use (&$callOrder) {
+            ->willReturnCallback(function () use (&$callOrder) {
                 $callOrder[] = 'emitter2';
             });
 
@@ -101,7 +101,7 @@ class CompositeEmitterTest extends TestCase
 
     public function testEmitWithGenerator(): void
     {
-        $generator = function() {
+        $generator = function () {
             $emitter1 = $this->createMock(EmitterInterface::class);
             $emitter1->expects($this->once())->method('emit')->with('gen-id');
             yield $emitter1;

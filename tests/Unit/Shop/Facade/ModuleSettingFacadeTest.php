@@ -154,7 +154,7 @@ class ModuleSettingFacadeTest extends TestCase
             ->expects($this->once())
             ->method('getString')
             ->with(
-                $this->callback(function($arg) {
+                $this->callback(function ($arg) {
                     return strpos($arg, 'oxsheartbeat_') === 0;
                 }),
                 'oxsheartbeat'
@@ -170,7 +170,7 @@ class ModuleSettingFacadeTest extends TestCase
             ->expects($this->once())
             ->method('getCollection')
             ->with(
-                $this->callback(function($arg) {
+                $this->callback(function ($arg) {
                     return strpos($arg, 'oxsheartbeat_') === 0;
                 }),
                 'oxsheartbeat'

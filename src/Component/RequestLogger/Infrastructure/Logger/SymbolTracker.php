@@ -42,9 +42,9 @@ final class SymbolTracker
      */
     public static function report(bool $strict = false): array
     {
-        $classesNew    = array_values(array_diff(get_declared_classes(),    self::$classesBefore));
+        $classesNew    = array_values(array_diff(get_declared_classes(), self::$classesBefore));
         $interfacesNew = array_values(array_diff(get_declared_interfaces(), self::$interfacesBefore));
-        $traitsNew     = array_values(array_diff(get_declared_traits(),     self::$traitsBefore));
+        $traitsNew     = array_values(array_diff(get_declared_traits(), self::$traitsBefore));
 
         // Concatenate sequentially – order remains as declared
         $symbols = array_merge($classesNew, $interfacesNew, $traitsNew);
