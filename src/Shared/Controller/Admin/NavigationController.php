@@ -23,7 +23,6 @@ use OxidSupport\Heartbeat\Module\Module;
 class NavigationController extends NavigationController_parent
 {
     private const SETTING_REQUESTLOGGER_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
-    private const SETTING_REMOTE_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
     private const SETTING_LOGSENDER_ACTIVE = Module::SETTING_LOGSENDER_ACTIVE;
     private const SETTING_DIAGNOSTICSPROVIDER_ACTIVE = Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE;
 
@@ -55,8 +54,8 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             ),
-            'heartbeat_remote_setup' => $this->isApiUserSetupComplete() && $moduleSettingService->getBoolean(
-                self::SETTING_REMOTE_ACTIVE,
+            'heartbeat_requestlogger_setup' => $this->isApiUserSetupComplete() && $moduleSettingService->getBoolean(
+                self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             ),
             'heartbeat_logsender_manage' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),

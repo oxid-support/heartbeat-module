@@ -1,0 +1,41 @@
+{% extends "@oxsheartbeat/admin/heartbeat_base.html.twig" %}
+{% import "@oxsheartbeat/admin/heartbeat_macros.html.twig" as lf %}
+
+{% block title %}Request Logger Remote - Setup{% endblock %}
+
+{% block body %}
+{% set isActive = oView.isComponentActive() %}
+{% set apiUserSetupComplete = oView.isApiUserSetupComplete() %}
+{% set configAccessActivated = oView.isConfigAccessActivated() %}
+{% set canToggle = oView.canToggle() %}
+
+{{ lf.page_header(
+    "OXSHEARTBEAT_LF_REMOTE_TITLE",
+    oView.getStatusClass(),
+    oView.getStatusTextKey(),
+    "OXSHEARTBEAT_LF_REMOTE_DESC"
+) }}
+
+{{ lf.toggle_section("heartbeat_requestlogger_setup", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+
+{% if not apiUserSetupComplete %}
+    <div class="warning-notice">
+        <h3>&#9888; {{ translate({ ident: "OXSHEARTBEAT_REMOTE_WARNING_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSHEARTBEAT_REMOTE_WARNING_TEXT" }) }}</p>
+        <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=heartbeat_apiuser_setup';">
+            {{ translate({ ident: "OXSHEARTBEAT_REMOTE_GOTO_APIUSER" }) }}
+        </button>
+    </div>
+{% elseif not configAccessActivated %}
+    <div class="prerequisite-notice">
+        <h3>&#9888; {{ translate({ ident: "OXSHEARTBEAT_REMOTE_CONFIG_ACCESS_REQUIRED_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSHEARTBEAT_REMOTE_CONFIG_ACCESS_REQUIRED_TEXT" }) }}</p>
+        <p style="margin-top: 10px;"><code>./vendor/bin/oe-console oe:module:activate oe_graphql_configuration_access</code></p>
+    </div>
+{% elseif isActive %}
+    <div class="ready-notice">
+        <h3>&#10004; {{ translate({ ident: "OXSHEARTBEAT_REMOTE_READY_TITLE" }) }}</h3>
+        <p>{{ translate({ ident: "OXSHEARTBEAT_REMOTE_READY_TEXT" }) }}</p>
+    </div>
+{% endif %}
+{% endblock %}

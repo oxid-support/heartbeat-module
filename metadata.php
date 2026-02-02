@@ -20,14 +20,14 @@ Includes GraphQL API for remote configuration and activation.',
     'extend' => [
         ShopControl::class => \OxidSupport\Heartbeat\Shop\Extend\Core\ShopControl::class,
         \OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration::class =>
-            \OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\Admin\ModuleConfigController::class,
+            \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\ModuleConfigController::class,
         \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class =>
             \OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController::class,
     ],
     'controllers' => [
     ],
     'events' => [
-        'onActivate' => \OxidSupport\Heartbeat\Component\RequestLoggerRemote\Core\ModuleEvents::class . '::onActivate',
+        'onActivate' => \OxidSupport\Heartbeat\Component\RequestLogger\Core\ModuleEvents::class . '::onActivate',
     ],
     'settings' => [
         // Request Logger component settings

@@ -37,20 +37,17 @@ use PHPUnit\Framework\TestCase;
 final class NavigationControllerTest extends TestCase
 {
     private const SETTING_REQUESTLOGGER_ACTIVE = Module::SETTING_REQUESTLOGGER_ACTIVE;
-    private const SETTING_REMOTE_ACTIVE = Module::SETTING_REMOTE_ACTIVE;
 
     #[DataProvider('componentStatusDataProvider')]
     public function testGetHeartbeatComponentStatusReturnsCorrectValues(
         bool $apiUserSetupComplete,
-        bool $requestLoggerActive,
-        bool $remoteActive
+        bool $requestLoggerActive
     ): void {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
             ->willReturnMap([
                 [self::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, $requestLoggerActive],
-                [self::SETTING_REMOTE_ACTIVE, Module::ID, $remoteActive],
             ]);
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
@@ -69,24 +66,20 @@ final class NavigationControllerTest extends TestCase
             $requestLoggerActive,
             $status['heartbeat_requestlogger_settings']
         );
-        // heartbeat_remote_setup requires both apiUserSetupComplete AND remoteActive
+        // heartbeat_requestlogger_setup requires both apiUserSetupComplete AND requestLoggerActive
         $this->assertSame(
-            $apiUserSetupComplete && $remoteActive,
-            $status['heartbeat_remote_setup']
+            $apiUserSetupComplete && $requestLoggerActive,
+            $status['heartbeat_requestlogger_setup']
         );
     }
 
     public static function componentStatusDataProvider(): array
     {
         return [
-            'all active' => [true, true, true],
-            'all inactive' => [false, false, false],
-            'only api user complete' => [true, false, false],
-            'only request logger active' => [false, true, false],
-            'only remote active' => [false, false, true],
-            'api user and request logger' => [true, true, false],
-            'api user and remote' => [true, false, true],
-            'request logger and remote' => [false, true, true],
+            'all active' => [true, true],
+            'all inactive' => [false, false],
+            'only api user complete' => [true, false],
+            'only request logger active' => [false, true],
         ];
     }
 
@@ -97,7 +90,6 @@ final class NavigationControllerTest extends TestCase
             ->method('getBoolean')
             ->willReturnMap([
                 [self::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, true],
-                [self::SETTING_REMOTE_ACTIVE, Module::ID, false],
             ]);
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
@@ -118,7 +110,8 @@ final class NavigationControllerTest extends TestCase
         $this->assertArrayHasKey('lfComponentStatus', $viewData);
         $this->assertTrue($viewData['lfComponentStatus']['heartbeat_apiuser_setup']);
         $this->assertTrue($viewData['lfComponentStatus']['heartbeat_requestlogger_settings']);
-        $this->assertFalse($viewData['lfComponentStatus']['heartbeat_remote_setup']);
+        // Now both use the same setting, so if requestlogger is active AND api user is setup, setup is also active
+        $this->assertTrue($viewData['lfComponentStatus']['heartbeat_requestlogger_setup']);
     }
 
     public function testApiUserStatusReturnsFalseOnException(): void

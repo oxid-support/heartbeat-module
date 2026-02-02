@@ -130,48 +130,42 @@ services:
         tags: ['graphql_permission_provider']
 
     # ==========================================================================
-    # Component: RequestLoggerRemote - Services
+    # Component: RequestLogger - Remote Services
     # ==========================================================================
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\SettingServiceInterface:
-        class: OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\SettingService
+    OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SettingServiceInterface:
+        class: OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SettingService
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\ActivationServiceInterface:
-        class: OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\ActivationService
-
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\SetupStatusServiceInterface:
-        class: OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\SetupStatusService
+    OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SetupStatusServiceInterface:
+        class: OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SetupStatusService
         public: true
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\RemoteComponentStatusServiceInterface:
-        class: OxidSupport\Heartbeat\Component\RequestLoggerRemote\Service\RemoteComponentStatusService
+    OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusServiceInterface:
+        class: OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusService
         public: true
 
-    # Component: RequestLoggerRemote - Controller/GraphQL
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\GraphQL\SettingController:
+    # Component: RequestLogger - Remote Controller/GraphQL
+    OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController:
         public: true
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\GraphQL\ActivationController:
-        public: true
-
-    # Component: RequestLoggerRemote - Controller/Admin
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\Admin\PasswordResetController:
+    # Component: RequestLogger - Remote Controller/Admin
+    OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\PasswordResetController:
         public: true
         autowire: false
         tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_remote_password_reset' }
+            - { name: 'oxid.view_controller', controller_key: 'heartbeat_requestlogger_password_reset' }
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Controller\Admin\SetupController:
+    OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\RemoteSetupController:
         public: true
         autowire: false
         tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_remote_setup' }
+            - { name: 'oxid.view_controller', controller_key: 'heartbeat_requestlogger_setup' }
 
-    # Component: RequestLoggerRemote - Framework (GraphQL)
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Framework\NamespaceMapper:
+    # Component: RequestLogger - Remote Framework (GraphQL)
+    OxidSupport\Heartbeat\Component\RequestLogger\Framework\NamespaceMapper:
         tags: ['graphql_namespace_mapper']
 
-    OxidSupport\Heartbeat\Component\RequestLoggerRemote\Framework\PermissionProvider:
+    OxidSupport\Heartbeat\Component\RequestLogger\Framework\PermissionProvider:
         public: true
         tags: ['graphql_permission_provider']
 
