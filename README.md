@@ -1,10 +1,16 @@
 # OXS :: Heartbeat
 
-**OXS Heartbeat** is an OXID eShop module that provides **comprehensive logging capabilities**.
-It includes detailed request logging, capturing what users do inside the shop, and a GraphQL API for remote configuration.
+**OXS Heartbeat** is an OXID eShop module that enables **remote monitoring and support** for OXID shops.
 
-The goal: create a **complete trace of what happened in the shop** so developers, support engineers, and analysts can reconstruct a user's actions.
-Logs are **minimally invasive**, stored locally on server, and produce **structured log entries** in Monolog's line format (timestamp, level, message, and JSON context), designed to be consumed by internal monitoring and analytics tools.
+It provides:
+- **Request Logger**: Detailed request logging with correlation ID tracking
+- **Log Sender**: Collect and provide log files to external monitoring systems
+- **Diagnostics Provider**: Shop diagnostic information (modules, PHP, server)
+- **API User**: Secure GraphQL API access for OXID Support
+
+All components are accessible via GraphQL API, allowing OXID Support to remotely analyze shop issues without direct server access.
+
+> **Full Control**: Remote access is **completely optional**. Each component can be enabled/disabled independently by the shop operator. No data is transmitted unless explicitly activated. Access can be revoked at any time.
 
 ---
 
@@ -69,13 +75,19 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 The Heartbeat module consists of several components:
 
-### 1. Request Logger
-Records controller actions, request parameters, and the classes loaded during the lifecycle of a request to local log files on server.
+### 1. API User
+Manages the API user for remote access to Heartbeat components. **Required** for all remote-enabled components (Request Logger, Log Sender, Diagnostics Provider). Set this up first.
 
-### 2. Request Logger Remote
-Provides a GraphQL API for remote configuration and management of the Request Logger settings.
+### 2. Request Logger
+Records controller actions, request parameters and the classes loaded during the lifecycle of a request to local log files. Includes GraphQL API for remote configuration.
 
-Both components can be enabled/disabled independently via the Admin interface.
+### 3. Log Sender
+Collects log files from various sources and provides them to external monitoring systems via GraphQL API.
+
+### 4. Diagnostics Provider
+Provides shop diagnostic information (modules, PHP config, server info) via GraphQL API.
+
+All components can be enabled/disabled independently via the Admin interface under **OXS :: Heartbeat**.
 
 ---
 
@@ -118,23 +130,37 @@ Both components can be enabled/disabled independently via the Admin interface.
     - All logs stored locally on server filesystem only
     - No data transmission to external services
 
-### Request Logger Remote Features
+### Remote Configuration (via GraphQL API)
 
-- **GraphQL API** for remote configuration
-- Query and modify all module settings remotely
+- Query and modify all Request Logger settings remotely
 - Activate/deactivate logging via API
 - Authenticate via JWT with dedicated API user
-- Secure token-based setup workflow
+- Requires API User setup
 
 ---
 
 ## Module Configuration
 
-The module provides configurable settings accessible via OXID Admin → Extensions → Modules → OXS :: Heartbeat.
+The module provides configurable settings accessible via OXID Admin under **OXS :: Heartbeat**.
+
+### API User Setup (Required First)
+
+Navigate to: **OXS :: Heartbeat → API User → Setup**
+
+The API User is required for all components that need remote access. Follow the setup workflow:
+
+1. **Migrations**: Ensure database migrations are executed
+2. **GraphQL Base**: Ensure GraphQL Base module is activated
+3. **Setup Token**: Copy the setup token and send it to OXID Support
+4. **Activation**: Wait for OXID Support to set the API password
+
+Once complete, the API User status shows "Active" and other components can be enabled.
 
 ### Request Logger Settings
 
 Navigate to: **OXS :: Heartbeat → Request Logger → Settings**
+
+**Note**: Requires API User setup to be complete.
 
 #### 1. Component Activation
 - Toggle to enable/disable the Request Logger component
@@ -161,13 +187,35 @@ Navigate to: **OXS :: Heartbeat → Request Logger → Settings**
 - List of parameter names (case-insensitive) whose values should be masked as `[redacted]` in logs
 - Only applies when "Redact all values" is disabled
 
-### Request Logger Remote Settings
+### Log Sender Settings
 
-Navigate to: **OXS :: Heartbeat → Request Logger Remote → Setup**
+Navigate to: **OXS :: Heartbeat → Log Sender → Manage**
 
-- **Component Activation**: Toggle to enable/disable the Remote component
-- **Setup Workflow**: Follow the guided setup to configure remote access
-- **API Reset**: Reset API credentials if needed
+**Note**: Requires API User setup to be complete.
+
+- **Component Activation**: Toggle to enable/disable the Log Sender
+- **Log Sources**: View all recognized log sources with availability status
+- **Source Toggle**: Enable/disable individual log sources for sending
+- **Static Paths**: Configure additional log files or directories to monitor
+
+Log sources can be registered via:
+- **DI Tag Provider**: Services implementing `LogPathProviderInterface` with tag `oxs.logsender.provider`
+- **Static Paths**: Manual configuration in the admin interface
+
+### Diagnostics Provider Settings
+
+Navigate to: **OXS :: Heartbeat → Diagnostics Provider → Manage**
+
+**Note**: Requires API User setup to be complete.
+
+- **Component Activation**: Toggle to enable/disable the Diagnostics Provider
+
+Provides the following information via GraphQL API:
+- Shop details (URL, edition, version, statistics)
+- Installed modules
+- System information
+- PHP configuration
+- Server information
 
 ---
 
@@ -240,21 +288,25 @@ Each `.log` file contains newline-separated log entries in Monolog's format. The
 
 ## GraphQL API
 
-The Request Logger Remote component provides a GraphQL API for remote management.
+The Heartbeat module provides GraphQL APIs for remote management of all components.
 
 ### Authentication
 
-1. During module activation, an API user is created
-2. Use the setup token from the Admin interface to set the API user password
-3. Authenticate via GraphQL to receive a JWT token
-4. Use the JWT token for subsequent API calls
-
+1. During module activation, an API user (`heartbeat-api@oxid-esales.com`) is created
+2. To enable remote access, use the setup token from the Admin interface to set the API user password (via OXID Support: support@oxid-esales.com)
+Note: The API user is only used for remote access of the Heartbeats data through the OXID Support and access can be revoked at any time.
 ### Available Operations
 
-- Query current settings
-- Modify logging settings
+**Request Logger:**
+- Query and modify logging settings
 - Activate/deactivate the Request Logger component
-- Reset API user password
+
+**Log Sender:**
+- Query available log sources
+- Read log file contents
+
+**Diagnostics Provider:**
+- Query shop diagnostics (modules, PHP config, server info)
 
 ---
 
