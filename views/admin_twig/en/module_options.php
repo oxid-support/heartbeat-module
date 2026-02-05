@@ -2,18 +2,8 @@
 
 declare(strict_types=1);
 
-use OxidSupport\Heartbeat\Module\Module as RequestLoggerModule;
-
 $aLang = [
     'charset' => 'UTF-8',
-    'SHOP_MODULE_GROUP_' . RequestLoggerModule::ID . '_main' => 'Settings',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level' => 'Log Level',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_standard' => 'Standard',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-level_detailed' => 'Detailed',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_redact-all-values' => 'Redact all values',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_redact' => 'Redact',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-frontend' => 'Log Frontend Requests',
-    'SHOP_MODULE_' . RequestLoggerModule::ID . '_log-admin' => 'Log Admin Requests',
 
     // Heartbeat Navigation
     'mxheartbeat' => 'OXS :: Heartbeat',
@@ -105,6 +95,12 @@ $aLang = [
     'OXSHEARTBEAT_REMOTE_CONFIG_ACCESS_REQUIRED_TEXT' => 'This component requires the GraphQL Configuration Access module. Please activate it:',
     'OXSHEARTBEAT_REMOTE_READY_TITLE' => 'Remote Access Activated',
     'OXSHEARTBEAT_REMOTE_READY_TEXT' => 'OXID Support can now access the Request Logger settings.',
+
+    // Request Logger - API User Warning
+    'OXSHEARTBEAT_REQUESTLOGGER_STATUS_WARNING' => 'Setup Required',
+    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TITLE' => 'API User Required',
+    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TEXT' => 'This component requires a configured API User. Please set up the API User first.',
+    'OXSHEARTBEAT_REQUESTLOGGER_GOTO_APIUSER' => 'Go to API User Setup',
 
     // ==========================================================================
     // Log Sender Component

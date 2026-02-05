@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Controller\Admin;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\ComponentControllerInterface;
@@ -71,7 +72,7 @@ final class SettingsControllerTest extends TestCase
             ->method('saveBoolean')
             ->with(self::SETTING_COMPONENT_ACTIVE, false, Module::ID);
 
-        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, true);
         $controller->toggleComponent();
     }
 
@@ -89,7 +90,18 @@ final class SettingsControllerTest extends TestCase
             ->method('saveBoolean')
             ->with(self::SETTING_COMPONENT_ACTIVE, true, Module::ID);
 
-        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, true);
+        $controller->toggleComponent();
+    }
+
+    public function testToggleComponentDoesNothingWhenApiUserNotSetup(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService
+            ->expects($this->never())
+            ->method('saveBoolean');
+
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, false);
         $controller->toggleComponent();
     }
 
@@ -127,12 +139,20 @@ final class SettingsControllerTest extends TestCase
         $this->assertSame(['password', 'secret'], $settings['redactFields']);
     }
 
-    public function testCanToggleAlwaysReturnsTrue(): void
+    public function testCanToggleReturnsTrueWhenApiUserSetupComplete(): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, true);
 
         $this->assertTrue($controller->canToggle());
+    }
+
+    public function testCanToggleReturnsFalseWhenApiUserNotSetup(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, false);
+
+        $this->assertFalse($controller->canToggle());
     }
 
     public function testImplementsTogglableComponentInterface(): void
@@ -150,7 +170,7 @@ final class SettingsControllerTest extends TestCase
     }
 
     #[DataProvider('statusClassDataProvider')]
-    public function testGetStatusClassReturnsCorrectValue(bool $isActive, string $expectedClass): void
+    public function testGetStatusClassReturnsCorrectValue(bool $isActive, bool $apiUserSetup, string $expectedClass): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -158,7 +178,7 @@ final class SettingsControllerTest extends TestCase
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn($isActive);
 
-        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, $apiUserSetup);
 
         $this->assertSame($expectedClass, $controller->getStatusClass());
     }
@@ -166,13 +186,14 @@ final class SettingsControllerTest extends TestCase
     public static function statusClassDataProvider(): array
     {
         return [
-            'active returns active class' => [true, 'active'],
-            'inactive returns inactive class' => [false, 'inactive'],
+            'api user not setup returns warning' => [true, false, 'warning'],
+            'api user setup and active returns active class' => [true, true, 'active'],
+            'api user setup and inactive returns inactive class' => [false, true, 'inactive'],
         ];
     }
 
     #[DataProvider('statusTextKeyDataProvider')]
-    public function testGetStatusTextKeyReturnsCorrectValue(bool $isActive, string $expectedKey): void
+    public function testGetStatusTextKeyReturnsCorrectValue(bool $isActive, bool $apiUserSetup, string $expectedKey): void
     {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
@@ -180,7 +201,7 @@ final class SettingsControllerTest extends TestCase
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn($isActive);
 
-        $controller = $this->createControllerWithMockedService($moduleSettingService);
+        $controller = $this->createControllerWithMockedServices($moduleSettingService, $apiUserSetup);
 
         $this->assertSame($expectedKey, $controller->getStatusTextKey());
     }
@@ -188,22 +209,39 @@ final class SettingsControllerTest extends TestCase
     public static function statusTextKeyDataProvider(): array
     {
         return [
-            'active returns active key' => [true, 'OXSHEARTBEAT_LF_STATUS_ACTIVE'],
-            'inactive returns inactive key' => [false, 'OXSHEARTBEAT_LF_STATUS_INACTIVE'],
+            'api user not setup returns warning key' => [true, false, 'OXSHEARTBEAT_REQUESTLOGGER_STATUS_WARNING'],
+            'api user setup and active returns active key' => [true, true, 'OXSHEARTBEAT_LF_STATUS_ACTIVE'],
+            'api user setup and inactive returns inactive key' => [false, true, 'OXSHEARTBEAT_LF_STATUS_INACTIVE'],
         ];
     }
 
     private function createControllerWithMockedService(
         ModuleSettingServiceInterface $moduleSettingService
     ): SettingsController {
+        return $this->createControllerWithMockedServices($moduleSettingService, true);
+    }
+
+    private function createControllerWithMockedServices(
+        ModuleSettingServiceInterface $moduleSettingService,
+        bool $apiUserSetupComplete
+    ): SettingsController {
+        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
+        $apiUserStatusService
+            ->method('isSetupComplete')
+            ->willReturn($apiUserSetupComplete);
+
         $controller = $this->getMockBuilder(SettingsController::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getModuleSettingService'])
+            ->onlyMethods(['getModuleSettingService', 'getApiUserStatusService'])
             ->getMock();
 
         $controller
             ->method('getModuleSettingService')
             ->willReturn($moduleSettingService);
+
+        $controller
+            ->method('getApiUserStatusService')
+            ->willReturn($apiUserStatusService);
 
         return $controller;
     }

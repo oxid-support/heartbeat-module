@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin;
 
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\AbstractComponentController;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\TogglableComponentInterface;
@@ -22,12 +24,40 @@ class SettingsController extends AbstractComponentController implements Togglabl
 {
     protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_settings';
 
+    private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
+
     public function isComponentActive(): bool
     {
-        return $this->getModuleSettingService()->getBoolean(
-            Module::SETTING_REQUESTLOGGER_ACTIVE,
-            Module::ID
-        );
+        try {
+            return $this->getModuleSettingService()->getBoolean(
+                Module::SETTING_REQUESTLOGGER_ACTIVE,
+                Module::ID
+            );
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Custom status class: warning if API User not set up.
+     */
+    public function getStatusClass(): string
+    {
+        if (!$this->isApiUserSetupComplete()) {
+            return self::STATUS_CLASS_WARNING;
+        }
+        return parent::getStatusClass();
+    }
+
+    /**
+     * Custom status text: warning message if API User not set up.
+     */
+    public function getStatusTextKey(): string
+    {
+        if (!$this->isApiUserSetupComplete()) {
+            return 'OXSHEARTBEAT_REQUESTLOGGER_STATUS_WARNING';
+        }
+        return parent::getStatusTextKey();
     }
 
     public function toggleComponent(): void
@@ -45,8 +75,29 @@ class SettingsController extends AbstractComponentController implements Togglabl
 
     public function canToggle(): bool
     {
-        // Request Logger has no prerequisites
-        return true;
+        return $this->isApiUserSetupComplete();
+    }
+
+    /**
+     * Check if the API User setup is complete (migration done + password set).
+     */
+    public function isApiUserSetupComplete(): bool
+    {
+        try {
+            return $this->getApiUserStatusService()->isSetupComplete();
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
+    protected function getApiUserStatusService(): ApiUserStatusServiceInterface
+    {
+        if ($this->apiUserStatusService === null) {
+            $this->apiUserStatusService = ContainerFactory::getInstance()
+                ->getContainer()
+                ->get(ApiUserStatusServiceInterface::class);
+        }
+        return $this->apiUserStatusService;
     }
 
     /**

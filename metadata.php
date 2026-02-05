@@ -30,30 +30,36 @@ Includes GraphQL API for remote configuration and activation.',
         'onActivate' => \OxidSupport\Heartbeat\Component\RequestLogger\Core\ModuleEvents::class . '::onActivate',
     ],
     'settings' => [
-        // Request Logger component settings
+        // Request Logger component settings (hidden - managed via component UI)
         [
-            'group' => HeartbeatModule::ID . '_main',
-            'name' => HeartbeatModule::ID . '_requestlogger_log_level',
-            'type' => 'select',
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_requestlogger_active',
+            'type'  => 'bool',
+            'value' => false,
+        ],
+        [
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_requestlogger_log_level',
+            'type'  => 'select',
             'constraints' => 'standard|detailed',
             'value' => 'standard',
         ],
         [
-            'group' => HeartbeatModule::ID . '_main',
-            'name' => HeartbeatModule::ID . '_requestlogger_log_frontend',
-            'type' => 'bool',
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_requestlogger_log_frontend',
+            'type'  => 'bool',
             'value' => false,
         ],
         [
-            'group' => HeartbeatModule::ID . '_main',
-            'name' => HeartbeatModule::ID . '_requestlogger_log_admin',
-            'type' => 'bool',
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_requestlogger_log_admin',
+            'type'  => 'bool',
             'value' => false,
         ],
         [
-            'group' => HeartbeatModule::ID . '_main',
-            'name' => HeartbeatModule::ID . '_requestlogger_redact_fields',
-            'type' => 'arr',
+            'group' => '',
+            'name'  => HeartbeatModule::ID . '_requestlogger_redact_fields',
+            'type'  => 'arr',
             'value' => [
                 'pwd',
                 'lgn_pwd',
@@ -62,16 +68,10 @@ Includes GraphQL API for remote configuration and activation.',
             ],
         ],
         [
-            'group' => HeartbeatModule::ID . '_main',
-            'name' => HeartbeatModule::ID . '_requestlogger_redact_all_values',
-            'type' => 'bool',
-            'value' => true,
-        ],
-        [
             'group' => '',
-            'name'  => HeartbeatModule::ID . '_requestlogger_active',
+            'name'  => HeartbeatModule::ID . '_requestlogger_redact_all_values',
             'type'  => 'bool',
-            'value' => false,
+            'value' => true,
         ],
         // API User component settings
         [
