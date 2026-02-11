@@ -38,7 +38,8 @@ final class ApiUserStatusServiceTest extends TestCase
         $queryBuilder->expects($this->once())->method('select')->with('COUNT(*)')->willReturnSelf();
         $queryBuilder->expects($this->once())->method('from')->with(self::MIGRATION_TABLE)->willReturnSelf();
         $queryBuilder->expects($this->once())->method('where')->with('version = :version')->willReturnSelf();
-        $queryBuilder->expects($this->once())->method('setParameter')->with('version', self::EXPECTED_MIGRATION)->willReturnSelf();
+        $queryBuilder->expects($this->once())->method('setParameter')
+            ->with('version', self::EXPECTED_MIGRATION)->willReturnSelf();
         $queryBuilder->expects($this->once())->method('execute')->willReturn($result);
 
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
@@ -100,7 +101,8 @@ final class ApiUserStatusServiceTest extends TestCase
         $queryBuilder->expects($this->once())->method('select')->with('COUNT(*)')->willReturnSelf();
         $queryBuilder->expects($this->once())->method('from')->with('oxuser')->willReturnSelf();
         $queryBuilder->expects($this->once())->method('where')->with('OXUSERNAME = :email')->willReturnSelf();
-        $queryBuilder->expects($this->once())->method('setParameter')->with('email', Module::API_USER_EMAIL)->willReturnSelf();
+        $queryBuilder->expects($this->once())->method('setParameter')
+            ->with('email', Module::API_USER_EMAIL)->willReturnSelf();
         $queryBuilder->expects($this->once())->method('execute')->willReturn($result);
 
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
@@ -164,7 +166,8 @@ final class ApiUserStatusServiceTest extends TestCase
         $queryBuilder->expects($this->once())->method('select')->with('OXPASSWORD')->willReturnSelf();
         $queryBuilder->expects($this->once())->method('from')->with('oxuser')->willReturnSelf();
         $queryBuilder->expects($this->once())->method('where')->with('OXUSERNAME = :email')->willReturnSelf();
-        $queryBuilder->expects($this->once())->method('setParameter')->with('email', Module::API_USER_EMAIL)->willReturnSelf();
+        $queryBuilder->expects($this->once())->method('setParameter')
+            ->with('email', Module::API_USER_EMAIL)->willReturnSelf();
         $queryBuilder->expects($this->once())->method('execute')->willReturn($result);
 
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);

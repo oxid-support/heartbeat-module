@@ -170,8 +170,11 @@ final class SettingsControllerTest extends TestCase
     }
 
     #[DataProvider('statusClassDataProvider')]
-    public function testGetStatusClassReturnsCorrectValue(bool $isActive, bool $apiUserSetup, string $expectedClass): void
-    {
+    public function testGetStatusClassReturnsCorrectValue(
+        bool $isActive,
+        bool $apiUserSetup,
+        string $expectedClass
+    ): void {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')
@@ -193,8 +196,11 @@ final class SettingsControllerTest extends TestCase
     }
 
     #[DataProvider('statusTextKeyDataProvider')]
-    public function testGetStatusTextKeyReturnsCorrectValue(bool $isActive, bool $apiUserSetup, string $expectedKey): void
-    {
+    public function testGetStatusTextKeyReturnsCorrectValue(
+        bool $isActive,
+        bool $apiUserSetup,
+        string $expectedKey
+    ): void {
         $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
         $moduleSettingService
             ->method('getBoolean')

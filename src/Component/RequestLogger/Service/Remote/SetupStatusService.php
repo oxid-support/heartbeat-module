@@ -32,7 +32,7 @@ final class SetupStatusService implements SetupStatusServiceInterface
                 ->setParameter('version', self::EXPECTED_MIGRATION)
                 ->execute();
 
-            return (int) $result->fetchOne() > 0;
+            return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
         } catch (\Exception) {
             return false;
         }

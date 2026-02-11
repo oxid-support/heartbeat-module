@@ -96,6 +96,6 @@ class ManageController extends AbstractComponentController implements TogglableC
                 ->getContainer()
                 ->get(ApiUserStatusServiceInterface::class);
         }
-        return $this->apiUserStatusService;
+        return $this->apiUserStatusService; // @phpstan-ignore return.type
     }
 }

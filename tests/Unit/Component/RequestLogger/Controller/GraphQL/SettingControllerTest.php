@@ -180,7 +180,8 @@ final class SettingControllerTest extends TestCase
     ): SettingController {
         return new SettingController(
             settingService: $settingService ?? $this->createStub(SettingServiceInterface::class),
-            componentStatusService: $componentStatusService ?? $this->createStub(RemoteComponentStatusServiceInterface::class),
+            componentStatusService: $componentStatusService
+                ?? $this->createStub(RemoteComponentStatusServiceInterface::class),
         );
     }
 }

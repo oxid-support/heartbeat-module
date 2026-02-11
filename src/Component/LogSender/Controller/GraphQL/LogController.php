@@ -116,7 +116,7 @@ final class LogController
                 Module::SETTING_LOGSENDER_ENABLED_SOURCES,
                 Module::ID
             );
-            return is_array($sources) ? array_values($sources) : [];
+            return array_values($sources);
         } catch (\Throwable) {
             return [];
         }

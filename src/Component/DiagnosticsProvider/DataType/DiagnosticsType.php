@@ -44,6 +44,8 @@ final class DiagnosticsType
 
     /**
      * Convert the diagnostics array from getDiagnostics() to DiagnosticsType
+     *
+     * @param array<string, mixed> $diagnostics
      */
     public static function fromDiagnosticsArray(array $diagnostics): self
     {
@@ -65,7 +67,6 @@ final class DiagnosticsType
                     'aCollations' => 'Database Collations',
                     'aPhpConfigparams' => 'PHP Configuration',
                     'aServerInfo' => 'Server Information',
-                    default => $key,
                 };
 
                 $sections[] = DiagnosticsSectionType::fromArray($sectionName, $diagnostics[$key]);

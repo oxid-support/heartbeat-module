@@ -83,7 +83,7 @@ class ModuleConfigController extends ModuleConfiguration
                 ->getContainer()
                 ->get(ContextInterface::class);
         }
-        return $this->context;
+        return $this->context; // @phpstan-ignore return.type
     }
 
     private function getShopConfigurationDao(): ShopConfigurationDaoInterface
@@ -93,7 +93,7 @@ class ModuleConfigController extends ModuleConfiguration
                 ->getContainer()
                 ->get(ShopConfigurationDaoInterface::class);
         }
-        return $this->shopConfigurationDao;
+        return $this->shopConfigurationDao; // @phpstan-ignore return.type
     }
 
     private function getSetupStatusService(): SetupStatusServiceInterface
@@ -103,6 +103,6 @@ class ModuleConfigController extends ModuleConfiguration
                 ->getContainer()
                 ->get(SetupStatusServiceInterface::class);
         }
-        return $this->setupStatusService;
+        return $this->setupStatusService; // @phpstan-ignore return.type
     }
 }

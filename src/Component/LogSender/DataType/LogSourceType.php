@@ -21,7 +21,7 @@ final class LogSourceType
         private readonly string $description,
         private readonly string $origin,
         private readonly bool $available,
-        /** @var LogPathType[] */
+        /** @var LogPath[] */
         private readonly array $paths,
     ) {
     }

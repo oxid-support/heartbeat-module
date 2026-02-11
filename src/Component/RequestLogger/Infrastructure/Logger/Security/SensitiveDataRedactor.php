@@ -15,6 +15,7 @@ class SensitiveDataRedactor implements SensitiveDataRedactorInterface
         $this->moduleSettingFacade = $moduleSettingFacade;
     }
 
+    /** @param array<string, mixed> $values @return array<string, mixed> */
     public function redact(array $values): array
     {
         // If redact all values is enabled, redact everything
@@ -26,6 +27,10 @@ class SensitiveDataRedactor implements SensitiveDataRedactorInterface
         return $this->redactBlocklistedKeys($values);
     }
 
+    /**
+     * @param array<string, mixed> $values
+     * @return array<string, mixed>
+     */
     private function redactAllValues(array $values): array
     {
         // Parameters that should not be redacted (controller and function names)
@@ -47,6 +52,10 @@ class SensitiveDataRedactor implements SensitiveDataRedactorInterface
         return $out;
     }
 
+    /**
+     * @param array<string, mixed> $values
+     * @return array<string, mixed>
+     */
     private function redactBlocklistedKeys(array $values): array
     {
         $blocklistLower = array_map(

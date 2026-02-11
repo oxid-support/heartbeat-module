@@ -8,6 +8,7 @@ interface ModuleSettingFacadeInterface
 {
     public function getLogLevel(): string;
 
+    /** @return array<int|string, string> */
     public function getRedactItems(): array;
 
     public function isRedactAllValuesEnabled(): bool;

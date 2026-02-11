@@ -367,7 +367,12 @@ final class RemoteSetupControllerTest extends TestCase
     ): RemoteSetupController {
         $controller = $this->getMockBuilder(RemoteSetupController::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getModuleSettingService', 'getContext', 'getShopConfigurationDao', 'getApiUserStatusService'])
+            ->onlyMethods([
+                'getModuleSettingService',
+                'getContext',
+                'getShopConfigurationDao',
+                'getApiUserStatusService',
+            ])
             ->getMock();
 
         $controller

@@ -48,7 +48,7 @@ final class ModuleEvents
         $moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
     }
 
-    private static function isPasswordAlreadySet($container): bool
+    private static function isPasswordAlreadySet(\Psr\Container\ContainerInterface $container): bool
     {
         try {
             $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);

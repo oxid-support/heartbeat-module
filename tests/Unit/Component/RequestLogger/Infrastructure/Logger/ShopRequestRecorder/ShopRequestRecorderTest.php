@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder;
 
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorder;
+// phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

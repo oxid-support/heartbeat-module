@@ -49,7 +49,7 @@ final class PasswordResetController extends AdminController
                 ->getContainer()
                 ->get(ApiUserServiceInterface::class);
         }
-        return $this->apiUserService;
+        return $this->apiUserService; // @phpstan-ignore return.type
     }
 
     private function getModuleSettingService(): ModuleSettingServiceInterface
@@ -59,7 +59,7 @@ final class PasswordResetController extends AdminController
                 ->getContainer()
                 ->get(ModuleSettingServiceInterface::class);
         }
-        return $this->moduleSettingService;
+        return $this->moduleSettingService; // @phpstan-ignore return.type
     }
 
     private function getTokenGenerator(): TokenGeneratorInterface
@@ -69,6 +69,6 @@ final class PasswordResetController extends AdminController
                 ->getContainer()
                 ->get(TokenGeneratorInterface::class);
         }
-        return $this->tokenGenerator;
+        return $this->tokenGenerator; // @phpstan-ignore return.type
     }
 }

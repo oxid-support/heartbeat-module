@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+// phpcs:ignore Generic.Files.LineLength.TooLong
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Decorator;
 
+// phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Composite\CompositeEmitter;
+// phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\Decorator\OnceEmitterDecorator;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\CorrelationId\Emitter\EmitterInterface;
 use PHPUnit\Framework\TestCase;

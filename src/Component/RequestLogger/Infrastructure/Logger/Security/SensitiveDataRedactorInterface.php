@@ -6,5 +6,9 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Se
 
 interface SensitiveDataRedactorInterface
 {
+    /**
+     * @param array<string, mixed> $values
+     * @return array<string, mixed>
+     */
     public function redact(array $values): array;
 }

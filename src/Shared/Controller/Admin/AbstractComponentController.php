@@ -77,7 +77,7 @@ abstract class AbstractComponentController extends AdminController implements Co
                 ->getContainer()
                 ->get(ContextInterface::class);
         }
-        return $this->context;
+        return $this->context; // @phpstan-ignore return.type
     }
 
     protected function getShopConfigurationDao(): ShopConfigurationDaoInterface
@@ -87,7 +87,7 @@ abstract class AbstractComponentController extends AdminController implements Co
                 ->getContainer()
                 ->get(ShopConfigurationDaoInterface::class);
         }
-        return $this->shopConfigurationDao;
+        return $this->shopConfigurationDao; // @phpstan-ignore return.type
     }
 
     protected function getModuleSettingService(): ModuleSettingServiceInterface
@@ -97,6 +97,6 @@ abstract class AbstractComponentController extends AdminController implements Co
                 ->getContainer()
                 ->get(ModuleSettingServiceInterface::class);
         }
-        return $this->moduleSettingService;
+        return $this->moduleSettingService; // @phpstan-ignore return.type
     }
 }

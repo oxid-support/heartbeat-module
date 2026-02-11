@@ -6,9 +6,12 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Sh
 
 interface ShopRequestRecorderInterface
 {
+    /** @param array<string, mixed> $record */
     public function logStart(array $record): void;
 
+    /** @param array<string, mixed> $record */
     public function logSymbols(array $record): void;
 
+    /** @param array<string, mixed> $record */
     public function logFinish(array $record): void;
 }

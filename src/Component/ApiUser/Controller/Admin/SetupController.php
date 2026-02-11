@@ -150,7 +150,7 @@ class SetupController extends AbstractComponentController
                 ->getContainer()
                 ->get(ApiUserServiceInterface::class);
         }
-        return $this->apiUserService;
+        return $this->apiUserService; // @phpstan-ignore return.type
     }
 
     protected function getApiUserStatusService(): ApiUserStatusServiceInterface
@@ -160,6 +160,6 @@ class SetupController extends AbstractComponentController
                 ->getContainer()
                 ->get(ApiUserStatusServiceInterface::class);
         }
-        return $this->apiUserStatusService;
+        return $this->apiUserStatusService; // @phpstan-ignore return.type
     }
 }
