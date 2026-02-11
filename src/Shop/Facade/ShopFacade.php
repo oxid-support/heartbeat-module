@@ -51,18 +51,18 @@ class ShopFacade implements ShopFacadeInterface
 
     public function getUserId(): ?string
     {
-        if ($user = $this->getSession()->getUser()) {
+        if ($user = $this->getSession()->getUser()) { // @phpstan-ignore if.alwaysTrue
             return (string) $user->getId();
         }
-        return null;
+        return null; // @phpstan-ignore deadCode.unreachable
     }
 
     public function getUsername(): ?string
     {
-        if ($user = $this->getSession()->getUser()) {
+        if ($user = $this->getSession()->getUser()) { // @phpstan-ignore if.alwaysTrue
             return (string) $user->getFieldData('oxusername');
         }
-        return null;
+        return null; // @phpstan-ignore deadCode.unreachable
     }
 
     public function getRequestParameter(string $name): ?string

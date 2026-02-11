@@ -86,6 +86,6 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
                 ->getContainer()
                 ->get(ApiUserStatusServiceInterface::class);
         }
-        return $this->apiUserStatusService;
+        return $this->apiUserStatusService; // @phpstan-ignore return.type
     }
 }

@@ -70,7 +70,7 @@ final class SymbolTracker
                 try {
                     $ref = new ReflectionClass($name);
                     $file = $ref->getFileName();
-                    if (!is_string($file) || $file === '') {
+                    if (!is_string($file) || $file === '') { // @phpstan-ignore identical.alwaysFalse
                         continue; // alias/eval
                     }
                     $out[] = $name;

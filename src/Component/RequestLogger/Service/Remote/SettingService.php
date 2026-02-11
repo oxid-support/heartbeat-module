@@ -85,7 +85,9 @@ final readonly class SettingService implements SettingServiceInterface
         }
 
         if (!array_is_list($items)) {
-            throw new InvalidCollectionException('Invalid JSON array provided for redact items - must be a list, not an object');
+            throw new InvalidCollectionException(
+                'Invalid JSON array provided for redact items - must be a list, not an object'
+            );
         }
 
         return $this->moduleSettingService

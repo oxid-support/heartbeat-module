@@ -15,16 +15,19 @@ final class ShopRequestRecorder implements ShopRequestRecorderInterface
         $this->logger = $logger;
     }
 
+    /** @param array<string, mixed> $record */
     public function logStart(array $record): void
     {
         $this->logger->info('request.start', $record);
     }
 
+    /** @param array<string, mixed> $record */
     public function logSymbols(array $record): void
     {
         $this->logger->debug('request.symbols', $record);
     }
 
+    /** @param array<string, mixed> $record */
     public function logFinish(array $record): void
     {
         $this->logger->info('request.finish', $record);

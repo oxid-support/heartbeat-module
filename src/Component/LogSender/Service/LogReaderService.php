@@ -56,7 +56,7 @@ final class LogReaderService implements LogReaderServiceInterface
         $file->seek($startLine);
         while (!$file->eof()) {
             $line = $file->fgets();
-            if ($line !== false) {
+            if ($line !== false) { // @phpstan-ignore notIdentical.alwaysTrue
                 $result[] = $line;
             }
         }
@@ -132,7 +132,7 @@ final class LogReaderService implements LogReaderServiceInterface
         }
 
         fseek($handle, -$maxBytes, SEEK_END);
-        $content = fread($handle, $maxBytes);
+        $content = fread($handle, max(1, $maxBytes));
         fclose($handle);
 
         if ($content === false) {

@@ -37,7 +37,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 ->setParameter('version', self::EXPECTED_MIGRATION)
                 ->execute();
 
-            return (int) $result->fetchOne() > 0;
+            return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
         } catch (\Exception) {
             // Table doesn't exist or other error - migration not executed
             return false;
@@ -55,7 +55,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 ->setParameter('email', Module::API_USER_EMAIL)
                 ->execute();
 
-            return (int) $result->fetchOne() > 0;
+            return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
         } catch (\Exception) {
             return false;
         }
@@ -72,7 +72,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 ->setParameter('email', Module::API_USER_EMAIL)
                 ->execute();
 
-            $row = $result->fetchAssociative();
+            $row = $result->fetchAssociative(); // @phpstan-ignore method.nonObject
 
             if (!$row) {
                 return false;

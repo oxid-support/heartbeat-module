@@ -48,7 +48,8 @@ class ShopControlTest extends TestCase
 
     public function testRedactUrlQueryParams_WithQueryParams_RedactsAllValues(): void
     {
-        $url = 'http://localhost.local/admin/index.php?editlanguage=0&force_admin_sid=dc9440e1fcd2cf8f3a7a623ae65c505f&stoken=FF4399CF';
+        $url = 'http://localhost.local/admin/index.php'
+            . '?editlanguage=0&force_admin_sid=dc9440e1fcd2cf8f3a7a623ae65c505f&stoken=FF4399CF';
         $result = $this->invokeRedactUrlQueryParams($url);
 
         $this->assertStringContainsString('editlanguage=[redacted]', $result);
@@ -144,7 +145,8 @@ class ShopControlTest extends TestCase
 
     public function testRedactUrlQueryParams_WithClAndFncAndSensitiveParams(): void
     {
-        $url = 'http://localhost.local/admin/index.php?editlanguage=0&cl=navigation&fnc=logout&force_admin_sid=dc9440e1&stoken=FF4399CF';
+        $url = 'http://localhost.local/admin/index.php'
+            . '?editlanguage=0&cl=navigation&fnc=logout&force_admin_sid=dc9440e1&stoken=FF4399CF';
         $result = $this->invokeRedactUrlQueryParams($url);
 
         // cl and fnc should not be redacted

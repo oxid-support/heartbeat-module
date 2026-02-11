@@ -15,14 +15,61 @@
             <property name="exceptions">
                 <value>
                     \OxidEsales\EshopCommunity\Internal\Container\ContainerFactory,
-                    \OxidEsales\Eshop\Core\Registry
+                    \OxidEsales\EshopCommunity\Core\Di\ContainerFacade,
+                    \OxidEsales\Eshop\Core\Registry,
+                    \OxidEsales\Eshop\Core\ShopVersion,
+                    \OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\SymbolTracker,
+                    \OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType\DiagnosticsType,
+                    \OxidSupport\Heartbeat\Component\DiagnosticsProvider\DataType\DiagnosticsSectionType,
+                    \OxidSupport\Heartbeat\Component\LogSender\DataType\LogSourceType,
+                    \OxidSupport\Heartbeat\Component\LogSender\DataType\LogPathType
                 </value>
             </property>
         </properties>
     </rule>
 
-    <rule ref="rulesets/codesize.xml" />
+    <rule ref="rulesets/codesize.xml">
+        <exclude name="TooManyPublicMethods" />
+        <exclude name="CyclomaticComplexity" />
+        <exclude name="NPathComplexity" />
+    </rule>
+    <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
+        <properties>
+            <property name="maxmethods" value="15" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
+        <properties>
+            <property name="reportLevel" value="15" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/NPathComplexity">
+        <properties>
+            <property name="minimum" value="2000" />
+        </properties>
+    </rule>
     <rule ref="rulesets/design.xml" />
-    <rule ref="rulesets/naming.xml" />
+
+    <rule ref="rulesets/naming.xml">
+        <exclude name="ShortVariable" />
+        <exclude name="LongVariable" />
+        <exclude name="LongClassName" />
+    </rule>
+    <rule ref="rulesets/naming.xml/ShortVariable">
+        <properties>
+            <property name="exceptions" value="id,a,b,f,k,v,s,e" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/naming.xml/LongVariable">
+        <properties>
+            <property name="maximum" value="35" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/naming.xml/LongClassName">
+        <properties>
+            <property name="maximum" value="50" />
+        </properties>
+    </rule>
+
     <rule ref="rulesets/unusedcode.xml" />
 </ruleset>

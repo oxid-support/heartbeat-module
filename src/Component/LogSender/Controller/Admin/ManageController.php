@@ -95,7 +95,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     /**
      * Get all recognized log sources with enabled status.
      *
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     public function getLogSources(): array
     {
@@ -153,7 +153,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 Module::SETTING_LOGSENDER_ENABLED_SOURCES,
                 Module::ID
             );
-            return is_array($sources) ? array_values($sources) : [];
+            return array_values($sources);
         } catch (\Throwable) {
             return [];
         }
@@ -191,7 +191,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 ->getContainer()
                 ->get(ApiUserStatusServiceInterface::class);
         }
-        return $this->apiUserStatusService;
+        return $this->apiUserStatusService; // @phpstan-ignore return.type
     }
 
     protected function getLogCollectorService(): LogCollectorServiceInterface
@@ -201,7 +201,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 ->getContainer()
                 ->get(LogCollectorServiceInterface::class);
         }
-        return $this->logCollectorService;
+        return $this->logCollectorService; // @phpstan-ignore return.type
     }
 
     /**

@@ -30,4 +30,29 @@
     <rule ref="PSR2.Classes.PropertyDeclaration">
         <exclude-pattern>./</exclude-pattern>
     </rule>
+
+    <!-- ignore camelCase method naming for test methods (snake_case used for readability) -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>./</exclude-pattern>
+    </rule>
+
+    <!-- ignore side effects rule for test files with namespace function overrides -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>./</exclude-pattern>
+    </rule>
+
+    <!-- ignore one-class-per-file for test files (mock parent classes) -->
+    <rule ref="PSR1.Classes.ClassDeclaration">
+        <exclude-pattern>./</exclude-pattern>
+    </rule>
+
+    <!-- ignore file header docblock placement for tests with namespace overrides -->
+    <rule ref="PSR12.Files.FileHeader">
+        <exclude-pattern>./</exclude-pattern>
+    </rule>
+
+    <!-- ignore PascalCase class naming for test mock classes (e.g. *_parent stubs) -->
+    <rule ref="Squiz.Classes.ValidClassName">
+        <exclude-pattern>./</exclude-pattern>
+    </rule>
 </ruleset>

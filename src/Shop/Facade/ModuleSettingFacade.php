@@ -24,8 +24,10 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
         );
     }
 
+    /** @return array<int|string, string> */
     public function getRedactItems(): array
     {
+        /** @var array<int|string, string> */
         return $this->moduleSettingService->getCollection(
             Module::SETTING_REQUESTLOGGER_REDACT_FIELDS,
             Module::ID

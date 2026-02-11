@@ -97,11 +97,13 @@ class SettingsController extends AbstractComponentController implements Togglabl
                 ->getContainer()
                 ->get(ApiUserStatusServiceInterface::class);
         }
-        return $this->apiUserStatusService;
+        return $this->apiUserStatusService; // @phpstan-ignore return.type
     }
 
     /**
      * Get current settings for the template.
+     *
+     * @return array<string, mixed>
      */
     public function getSettings(): array
     {
@@ -113,8 +115,14 @@ class SettingsController extends AbstractComponentController implements Togglabl
             'logLevel' => (string) $moduleSettingService->getString(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, $moduleId),
             'logFrontend' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_LOG_FRONTEND, $moduleId),
             'logAdmin' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_LOG_ADMIN, $moduleId),
-            'redactAllValues' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES, $moduleId),
-            'redactFields' => $moduleSettingService->getCollection(Module::SETTING_REQUESTLOGGER_REDACT_FIELDS, $moduleId),
+            'redactAllValues' => $moduleSettingService->getBoolean(
+                Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES,
+                $moduleId
+            ),
+            'redactFields' => $moduleSettingService->getCollection(
+                Module::SETTING_REQUESTLOGGER_REDACT_FIELDS,
+                $moduleId
+            ),
         ];
     }
 

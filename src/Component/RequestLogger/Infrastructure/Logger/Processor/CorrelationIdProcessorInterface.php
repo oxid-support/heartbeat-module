@@ -6,5 +6,9 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Pr
 
 interface CorrelationIdProcessorInterface
 {
+    /**
+     * @param array<string, mixed> $record
+     * @return array<string, mixed>
+     */
     public function __invoke(array $record): array;
 }

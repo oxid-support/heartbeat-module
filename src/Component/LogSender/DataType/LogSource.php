@@ -75,7 +75,9 @@ final class LogSource
     /**
      * Converts the LogSource to an array representation.
      *
-     * @return array{id: string, name: string, description: string, origin: string, providerId: string|null, paths: array, available: bool}
+     * @return array{id: string, name: string, description: string,
+     *               origin: string, providerId: string|null,
+     *               paths: array<int, array<string, mixed>>, available: bool}
      */
     public function toArray(): array
     {

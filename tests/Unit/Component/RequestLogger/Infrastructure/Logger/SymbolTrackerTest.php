@@ -69,7 +69,8 @@ class SymbolTrackerTest extends TestCase
         SymbolTracker::enable();
 
         // Declare a new class dynamically
-        eval('namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger; class DynamicTestClass {}');
+        $ns = 'OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger';
+        eval("namespace $ns; class DynamicTestClass {}");
 
         $report = SymbolTracker::report();
 
@@ -84,7 +85,8 @@ class SymbolTrackerTest extends TestCase
         SymbolTracker::enable();
 
         // Simulate a class with _parent suffix
-        eval('namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger; class SomeClass_parent {}');
+        $ns = 'OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger';
+        eval("namespace $ns; class SomeClass_parent {}");
 
         $report = SymbolTracker::report();
 
@@ -111,7 +113,8 @@ class SymbolTrackerTest extends TestCase
         SymbolTracker::enable();
 
         // Evaled class (returns "eval()'d code" as filename)
-        eval('namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger; class EvaledClass {}');
+        $ns = 'OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger';
+        eval("namespace $ns; class EvaledClass {}");
 
         $reportNonStrict = SymbolTracker::report(false);
         $reportStrict = SymbolTracker::report(true);
@@ -136,7 +139,8 @@ class SymbolTrackerTest extends TestCase
     {
         SymbolTracker::enable();
 
-        eval('namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger; interface DynamicTestInterface {}');
+        $ns = 'OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger';
+        eval("namespace $ns; interface DynamicTestInterface {}");
 
         $report = SymbolTracker::report();
 
@@ -150,7 +154,8 @@ class SymbolTrackerTest extends TestCase
     {
         SymbolTracker::enable();
 
-        eval('namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger; trait DynamicTestTrait {}');
+        $ns = 'OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Infrastructure\Logger';
+        eval("namespace $ns; trait DynamicTestTrait {}");
 
         $report = SymbolTracker::report();
 

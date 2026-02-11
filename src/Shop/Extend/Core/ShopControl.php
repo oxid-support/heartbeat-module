@@ -7,6 +7,7 @@ namespace OxidSupport\Heartbeat\Shop\Extend\Core;
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface;
+// phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\SymbolTracker;
 use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacadeInterface;
@@ -14,9 +15,15 @@ use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
 
 class ShopControl extends CoreShopControl
 {
+    /**
+     * @param array<mixed>|null $parameters
+     * @param array<mixed>|null $viewsChain
+     */
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
+        /** @var ShopFacadeInterface $shopFacade */
         $shopFacade = ContainerFacade::get(ShopFacadeInterface::class);
+        /** @var ModuleSettingFacadeInterface $settingsFacade */
         $settingsFacade = ContainerFacade::get(ModuleSettingFacadeInterface::class);
 
         if (!$settingsFacade->isRequestLoggerComponentActive()) {
@@ -33,6 +40,7 @@ class ShopControl extends CoreShopControl
             return;
         }
 
+        /** @var ShopRequestRecorderInterface $recorder */
         $recorder = ContainerFacade::get(ShopRequestRecorderInterface::class);
 
         $this->logstart($recorder);
@@ -62,15 +70,18 @@ class ShopControl extends CoreShopControl
         ShopRequestRecorderInterface $recorder
     ): void {
 
+        /** @var ShopFacadeInterface $facade */
         $facade = ContainerFacade::get(ShopFacadeInterface::class);
+        /** @var SensitiveDataRedactorInterface $redactor */
         $redactor = ContainerFacade::get(SensitiveDataRedactorInterface::class);
+        /** @var ModuleSettingFacadeInterface $settingsFacade */
         $settingsFacade = ContainerFacade::get(ModuleSettingFacadeInterface::class);
 
         $referer   = $_SERVER['HTTP_REFERER'] ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 
-        $get  = $redactor->redact($_GET ?? []);
-        $post = $redactor->redact($_POST ?? []);
+        $get  = $redactor->redact($_GET);
+        $post = $redactor->redact($_POST);
 
         $redactAll = $settingsFacade->isRedactAllValuesEnabled();
 
@@ -110,6 +121,7 @@ class ShopControl extends CoreShopControl
         ]);
     }
 
+    /** @param array<string, mixed> $symbols */
     private function logSymbols(ShopRequestRecorderInterface $recorder, array $symbols): void
     {
         $recorder->logSymbols($symbols);
@@ -149,11 +161,11 @@ class ShopControl extends CoreShopControl
         // Build query string manually to avoid double URL-encoding of [redacted]
         $queryParts = [];
         foreach ($queryParams as $key => $value) {
-            $encodedKey = urlencode($key);
+            $encodedKey = urlencode((string) $key);
 
             // Don't redact cl and fnc parameters
-            if (in_array($key, $excludeFromRedaction, true)) {
-                $encodedValue = urlencode($value);
+            if (in_array((string) $key, $excludeFromRedaction, true)) {
+                $encodedValue = urlencode(is_array($value) ? '' : (string) $value);
                 $queryParts[] = $encodedKey . '=' . $encodedValue;
             } else {
                 // Use literal [redacted] without URL encoding

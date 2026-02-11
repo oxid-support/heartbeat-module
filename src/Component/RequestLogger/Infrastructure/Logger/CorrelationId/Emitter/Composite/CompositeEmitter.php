@@ -11,6 +11,7 @@ class CompositeEmitter implements EmitterInterface
     /** @var EmitterInterface[] */
     private iterable $emitters;
 
+    /** @param iterable<EmitterInterface> $emitters */
     public function __construct(iterable $emitters)
     {
         $this->emitters = $emitters;

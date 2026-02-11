@@ -16,7 +16,8 @@ final class NamespaceMapper implements NamespaceMapperInterface
     public function getControllerNamespaceMapping(): array
     {
         return [
-            'OxidSupport\\Heartbeat\\Component\\RequestLogger\\Controller\\GraphQL' => __DIR__ . '/../Controller/GraphQL/',
+            'OxidSupport\\Heartbeat\\Component\\RequestLogger\\Controller\\GraphQL'
+                => __DIR__ . '/../Controller/GraphQL/',
         ];
     }
 

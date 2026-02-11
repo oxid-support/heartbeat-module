@@ -11,6 +11,7 @@ class CompositeResolver implements ResolverInterface
     /** @var ResolverInterface[] */
     private iterable $resolvers;
 
+    /** @param iterable<ResolverInterface> $resolvers */
     public function __construct(iterable $resolvers)
     {
         $this->resolvers = $resolvers;

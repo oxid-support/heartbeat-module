@@ -58,8 +58,10 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             ),
-            'heartbeat_logsender_manage' => $this->isApiUserSetupComplete() && $this->getLogSenderStatus($moduleSettingService),
-            'heartbeat_diagnosticsprovider_manage' => $this->isApiUserSetupComplete() && $this->getDiagnosticsProviderStatus($moduleSettingService),
+            'heartbeat_logsender_manage' => $this->isApiUserSetupComplete()
+                && $this->getLogSenderStatus($moduleSettingService),
+            'heartbeat_diagnosticsprovider_manage' => $this->isApiUserSetupComplete()
+                && $this->getDiagnosticsProviderStatus($moduleSettingService),
         ];
     }
 

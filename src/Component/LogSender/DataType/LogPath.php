@@ -62,7 +62,9 @@ final class LogPath
     /**
      * Converts the LogPath to an array representation including validation data.
      *
-     * @return array{path: string, type: string, name: string, description: string, filePattern: string|null, validation: array}
+     * @return array{path: string, type: string, name: string,
+     *               description: string, filePattern: string|null,
+     *               validation: array<string, mixed>}
      */
     public function toArray(): array
     {
@@ -79,7 +81,8 @@ final class LogPath
     /**
      * Get validation status for this path.
      *
-     * @return array{exists: bool, readable: bool, status: string, error: string|null, fileSize: int|null, fileCount: int|null}
+     * @return array{exists: bool, readable: bool, status: string,
+     *               error: string|null, fileSize: int|null, fileCount: int|null}
      */
     public function getValidation(): array
     {

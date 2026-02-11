@@ -45,6 +45,8 @@ final class DiagnosticsSectionType
 
     /**
      * Convert an associative array to DiagnosticsSectionType
+     *
+     * @param array<string, mixed> $data
      */
     public static function fromArray(string $name, array $data): self
     {
@@ -53,7 +55,7 @@ final class DiagnosticsSectionType
         foreach ($data as $key => $value) {
             // Convert value to string if it's not already
             if (is_array($value)) {
-                $value = json_encode($value);
+                $value = json_encode($value) ?: '';
             } elseif (is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             } elseif ($value === null) {
@@ -67,7 +69,7 @@ final class DiagnosticsSectionType
                         $oldvalue->getInfo('version'),
                         $oldvalue->getInfo('author'),
                     ];
-                $value = json_encode($oldvalue);
+                $value = json_encode($oldvalue) ?: '';
             } else {
                 $value = (string) $value;
             }

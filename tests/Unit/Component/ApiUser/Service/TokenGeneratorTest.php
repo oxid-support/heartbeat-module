@@ -68,6 +68,9 @@ final class TokenGeneratorTest extends TestCase
     {
         // This test documents that generate() requires OXID's Registry
         // In a real OXID environment, this would return a unique ID
-        $this->markTestSkipped('TokenGenerator::generate() requires OXID Registry which is not available in unit tests.');
+        $this->markTestSkipped(
+            'TokenGenerator::generate() requires OXID Registry'
+            . ' which is not available in unit tests.'
+        );
     }
 }

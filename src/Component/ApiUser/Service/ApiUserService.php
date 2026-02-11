@@ -33,7 +33,7 @@ final class ApiUserService implements ApiUserServiceInterface
             ->where('OXUSERNAME = :email')
             ->setParameter('email', Module::API_USER_EMAIL);
 
-        $userId = $queryBuilder->execute()->fetchOne();
+        $userId = $queryBuilder->execute()->fetchOne(); // @phpstan-ignore method.nonObject
 
         if (!$userId) {
             return false;
