@@ -20,7 +20,7 @@
         "phpunit/phpunit": "^11.0",
         "oxid-esales/oxideshop-ce": "^7.0",
         "phpstan/phpstan": "^2.0",
-        "squizlabs/php_codesniffer": "^3.7",
+        "squizlabs/php_codesniffer": "^4.0",
         "phpmd/phpmd": "^2.15"
     },
     "autoload": {
