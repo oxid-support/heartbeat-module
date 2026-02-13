@@ -45,12 +45,12 @@
     {% if not migrationExecuted %}
         {# Migration not executed - show in workflow #}
         <div class="setup-workflow">
-            <h3>{{ translate({ ident: "OXSHEARTBEAT_SETUP_TITLE" }) }}</h3>
+            <h3>{{ translate({ ident: "OXSHEARTBEAT_APIUSER_SETUP_TITLE" }) }}</h3>
             <ol class="workflow-steps">
-                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_INSTALL" }) }}</li>
+                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_INSTALL" }) }}</li>
                 <li class="active">
-                    {{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_MIGRATE" }) }}<br>
-                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_MIGRATION_REQUIRED_TEXT" }) }}</small><br>
+                    {{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_MIGRATE" }) }}<br>
+                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_MIGRATION_REQUIRED_TEXT" }) }}</small><br>
                     <code id="migrationCommand" style="display: inline-block; background: #e3f2fd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 11px; cursor: pointer; border: 1px solid #2196f3;" onclick="
                         var textarea = document.createElement('textarea');
                         textarea.value = './vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat';
@@ -62,45 +62,45 @@
                         msg.style.display = 'inline';
                         setTimeout(function() { msg.style.display = 'none'; }, 2000);
                     ">&#x1F4D1; ./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat</code>
-                    <span id="migrationCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; {{ translate({ ident: "OXSHEARTBEAT_SETUP_COPIED" }) }}</span>
+                    <span id="migrationCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_COPIED" }) }}</span>
                 </li>
-                <li class="{{ graphqlBaseActivated ? 'done' : 'pending' }}">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_GRAPHQL_BASE" }) }}</li>
-                <li class="{{ configAccessActivated ? 'done' : (graphqlBaseActivated ? 'pending' : 'pending') }}">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_CONFIG_ACCESS" }) }}</li>
-                <li class="{{ moduleActivated ? 'warning' : 'pending' }}">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_ACTIVATE" }) }}{% if moduleActivated %}<br><small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_ACTIVATE_WARNING" }) }}</small>{% endif %}</li>
-                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_SEND_TOKEN" }) }}</li>
-                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_WAIT_SUPPORT" }) }}</li>
+                <li class="{{ graphqlBaseActivated ? 'done' : 'pending' }}">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE" }) }}</li>
+                <li class="{{ configAccessActivated ? 'done' : (graphqlBaseActivated ? 'pending' : 'pending') }}">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS" }) }}</li>
+                <li class="{{ moduleActivated ? 'warning' : 'pending' }}">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_ACTIVATE" }) }}{% if moduleActivated %}<br><small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_ACTIVATE_WARNING" }) }}</small>{% endif %}</li>
+                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN" }) }}</li>
+                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_WAIT_SUPPORT" }) }}</li>
             </ol>
         </div>
     {% elseif setupToken == '' %}
         {# No token = Setup complete (token was consumed by support) #}
         <div class="setup-complete">
-            <h3>&#10004; {{ translate({ ident: "OXSHEARTBEAT_SETUP_COMPLETE_TITLE" }) }}</h3>
-            <p style="margin: 0;">{{ translate({ ident: "OXSHEARTBEAT_SETUP_COMPLETE_TEXT" }) }}</p>
+            <h3>&#10004; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_SETUP_COMPLETE_TITLE" }) }}</h3>
+            <p style="margin: 0;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_SETUP_COMPLETE_TEXT" }) }}</p>
         </div>
     {% else %}
         {# Token exists - show send token step #}
         <div class="setup-workflow">
-            <h3>{{ translate({ ident: "OXSHEARTBEAT_SETUP_TITLE" }) }}</h3>
+            <h3>{{ translate({ ident: "OXSHEARTBEAT_APIUSER_SETUP_TITLE" }) }}</h3>
             <ol class="workflow-steps">
-                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_INSTALL" }) }}</li>
-                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_MIGRATE" }) }}</li>
+                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_INSTALL" }) }}</li>
+                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_MIGRATE" }) }}</li>
                 <li class="{{ graphqlBaseActivated ? 'done' : 'active' }}">
-                    {{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_GRAPHQL_BASE" }) }}
+                    {{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE" }) }}
                     {% if not graphqlBaseActivated %}<br>
-                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_GRAPHQL_BASE_DESC" }) }}</small>
+                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE_DESC" }) }}</small>
                     {% endif %}
                 </li>
                 <li class="{{ configAccessActivated ? 'done' : (graphqlBaseActivated ? 'active' : 'pending') }}">
-                    {{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_CONFIG_ACCESS" }) }}
+                    {{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS" }) }}
                     {% if not configAccessActivated and graphqlBaseActivated %}<br>
-                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_CONFIG_ACCESS_DESC" }) }}</small>
+                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS_DESC" }) }}</small>
                     {% endif %}
                 </li>
-                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_ACTIVATE" }) }}</li>
+                <li class="done">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_ACTIVATE" }) }}</li>
                 <li class="{{ (graphqlBaseActivated and configAccessActivated) ? 'active' : 'pending' }}">
-                    {{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_SEND_TOKEN" }) }}
+                    {{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN" }) }}
                     {% if graphqlBaseActivated and configAccessActivated %}<br>
-                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_SEND_TOKEN_DESC" }) }}</small><br>
+                    <small style="font-weight: normal;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN_DESC" }) }}</small><br>
                     <code id="setupTokenCode" style="display: inline-block; background: #e3f2fd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 11px; cursor: pointer; border: 1px solid #2196f3; word-break: break-all;" onclick="
                         var textarea = document.createElement('textarea');
                         textarea.value = '{{ setupToken }}';
@@ -112,14 +112,14 @@
                         msg.style.display = 'inline';
                         setTimeout(function() { msg.style.display = 'none'; }, 2000);
                     ">&#x1F4D1; {{ setupToken }}</code>
-                    <span id="tokenCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; {{ translate({ ident: "OXSHEARTBEAT_SETUP_COPIED" }) }}</span>
+                    <span id="tokenCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_COPIED" }) }}</span>
                     {% endif %}
                 </li>
-                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_SETUP_STEP_WAIT_SUPPORT" }) }}</li>
+                <li class="pending">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_STEP_WAIT_SUPPORT" }) }}</li>
             </ol>
             {% if not graphqlBaseActivated or not configAccessActivated %}
             <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px; color: #e65100;">
-                <strong>&#9888; {{ translate({ ident: "OXSHEARTBEAT_SETUP_PREREQUISITES_WARNING" }) }}</strong>
+                <strong>&#9888; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_PREREQUISITES_WARNING" }) }}</strong>
             </p>
             {% endif %}
         </div>
@@ -130,17 +130,17 @@
 
     {% if oView.getEditObjectId() == 'oxsheartbeat' %}
     <details class="api-reset-section">
-        <summary><h3>{{ translate({ ident: "OXSHEARTBEAT_API_RESET_TITLE" }) }}</h3></summary>
+        <summary><h3>{{ translate({ ident: "OXSHEARTBEAT_APIUSER_RESET_TITLE" }) }}</h3></summary>
         <div class="reset-content">
-            <p>{{ translate({ ident: "OXSHEARTBEAT_RESET_DESCRIPTION" }) }}</p>
+            <p>{{ translate({ ident: "OXSHEARTBEAT_APIUSER_RESET_DESCRIPTION" }) }}</p>
             <ul>
-                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_WARNING_1" }) }}</li>
-                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_WARNING_2" }) }}</li>
-                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_WARNING_3" }) }}</li>
-                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_WARNING_4" }) }}</li>
+                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_WARNING_1" }) }}</li>
+                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_WARNING_2" }) }}</li>
+                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_WARNING_3" }) }}</li>
+                <li>&#10060; {{ translate({ ident: "OXSHEARTBEAT_APIUSER_WARNING_4" }) }}</li>
             </ul>
             <div style="margin: 15px 0 0 0; padding: 15px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px;">
-                <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" onsubmit="return confirm('{{ translate({ ident: 'OXSHEARTBEAT_CONFIRM_DIALOG' }) }}');">
+                <form method="post" action="{{ oViewConf.getSelfLink()|raw }}" onsubmit="return confirm('{{ translate({ ident: 'OXSHEARTBEAT_APIUSER_CONFIRM_DIALOG' }) }}');">
                     {{ oViewConf.getHiddenSid()|raw }}
                     <input type="hidden" name="cl" value="heartbeat_password_reset">
                     <input type="hidden" name="fnc" value="resetPassword">
@@ -158,9 +158,9 @@
                                 btn.style.cursor = 'not-allowed';
                             }
                         ">
-                        {{ translate({ ident: "OXSHEARTBEAT_CONFIRM_RESET" }) }}
+                        {{ translate({ ident: "OXSHEARTBEAT_APIUSER_CONFIRM_RESET" }) }}
                     </label>
-                    <button type="submit" id="resetBtn" disabled style="display: block; background: #dc3545; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: not-allowed; opacity: 0.5; border-radius: 4px;">{{ translate({ ident: "OXSHEARTBEAT_RESET_BUTTON" }) }}</button>
+                    <button type="submit" id="resetBtn" disabled style="display: block; background: #dc3545; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: not-allowed; opacity: 0.5; border-radius: 4px;">{{ translate({ ident: "OXSHEARTBEAT_APIUSER_RESET_BUTTON" }) }}</button>
                 </form>
             </div>
         </div>
@@ -174,7 +174,7 @@
             this.select();
             document.execCommand('copy');
             var msg = document.createElement('span');
-            msg.textContent = ' \u2713 {{ translate({ ident: 'OXSHEARTBEAT_SETUP_COPIED' }) }}';
+            msg.textContent = ' \u2713 {{ translate({ ident: 'OXSHEARTBEAT_APIUSER_COPIED' }) }}';
             msg.style.cssText = 'color: green; font-weight: bold; margin-left: 10px;';
             this.parentNode.insertBefore(msg, this.nextSibling);
             setTimeout(function() { msg.remove(); }, 2000);
