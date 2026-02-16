@@ -18,9 +18,23 @@ final class ApiVersionService implements ApiVersionServiceInterface
     {
         return new ApiVersionType(
             apiVersion: Module::API_VERSION,
-            apiSchemaHash: Module::API_SCHEMA_HASH,
+            apiSchemaHash: self::computeSchemaHash(Module::SUPPORTED_OPERATIONS),
             moduleVersion: Module::VERSION,
             supportedOperations: Module::SUPPORTED_OPERATIONS,
         );
+    }
+
+    /**
+     * Compute a schema hash from the list of supported operations.
+     * Algorithm: sort operations alphabetically, join with newline, SHA-256, take first 16 hex chars.
+     *
+     * @param string[] $operations
+     */
+    public static function computeSchemaHash(array $operations): string
+    {
+        $sorted = $operations;
+        sort($sorted);
+
+        return substr(hash('sha256', implode("\n", $sorted)), 0, 16);
     }
 }

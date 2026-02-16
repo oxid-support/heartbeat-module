@@ -18,7 +18,6 @@ final class Module
 
     // API version contract
     public const API_VERSION = '1.0.0';
-    public const API_SCHEMA_HASH = 'fec5c208eef26be1';
 
     /** @var string[] List of all GraphQL operations this module provides/supports */
     public const SUPPORTED_OPERATIONS = [
