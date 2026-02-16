@@ -13,6 +13,35 @@ final class Module
 {
     public const ID = 'oxsheartbeat';
 
+    // Module version (must match metadata.php 'version')
+    public const VERSION = '1.0.0';
+
+    // API version contract
+    public const API_VERSION = '1.0.0';
+    public const API_SCHEMA_HASH = 'fec5c208eef26be1';
+
+    /** @var string[] List of all GraphQL operations this module provides/supports */
+    public const SUPPORTED_OPERATIONS = [
+        'token',
+        'heartbeatSetPassword',
+        'heartbeatResetPassword',
+        'requestLoggerSettings',
+        'requestLoggerLogLevel',
+        'requestLoggerLogLevelChange',
+        'requestLoggerLogFrontend',
+        'requestLoggerLogFrontendChange',
+        'requestLoggerLogAdmin',
+        'requestLoggerLogAdminChange',
+        'requestLoggerRedact',
+        'requestLoggerRedactChange',
+        'requestLoggerRedactAllValues',
+        'requestLoggerRedactAllValuesChange',
+        'logSenderSources',
+        'logSenderContent',
+        'diagnostics',
+        'heartbeatApiVersion',
+    ];
+
     // Request Logger component settings
     public const SETTING_REQUESTLOGGER_ACTIVE = self::ID . '_requestlogger_active';
     public const SETTING_REQUESTLOGGER_LOG_LEVEL = self::ID . '_requestlogger_log_level';

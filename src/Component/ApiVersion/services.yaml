@@ -1,0 +1,21 @@
+services:
+  _defaults:
+    public: false
+    autowire: true
+
+  # Service Layer
+  OxidSupport\Heartbeat\Component\ApiVersion\Service\ApiVersionServiceInterface:
+    class: OxidSupport\Heartbeat\Component\ApiVersion\Service\ApiVersionService
+    public: true
+
+  # Controller - GraphQL
+  OxidSupport\Heartbeat\Component\ApiVersion\Controller\GraphQL\ApiVersionController:
+    public: true
+
+  # Framework (GraphQL)
+  OxidSupport\Heartbeat\Component\ApiVersion\Framework\NamespaceMapper:
+    tags: ['graphql_namespace_mapper']
+
+  OxidSupport\Heartbeat\Component\ApiVersion\Framework\PermissionProvider:
+    public: true
+    tags: ['graphql_permission_provider']

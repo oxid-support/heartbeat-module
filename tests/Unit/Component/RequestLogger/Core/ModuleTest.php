@@ -96,10 +96,11 @@ final class ModuleTest extends TestCase
         $reflection = new \ReflectionClass(Module::class);
         $constants = $reflection->getConstants();
 
-        // Module has ID + 6 request logger settings + 1 API user setting
+        // Module has ID + VERSION + API_VERSION + API_SCHEMA_HASH + SUPPORTED_OPERATIONS
+        // + 6 request logger settings + 1 API user setting
         // + 1 remote setting + 4 log sender settings
-        // + 1 diagnostics provider setting + API_USER_EMAIL = 15 constants
-        $this->assertCount(15, $constants);
+        // + 1 diagnostics provider setting + API_USER_EMAIL = 19 constants
+        $this->assertCount(19, $constants);
     }
 
     public function testAllConstantsArePublic(): void
