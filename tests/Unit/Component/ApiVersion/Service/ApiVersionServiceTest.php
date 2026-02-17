@@ -92,7 +92,10 @@ final class ApiVersionServiceTest extends TestCase
         $result = $service->getApiVersion();
 
         foreach ($result->getComponentStatus() as $status) {
-            $this->assertFalse($status->isActive(), "Component '{$status->getName()}' should default to false on error");
+            $this->assertFalse(
+                $status->isActive(),
+                "Component '{$status->getName()}' should default to false on error",
+            );
         }
     }
 

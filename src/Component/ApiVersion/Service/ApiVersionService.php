@@ -38,9 +38,18 @@ final class ApiVersionService implements ApiVersionServiceInterface
     private function getComponentStatuses(): array
     {
         return [
-            new ComponentStatusType('requestLogger', $this->isSettingActive(Module::SETTING_REQUESTLOGGER_ACTIVE)),
-            new ComponentStatusType('logSender', $this->isSettingActive(Module::SETTING_LOGSENDER_ACTIVE)),
-            new ComponentStatusType('diagnosticsProvider', $this->isSettingActive(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE)),
+            new ComponentStatusType(
+                'requestLogger',
+                $this->isSettingActive(Module::SETTING_REQUESTLOGGER_ACTIVE),
+            ),
+            new ComponentStatusType(
+                'logSender',
+                $this->isSettingActive(Module::SETTING_LOGSENDER_ACTIVE),
+            ),
+            new ComponentStatusType(
+                'diagnosticsProvider',
+                $this->isSettingActive(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE),
+            ),
         ];
     }
 
