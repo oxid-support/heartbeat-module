@@ -21,12 +21,14 @@ final class ApiVersionType
 {
     /**
      * @param string[] $supportedOperations
+     * @param ComponentStatusType[] $componentStatus
      */
     public function __construct(
         private readonly string $apiVersion,
         private readonly string $apiSchemaHash,
         private readonly string $moduleVersion,
         private readonly array $supportedOperations,
+        private readonly array $componentStatus = [],
     ) {
     }
 
@@ -55,5 +57,14 @@ final class ApiVersionType
     public function getSupportedOperations(): array
     {
         return $this->supportedOperations;
+    }
+
+    /**
+     * @return ComponentStatusType[]
+     */
+    #[Field]
+    public function getComponentStatus(): array
+    {
+        return $this->componentStatus;
     }
 }

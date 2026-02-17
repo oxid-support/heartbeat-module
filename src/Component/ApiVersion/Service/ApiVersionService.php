@@ -9,11 +9,18 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\ApiVersion\Service;
 
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ApiVersionType;
+use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ComponentStatusType;
 use OxidSupport\Heartbeat\Module\Module;
 
 final class ApiVersionService implements ApiVersionServiceInterface
 {
+    public function __construct(
+        private readonly ModuleSettingServiceInterface $moduleSettingService,
+    ) {
+    }
+
     public function getApiVersion(): ApiVersionType
     {
         return new ApiVersionType(
@@ -21,7 +28,29 @@ final class ApiVersionService implements ApiVersionServiceInterface
             apiSchemaHash: self::computeSchemaHash(Module::SUPPORTED_OPERATIONS),
             moduleVersion: Module::VERSION,
             supportedOperations: Module::SUPPORTED_OPERATIONS,
+            componentStatus: $this->getComponentStatuses(),
         );
+    }
+
+    /**
+     * @return ComponentStatusType[]
+     */
+    private function getComponentStatuses(): array
+    {
+        return [
+            new ComponentStatusType('requestLogger', $this->isSettingActive(Module::SETTING_REQUESTLOGGER_ACTIVE)),
+            new ComponentStatusType('logSender', $this->isSettingActive(Module::SETTING_LOGSENDER_ACTIVE)),
+            new ComponentStatusType('diagnosticsProvider', $this->isSettingActive(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE)),
+        ];
+    }
+
+    private function isSettingActive(string $settingKey): bool
+    {
+        try {
+            return $this->moduleSettingService->getBoolean($settingKey, Module::ID);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     /**

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\ApiVersion\Service;
 
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ComponentStatusType;
 use OxidSupport\Heartbeat\Component\ApiVersion\Service\ApiVersionService;
 use OxidSupport\Heartbeat\Module\Module;
 use PHPUnit\Framework\TestCase;
@@ -22,9 +24,31 @@ final class ApiVersionServiceTest extends TestCase
         'token',
     ];
 
+    private function createService(?ModuleSettingServiceInterface $settingService = null): ApiVersionService
+    {
+        return new ApiVersionService(
+            $settingService ?? $this->createMockSettingService(),
+        );
+    }
+
+    private function createMockSettingService(
+        bool $requestLogger = false,
+        bool $logSender = false,
+        bool $diagnosticsProvider = false,
+    ): ModuleSettingServiceInterface {
+        $mock = $this->createMock(ModuleSettingServiceInterface::class);
+        $mock->method('getBoolean')->willReturnMap([
+            [Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, $requestLogger],
+            [Module::SETTING_LOGSENDER_ACTIVE, Module::ID, $logSender],
+            [Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID, $diagnosticsProvider],
+        ]);
+
+        return $mock;
+    }
+
     public function testGetApiVersionReturnsExpectedFields(): void
     {
-        $service = new ApiVersionService();
+        $service = $this->createService();
         $result = $service->getApiVersion();
 
         $this->assertSame(Module::API_VERSION, $result->getApiVersion());
@@ -32,6 +56,44 @@ final class ApiVersionServiceTest extends TestCase
         $this->assertSame(Module::SUPPORTED_OPERATIONS, $result->getSupportedOperations());
         $this->assertNotEmpty($result->getApiSchemaHash());
         $this->assertSame(16, strlen($result->getApiSchemaHash()));
+    }
+
+    public function testGetApiVersionReturnsComponentStatus(): void
+    {
+        $service = $this->createService(
+            $this->createMockSettingService(
+                requestLogger: true,
+                logSender: false,
+                diagnosticsProvider: true,
+            ),
+        );
+        $result = $service->getApiVersion();
+
+        $statuses = $result->getComponentStatus();
+        $this->assertCount(3, $statuses);
+
+        $statusMap = [];
+        foreach ($statuses as $status) {
+            $this->assertInstanceOf(ComponentStatusType::class, $status);
+            $statusMap[$status->getName()] = $status->isActive();
+        }
+
+        $this->assertTrue($statusMap['requestLogger']);
+        $this->assertFalse($statusMap['logSender']);
+        $this->assertTrue($statusMap['diagnosticsProvider']);
+    }
+
+    public function testComponentStatusDefaultsToFalseOnError(): void
+    {
+        $mock = $this->createMock(ModuleSettingServiceInterface::class);
+        $mock->method('getBoolean')->willThrowException(new \RuntimeException('Setting not found'));
+
+        $service = $this->createService($mock);
+        $result = $service->getApiVersion();
+
+        foreach ($result->getComponentStatus() as $status) {
+            $this->assertFalse($status->isActive(), "Component '{$status->getName()}' should default to false on error");
+        }
     }
 
     public function testComputeSchemaHashIsDeterministic(): void
