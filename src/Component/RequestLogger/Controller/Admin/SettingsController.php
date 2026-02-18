@@ -38,28 +38,6 @@ class SettingsController extends AbstractComponentController implements Togglabl
         }
     }
 
-    /**
-     * Custom status class: warning if API User not set up.
-     */
-    public function getStatusClass(): string
-    {
-        if (!$this->isApiUserSetupComplete()) {
-            return self::STATUS_CLASS_WARNING;
-        }
-        return parent::getStatusClass();
-    }
-
-    /**
-     * Custom status text: warning message if API User not set up.
-     */
-    public function getStatusTextKey(): string
-    {
-        if (!$this->isApiUserSetupComplete()) {
-            return 'OXSHEARTBEAT_REQUESTLOGGER_STATUS_WARNING';
-        }
-        return parent::getStatusTextKey();
-    }
-
     public function toggleComponent(): void
     {
         if (!$this->canToggle()) {
@@ -75,7 +53,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
 
     public function canToggle(): bool
     {
-        return $this->isApiUserSetupComplete();
+        return true;
     }
 
     /**

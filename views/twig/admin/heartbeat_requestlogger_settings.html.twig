@@ -7,7 +7,6 @@
 {% set settings = oView.getSettings() %}
 {% set isActive = settings.componentActive %}
 {% set apiUserSetupComplete = oView.isApiUserSetupComplete() %}
-{% set canToggle = oView.canToggle() %}
 
 {{ lf.page_header(
     "OXSHEARTBEAT_LF_REQUESTLOGGER_TITLE",
@@ -16,11 +15,11 @@
     "OXSHEARTBEAT_LF_REQUESTLOGGER_DESC"
 ) }}
 
-{{ lf.toggle_section("heartbeat_requestlogger_settings", isActive, not canToggle, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
+{{ lf.toggle_section("heartbeat_requestlogger_settings", isActive, false, oViewConf.getSelfLink(), oViewConf.getHiddenSid()) }}
 
 {% if not apiUserSetupComplete %}
-    <div class="warning-notice">
-        <h3>&#9888; {{ translate({ ident: "OXSHEARTBEAT_REQUESTLOGGER_WARNING_TITLE" }) }}</h3>
+    <div class="info-notice">
+        <h3>&#9432; {{ translate({ ident: "OXSHEARTBEAT_REQUESTLOGGER_WARNING_TITLE" }) }}</h3>
         <p>{{ translate({ ident: "OXSHEARTBEAT_REQUESTLOGGER_WARNING_TEXT" }) }}</p>
         <button type="button" class="btn-primary" onclick="top.basefrm.location='{{ oViewConf.getSelfLink()|replace({"&amp;": "&"})|raw }}&cl=heartbeat_apiuser_setup';">
             {{ translate({ ident: "OXSHEARTBEAT_REQUESTLOGGER_GOTO_APIUSER" }) }}

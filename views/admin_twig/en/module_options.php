@@ -98,10 +98,9 @@ $aLang = [
     'OXSHEARTBEAT_REMOTE_READY_TITLE' => 'Remote Access Activated',
     'OXSHEARTBEAT_REMOTE_READY_TEXT' => 'OXID Support can now access the Request Logger settings.',
 
-    // Request Logger - API User Warning
-    'OXSHEARTBEAT_REQUESTLOGGER_STATUS_WARNING' => 'Setup Required',
-    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TITLE' => 'API User Required',
-    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TEXT' => 'This component requires a configured API User. Please set up the API User first.',
+    // Request Logger - API User Info Notice
+    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TITLE' => 'API User Not Configured',
+    'OXSHEARTBEAT_REQUESTLOGGER_WARNING_TEXT' => 'Without an API User, no connection to the Heartbeat dashboard is possible. Local logging works independently.',
     'OXSHEARTBEAT_REQUESTLOGGER_GOTO_APIUSER' => 'Go to API User Setup',
 
     // ==========================================================================
