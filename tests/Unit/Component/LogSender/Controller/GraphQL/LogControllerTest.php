@@ -17,7 +17,6 @@ use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPathType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSource;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSourceType;
-use OxidSupport\Heartbeat\Component\LogSender\Exception\LogSenderDisabledException;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogCollectorServiceInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogReaderServiceInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusServiceInterface;
@@ -44,6 +43,9 @@ final class LogControllerTest extends TestCase
         $this->mockReader = $this->createMock(LogReaderServiceInterface::class);
         $this->mockStatus = $this->createMock(LogSenderStatusServiceInterface::class);
         $this->mockSettings = $this->createMock(ModuleSettingServiceInterface::class);
+
+        // Default: component is active (individual tests override for inactive scenarios)
+        $this->mockStatus->method('isActive')->willReturn(true);
 
         $this->sut = new LogController(
             $this->mockCollector,
@@ -142,14 +144,20 @@ final class LogControllerTest extends TestCase
         $this->assertEmpty($result);
     }
 
-    public function testLogSenderSourcesThrowsWhenComponentInactive(): void
+    public function testLogSenderSourcesReturnsEmptyArrayWhenComponentInactive(): void
     {
-        $this->mockStatus->method('assertComponentActive')
-            ->willThrowException(new LogSenderDisabledException());
+        $inactiveStatus = $this->createMock(LogSenderStatusServiceInterface::class);
+        $inactiveStatus->method('isActive')->willReturn(false);
+        $controller = new LogController(
+            $this->mockCollector,
+            $this->mockReader,
+            $inactiveStatus,
+            $this->mockSettings
+        );
 
-        $this->expectException(LogSenderDisabledException::class);
+        $result = $controller->logSenderSources();
 
-        $this->sut->logSenderSources();
+        $this->assertSame([], $result);
     }
 
     // =========================================================================
@@ -380,14 +388,20 @@ final class LogControllerTest extends TestCase
         $this->sut->logSenderContent('test_source');
     }
 
-    public function testLogSenderContentThrowsWhenComponentInactive(): void
+    public function testLogSenderContentReturnsNullWhenComponentInactive(): void
     {
-        $this->mockStatus->method('assertComponentActive')
-            ->willThrowException(new LogSenderDisabledException());
+        $inactiveStatus = $this->createMock(LogSenderStatusServiceInterface::class);
+        $inactiveStatus->method('isActive')->willReturn(false);
+        $controller = new LogController(
+            $this->mockCollector,
+            $this->mockReader,
+            $inactiveStatus,
+            $this->mockSettings
+        );
 
-        $this->expectException(LogSenderDisabledException::class);
+        $result = $controller->logSenderContent('any_source');
 
-        $this->sut->logSenderContent('any_source');
+        $this->assertNull($result);
     }
 
     public function testLogSenderContentThrowsWhenNoReadablePathFound(): void

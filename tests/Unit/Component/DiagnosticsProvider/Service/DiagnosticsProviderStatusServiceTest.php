@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\DiagnosticsProvider\Service;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
-use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Exception\DiagnosticsProviderDisabledException;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusService;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
@@ -63,42 +62,6 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $this->assertFalse($this->service->isActive());
-    }
-
-    // assertComponentActive() tests
-
-    public function testAssertComponentActiveDoesNotThrowWhenActive(): void
-    {
-        $this->moduleSettingService
-            ->method('getBoolean')
-            ->willReturn(true);
-
-        $this->service->assertComponentActive();
-
-        // If we reach here, no exception was thrown
-        $this->assertTrue(true);
-    }
-
-    public function testAssertComponentActiveThrowsWhenInactive(): void
-    {
-        $this->moduleSettingService
-            ->method('getBoolean')
-            ->willReturn(false);
-
-        $this->expectException(DiagnosticsProviderDisabledException::class);
-
-        $this->service->assertComponentActive();
-    }
-
-    public function testAssertComponentActiveThrowsOnSettingException(): void
-    {
-        $this->moduleSettingService
-            ->method('getBoolean')
-            ->willThrowException(new \RuntimeException('Setting not found'));
-
-        $this->expectException(DiagnosticsProviderDisabledException::class);
-
-        $this->service->assertComponentActive();
     }
 
     // Service class tests

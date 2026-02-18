@@ -30,9 +30,11 @@ final class DiagnosticsController
     #[Query]
     #[Logged]
     #[Right('LOG_SENDER_VIEW')]
-    public function diagnostics(): DiagnosticsType
+    public function diagnostics(): ?DiagnosticsType
     {
-        $this->statusService->assertComponentActive();
+        if (!$this->statusService->isActive()) {
+            return null;
+        }
 
         $diagnosticsArray = $this->diagnosticsProvider->getDiagnostics();
         return DiagnosticsType::fromDiagnosticsArray($diagnosticsArray);

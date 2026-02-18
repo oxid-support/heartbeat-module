@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
-use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Exception\DiagnosticsProviderDisabledException;
 use OxidSupport\Heartbeat\Module\Module;
 
 /**
@@ -32,16 +31,6 @@ final readonly class DiagnosticsProviderStatusService implements DiagnosticsProv
             return $this->moduleSettingService->getBoolean(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID);
         } catch (\Throwable) {
             return false;
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function assertComponentActive(): void
-    {
-        if (!$this->isActive()) {
-            throw new DiagnosticsProviderDisabledException();
         }
     }
 }

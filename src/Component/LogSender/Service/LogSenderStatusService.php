@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Component\LogSender\Service;
 
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
-use OxidSupport\Heartbeat\Component\LogSender\Exception\LogSenderDisabledException;
 use OxidSupport\Heartbeat\Module\Module;
 
 /**
@@ -47,16 +46,6 @@ final readonly class LogSenderStatusService implements LogSenderStatusServiceInt
             return $maxBytes > 0 ? $maxBytes : self::DEFAULT_MAX_BYTES;
         } catch (\Throwable) {
             return self::DEFAULT_MAX_BYTES;
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function assertComponentActive(): void
-    {
-        if (!$this->isActive()) {
-            throw new LogSenderDisabledException();
         }
     }
 }

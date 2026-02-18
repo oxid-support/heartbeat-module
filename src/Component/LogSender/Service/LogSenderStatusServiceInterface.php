@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\LogSender\Service;
 
-use OxidSupport\Heartbeat\Component\LogSender\Exception\LogSenderDisabledException;
-
 /**
  * Service for checking the Log Sender component status.
  */
@@ -25,11 +23,4 @@ interface LogSenderStatusServiceInterface
      * Get the maximum bytes allowed per read request.
      */
     public function getMaxBytes(): int;
-
-    /**
-     * Assert that the Log Sender component is active.
-     *
-     * @throws LogSenderDisabledException
-     */
-    public function assertComponentActive(): void;
 }

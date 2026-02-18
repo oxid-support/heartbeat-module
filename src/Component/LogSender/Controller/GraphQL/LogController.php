@@ -41,7 +41,9 @@ final class LogController
     #[Right('LOG_SENDER_VIEW')]
     public function logSenderSources(): array
     {
-        $this->statusService->assertComponentActive();
+        if (!$this->statusService->isActive()) {
+            return [];
+        }
 
         $enabledSourceIds = $this->getEnabledSourceIds();
         $sources = $this->logCollectorService->getSources();
@@ -62,9 +64,11 @@ final class LogController
     #[Query]
     #[Logged]
     #[Right('LOG_SENDER_VIEW')]
-    public function logSenderContent(string $sourceId, ?int $maxBytes = null): LogContentType
+    public function logSenderContent(string $sourceId, ?int $maxBytes = null): ?LogContentType
     {
-        $this->statusService->assertComponentActive();
+        if (!$this->statusService->isActive()) {
+            return null;
+        }
 
         $enabledSourceIds = $this->getEnabledSourceIds();
         if (!in_array($sourceId, $enabledSourceIds, true)) {

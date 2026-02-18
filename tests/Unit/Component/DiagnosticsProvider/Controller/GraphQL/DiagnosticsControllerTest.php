@@ -40,7 +40,7 @@ final class DiagnosticsControllerTest extends TestCase
         $this->assertTrue($method->isPublic());
     }
 
-    public function testDiagnosticsReturnsDiagnosticsType(): void
+    public function testDiagnosticsReturnsNullableDiagnosticsType(): void
     {
         $reflection = new ReflectionClass(DiagnosticsController::class);
         $method = $reflection->getMethod('diagnostics');
@@ -48,6 +48,7 @@ final class DiagnosticsControllerTest extends TestCase
 
         $this->assertNotNull($returnType);
         $this->assertEquals(DiagnosticsType::class, $returnType->getName());
+        $this->assertTrue($returnType->allowsNull());
     }
 
     public function testDiagnosticsHasQueryAttribute(): void
