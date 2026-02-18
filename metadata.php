@@ -25,6 +25,19 @@ Includes GraphQL API for remote configuration and activation.',
             \OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController::class,
     ],
     'controllers' => [
+        // Required for OXID eShop 7.2 compatibility (7.4+ uses services.yaml oxid.view_controller tags)
+        'heartbeat_requestlogger_settings' =>
+            \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController::class,
+        'heartbeat_apiuser_setup' =>
+            \OxidSupport\Heartbeat\Component\ApiUser\Controller\Admin\SetupController::class,
+        'heartbeat_requestlogger_password_reset' =>
+            \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\PasswordResetController::class,
+        'heartbeat_requestlogger_setup' =>
+            \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\RemoteSetupController::class,
+        'heartbeat_logsender_manage' =>
+            \OxidSupport\Heartbeat\Component\LogSender\Controller\Admin\ManageController::class,
+        'heartbeat_diagnosticsprovider_manage' =>
+            \OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\Admin\ManageController::class,
     ],
     'events' => [
         'onActivate' => \OxidSupport\Heartbeat\Component\RequestLogger\Core\ModuleEvents::class . '::onActivate',
