@@ -30,7 +30,7 @@ git clone https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbea
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
-
+in some cases, use -W
 > **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies.
 
 ### Step 2: Run Database Migrations
