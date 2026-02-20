@@ -49,3 +49,17 @@ jobs:
       run: composer run-script static
     - name: Run Unit Tests
       run: composer run-script tests-unit
+
+  notify-devops:
+    name: Notify DevOps Repo
+    needs: [build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger submodule update in devops repo
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          repository: oxid-support/heartbeat_project_devops
+          event-type: submodule-updated
+          client-payload: '{"component": "module", "sha": "${{ github.sha }}", "ref": "${{ github.ref_name }}"}'
