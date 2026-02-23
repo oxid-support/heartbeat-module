@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\LogSender\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPathType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSource;
@@ -25,13 +25,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(LogCollectorService::class)]
 final class LogCollectorServiceTest extends TestCase
 {
-    private ModuleSettingServiceInterface&MockObject $moduleSettingService;
+    private ModuleSettingBridgeInterface&MockObject $moduleSettingService;
     private string $testDir;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $this->testDir = sys_get_temp_dir() . '/logcollector_test_' . uniqid();
         mkdir($this->testDir, 0777, true);
     }
@@ -71,7 +71,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesReturnsEmptyArrayWithNoProvidersAndNoStaticPaths(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $service = $this->createService([]);
@@ -84,7 +84,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesReturnsStaticPathSources(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->with(Module::SETTING_LOGSENDER_STATIC_PATHS, Module::ID)
             ->willReturn([
                 [
@@ -109,7 +109,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesHandlesInvalidStaticPathConfig(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 ['invalid' => 'config'],
                 ['path' => '/some/path'], // missing type
@@ -124,7 +124,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesHandlesSettingException(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $service = $this->createService([]);
@@ -137,12 +137,12 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesReturnsProviderSources(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Provider Logs',
         );
 
@@ -166,12 +166,12 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesIncludesInactiveProvidersAsUnavailable(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Inactive Logs',
         );
 
@@ -194,12 +194,12 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesIncludesInactiveProviderWithMissingPathAsUnavailable(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $logPath = new LogPath(
             path: '/nonexistent/path',
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Missing Logs',
         );
 
@@ -223,12 +223,12 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesMarksActiveProviderWithExistingPathAsAvailable(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Existing Logs',
         );
 
@@ -250,12 +250,12 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesMarksProviderUnavailableWhenPathDoesNotExist(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $logPath = new LogPath(
             path: '/nonexistent/path',
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Missing Logs',
         );
 
@@ -276,7 +276,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesMarksProviderUnavailableWhenNoPaths(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $provider = $this->createMockProvider(
@@ -298,7 +298,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourcesCombinesStaticAndProviderSources(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 [
                     'path' => $this->testDir,
@@ -309,7 +309,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Provider Logs',
         );
 
@@ -333,7 +333,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourceByIdReturnsMatchingSource(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 [
                     'path' => $this->testDir,
@@ -352,7 +352,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetSourceByIdThrowsExceptionForNonExistentId(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $service = $this->createService([]);
@@ -366,7 +366,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetStaticPathsReturnsConfiguredPaths(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 [
                     'path' => '/var/log/test.log',
@@ -383,7 +383,7 @@ final class LogCollectorServiceTest extends TestCase
         $this->assertCount(1, $paths);
         $this->assertInstanceOf(LogPath::class, $paths[0]);
         $this->assertEquals('/var/log/test.log', $paths[0]->path);
-        $this->assertEquals(LogPathType::FILE, $paths[0]->type);
+        $this->assertEquals(LogPathType::FILE(), $paths[0]->type);
         $this->assertEquals('Test Log', $paths[0]->name);
         $this->assertEquals('A test log file', $paths[0]->description);
         $this->assertEquals('*.log', $paths[0]->filePattern);
@@ -392,7 +392,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetStaticPathsUsesBasenameAsDefaultName(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 [
                     'path' => '/var/log/myapp.log',
@@ -409,7 +409,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testGetStaticPathsSkipsInvalidTypes(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([
                 [
                     'path' => '/var/log/test.log',
@@ -441,7 +441,7 @@ final class LogCollectorServiceTest extends TestCase
     public function testConstructorAcceptsTraversableProviders(): void
     {
         $this->moduleSettingService
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $provider = $this->createMockProvider('test', 'Test', 'Desc', []);

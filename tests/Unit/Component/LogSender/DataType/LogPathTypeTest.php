@@ -18,41 +18,41 @@ final class LogPathTypeTest extends TestCase
 {
     public function testFileTypeHasCorrectValue(): void
     {
-        $this->assertEquals('file', LogPathType::FILE->value);
+        $this->assertEquals('file', LogPathType::FILE()->value);
     }
 
     public function testDirectoryTypeHasCorrectValue(): void
     {
-        $this->assertEquals('directory', LogPathType::DIRECTORY->value);
+        $this->assertEquals('directory', LogPathType::DIRECTORY()->value);
     }
 
     public function testFileLabelReturnsCorrectString(): void
     {
-        $this->assertEquals('File', LogPathType::FILE->getLabel());
+        $this->assertEquals('File', LogPathType::FILE()->getLabel());
     }
 
     public function testDirectoryLabelReturnsCorrectString(): void
     {
-        $this->assertEquals('Directory', LogPathType::DIRECTORY->getLabel());
+        $this->assertEquals('Directory', LogPathType::DIRECTORY()->getLabel());
     }
 
     public function testFileLabelDeReturnsCorrectString(): void
     {
-        $this->assertEquals('Datei', LogPathType::FILE->getLabelDe());
+        $this->assertEquals('Datei', LogPathType::FILE()->getLabelDe());
     }
 
     public function testDirectoryLabelDeReturnsCorrectString(): void
     {
-        $this->assertEquals('Verzeichnis', LogPathType::DIRECTORY->getLabelDe());
+        $this->assertEquals('Verzeichnis', LogPathType::DIRECTORY()->getLabelDe());
     }
 
-    public function testCanCreateFromValidValue(): void
+    public function testTryFromReturnsCorrectInstances(): void
     {
-        $file = LogPathType::from('file');
-        $directory = LogPathType::from('directory');
+        $file = LogPathType::tryFrom('file');
+        $directory = LogPathType::tryFrom('directory');
 
-        $this->assertSame(LogPathType::FILE, $file);
-        $this->assertSame(LogPathType::DIRECTORY, $directory);
+        $this->assertSame(LogPathType::FILE(), $file);
+        $this->assertSame(LogPathType::DIRECTORY(), $directory);
     }
 
     public function testTryFromReturnsNullForInvalidValue(): void
@@ -62,18 +62,10 @@ final class LogPathTypeTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testEnumHasExactlyTwoCases(): void
+    public function testSingletonIdentity(): void
     {
-        $cases = LogPathType::cases();
-
-        $this->assertCount(2, $cases);
-    }
-
-    public function testEnumIsBackedByString(): void
-    {
-        $reflection = new \ReflectionEnum(LogPathType::class);
-
-        $this->assertTrue($reflection->isBacked());
-        $this->assertEquals('string', $reflection->getBackingType()->getName());
+        $this->assertSame(LogPathType::FILE(), LogPathType::FILE());
+        $this->assertSame(LogPathType::DIRECTORY(), LogPathType::DIRECTORY());
+        $this->assertNotSame(LogPathType::FILE(), LogPathType::DIRECTORY());
     }
 }

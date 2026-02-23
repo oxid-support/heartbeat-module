@@ -24,11 +24,11 @@ final class ApiVersionType
      * @param ComponentStatusType[] $componentStatus
      */
     public function __construct(
-        private readonly string $apiVersion,
-        private readonly string $apiSchemaHash,
-        private readonly string $moduleVersion,
-        private readonly array $supportedOperations,
-        private readonly array $componentStatus = [],
+        private string $apiVersion,
+        private string $apiSchemaHash,
+        private string $moduleVersion,
+        private array $supportedOperations,
+        private array $componentStatus = [],
     ) {
     }
 

@@ -11,7 +11,7 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin;
 
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\ApiUser\Exception\UserNotFoundException;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserServiceInterface;
@@ -20,7 +20,7 @@ use OxidSupport\Heartbeat\Component\ApiUser\Service\TokenGeneratorInterface;
 final class PasswordResetController extends AdminController
 {
     private ?ApiUserServiceInterface $apiUserService = null;
-    private ?ModuleSettingServiceInterface $moduleSettingService = null;
+    private ?ModuleSettingBridgeInterface $moduleSettingService = null;
     private ?TokenGeneratorInterface $tokenGenerator = null;
 
     public function resetPassword(): string
@@ -30,7 +30,7 @@ final class PasswordResetController extends AdminController
 
             $this->getApiUserService()->resetPasswordForApiUser();
 
-            $this->getModuleSettingService()->saveString(
+            $this->getModuleSettingService()->save(
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 $token,
                 Module::ID
@@ -52,12 +52,12 @@ final class PasswordResetController extends AdminController
         return $this->apiUserService; // @phpstan-ignore return.type
     }
 
-    private function getModuleSettingService(): ModuleSettingServiceInterface
+    private function getModuleSettingService(): ModuleSettingBridgeInterface
     {
         if ($this->moduleSettingService === null) {
             $this->moduleSettingService = ContainerFactory::getInstance()
                 ->getContainer()
-                ->get(ModuleSettingServiceInterface::class);
+                ->get(ModuleSettingBridgeInterface::class);
         }
         return $this->moduleSettingService; // @phpstan-ignore return.type
     }

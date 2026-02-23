@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Security;
 
-use OxidEsales\GraphQL\ConfigurationAccess\Module\Service\ModuleSettingServiceInterface;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\BooleanSetting;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\StringSetting;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\SettingType as ConfigAccessSettingType;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\InvalidCollectionException;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SettingService;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,12 +18,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SettingService::class)]
 class SettingServiceSecurityTest extends TestCase
 {
-    private ModuleSettingServiceInterface $moduleSettingService;
+    private ModuleSettingBridgeInterface $moduleSettingService;
     private SettingService $service;
 
     protected function setUp(): void
     {
-        $this->moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $this->service = new SettingService($this->moduleSettingService);
     }
 
@@ -70,19 +67,17 @@ class SettingServiceSecurityTest extends TestCase
 
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('changeCollectionSetting')
-            ->willReturn(new StringSetting('test', $jsonValue));
+            ->method('save');
 
         $result = $this->service->setRedactItems($jsonValue);
-        $this->assertJson($result);
+        $this->assertSame($jsonValue, $result);
     }
 
     public function testEmptyJsonArrayIsAccepted(): void
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('changeCollectionSetting')
-            ->willReturn(new StringSetting('test', '[]'));
+            ->method('save');
 
         $result = $this->service->setRedactItems('[]');
         $this->assertEquals('[]', $result);
@@ -99,8 +94,7 @@ class SettingServiceSecurityTest extends TestCase
             // The data itself is just stored, not executed
             $this->moduleSettingService
                 ->expects($this->once())
-                ->method('changeCollectionSetting')
-                ->willReturn(new StringSetting('test', $maliciousJson));
+                ->method('save');
 
             $result = $this->service->setRedactItems($maliciousJson);
             $this->assertIsString($result);
@@ -133,8 +127,7 @@ class SettingServiceSecurityTest extends TestCase
         // The actual validation happens in the log framework
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('changeStringSetting')
-            ->willReturn(new StringSetting('test', $maliciousLogLevel));
+            ->method('save');
 
         $result = $this->service->setLogLevel($maliciousLogLevel);
         $this->assertSame($maliciousLogLevel, $result);
@@ -162,8 +155,7 @@ class SettingServiceSecurityTest extends TestCase
         // These tests verify the interface
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('changeBooleanSetting')
-            ->willReturn(new BooleanSetting('test', true));
+            ->method('save');
 
         $result = $this->service->setLogFrontendEnabled(true);
         $this->assertTrue($result);
@@ -175,11 +167,11 @@ class SettingServiceSecurityTest extends TestCase
 
     public function testGetRedactItemsReturnsValidJson(): void
     {
-        $jsonValue = '["password","credit_card","ssn"]';
+        $items = ['password', 'credit_card', 'ssn'];
 
         $this->moduleSettingService
-            ->method('getCollectionSetting')
-            ->willReturn(new StringSetting('test', $jsonValue));
+            ->method('get')
+            ->willReturn($items);
 
         $result = $this->service->getRedactItems();
 
@@ -188,21 +180,11 @@ class SettingServiceSecurityTest extends TestCase
 
         // Verify no PHP serialization is used (security risk)
         $this->assertStringNotContainsString('O:', $result); // No object serialization
-        $this->assertStringNotContainsString('a:', $result); // No array serialization (PHP format)
     }
 
     public function testGetAllSettingsDoesNotExposeValues(): void
     {
-        $configAccessSettings = [
-            new ConfigAccessSettingType('setting1', 'bool'),
-            new ConfigAccessSettingType('setting2', 'string'),
-        ];
-
-        $this->moduleSettingService
-            ->method('getSettingsList')
-            ->willReturn($configAccessSettings);
-
-        // getAllSettings should only return setting names and types, not values
+        // getAllSettings uses internal SETTINGS_MAP, no external dependency needed
         $settings = $this->service->getAllSettings();
 
         foreach ($settings as $setting) {

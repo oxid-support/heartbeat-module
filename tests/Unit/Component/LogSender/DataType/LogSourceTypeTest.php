@@ -136,7 +136,7 @@ final class LogSourceTypeTest extends TestCase
     {
         $logPath = new LogPath(
             '/var/log/test.log',
-            LogPathType::FILE,
+            LogPathType::FILE(),
             'Test Log',
             'Description'
         );

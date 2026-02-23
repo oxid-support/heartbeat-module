@@ -20,8 +20,8 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 final class ComponentStatusType
 {
     public function __construct(
-        private readonly string $name,
-        private readonly bool $active,
+        private string $name,
+        private bool $active,
     ) {
     }
 

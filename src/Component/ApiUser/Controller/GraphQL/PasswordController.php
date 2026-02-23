@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\ApiUser\Controller\GraphQL;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\ApiUser\Exception\InvalidTokenException;
 use OxidSupport\Heartbeat\Component\ApiUser\Exception\PasswordTooShortException;
@@ -24,7 +24,7 @@ final class PasswordController
 {
     public function __construct(
         private ApiUserServiceInterface $apiUserService,
-        private ModuleSettingServiceInterface $moduleSettingService,
+        private ModuleSettingBridgeInterface $moduleSettingService,
         private TokenGeneratorInterface $tokenGenerator
     ) {
     }
@@ -42,7 +42,7 @@ final class PasswordController
 
         // Security: Clear token BEFORE setting password to prevent race conditions (TOCTOU)
         // This ensures a second concurrent request with the same token will fail validation
-        $this->moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, '', Module::ID);
+        $this->moduleSettingService->save(Module::SETTING_APIUSER_SETUP_TOKEN, '', Module::ID);
 
         // Delegate to service
         $this->apiUserService->setPasswordForApiUser($password);
@@ -67,7 +67,7 @@ final class PasswordController
         $this->apiUserService->resetPasswordForApiUser();
 
         // Save token
-        $this->moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
+        $this->moduleSettingService->save(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
 
         return $token;
     }
@@ -78,7 +78,7 @@ final class PasswordController
     private function assertSetupAvailable(): void
     {
         try {
-            $storedToken = (string) $this->moduleSettingService->getString(
+            $storedToken = (string) $this->moduleSettingService->get(
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 Module::ID
             );
@@ -94,7 +94,7 @@ final class PasswordController
     private function validateToken(string $token): void
     {
         try {
-            $storedToken = (string) $this->moduleSettingService->getString(
+            $storedToken = (string) $this->moduleSettingService->get(
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 Module::ID
             );

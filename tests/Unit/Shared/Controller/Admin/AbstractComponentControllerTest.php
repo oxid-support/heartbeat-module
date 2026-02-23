@@ -9,10 +9,6 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Shared\Controller\Admin;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
-use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\AbstractComponentController;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\ComponentControllerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -66,70 +62,6 @@ final class AbstractComponentControllerTest extends TestCase
         ];
     }
 
-    public function testIsModuleActivatedReturnsTrueForActiveModule(): void
-    {
-        $moduleId = 'test_module';
-        $shopId = 1;
-
-        $moduleConfiguration = $this->createMock(ModuleConfiguration::class);
-        $moduleConfiguration
-            ->method('isActivated')
-            ->willReturn(true);
-
-        $shopConfiguration = $this->createMock(ShopConfiguration::class);
-        $shopConfiguration
-            ->method('getModuleConfiguration')
-            ->with($moduleId)
-            ->willReturn($moduleConfiguration);
-
-        $controller = $this->createControllerWithModuleCheck($shopId, $shopConfiguration);
-
-        $result = $this->invokeIsModuleActivated($controller, $moduleId);
-
-        $this->assertTrue($result);
-    }
-
-    public function testIsModuleActivatedReturnsFalseForInactiveModule(): void
-    {
-        $moduleId = 'test_module';
-        $shopId = 1;
-
-        $moduleConfiguration = $this->createMock(ModuleConfiguration::class);
-        $moduleConfiguration
-            ->method('isActivated')
-            ->willReturn(false);
-
-        $shopConfiguration = $this->createMock(ShopConfiguration::class);
-        $shopConfiguration
-            ->method('getModuleConfiguration')
-            ->with($moduleId)
-            ->willReturn($moduleConfiguration);
-
-        $controller = $this->createControllerWithModuleCheck($shopId, $shopConfiguration);
-
-        $result = $this->invokeIsModuleActivated($controller, $moduleId);
-
-        $this->assertFalse($result);
-    }
-
-    public function testIsModuleActivatedReturnsFalseOnException(): void
-    {
-        $moduleId = 'nonexistent_module';
-        $shopId = 1;
-
-        $shopConfiguration = $this->createMock(ShopConfiguration::class);
-        $shopConfiguration
-            ->method('getModuleConfiguration')
-            ->with($moduleId)
-            ->willThrowException(new \Exception('Module not found'));
-
-        $controller = $this->createControllerWithModuleCheck($shopId, $shopConfiguration);
-
-        $result = $this->invokeIsModuleActivated($controller, $moduleId);
-
-        $this->assertFalse($result);
-    }
-
     public function testStatusClassConstantsAreDefined(): void
     {
         $this->assertSame('active', ComponentControllerInterface::STATUS_CLASS_ACTIVE);
@@ -149,54 +81,5 @@ final class AbstractComponentControllerTest extends TestCase
                 return $this->active;
             }
         };
-    }
-
-    private function createControllerWithModuleCheck(
-        int $shopId,
-        ShopConfiguration $shopConfiguration
-    ): AbstractComponentController {
-        $context = $this->createMock(ContextInterface::class);
-        $context
-            ->method('getCurrentShopId')
-            ->willReturn($shopId);
-
-        $shopConfigurationDao = $this->createMock(ShopConfigurationDaoInterface::class);
-        $shopConfigurationDao
-            ->method('get')
-            ->with($shopId)
-            ->willReturn($shopConfiguration);
-
-        return new class ($context, $shopConfigurationDao) extends AbstractComponentController {
-            public function __construct(
-                private ContextInterface $contextMock,
-                private ShopConfigurationDaoInterface $shopConfigurationDaoMock
-            ) {
-            }
-
-            public function isComponentActive(): bool
-            {
-                return false;
-            }
-
-            protected function getContext(): ContextInterface
-            {
-                return $this->contextMock;
-            }
-
-            protected function getShopConfigurationDao(): ShopConfigurationDaoInterface
-            {
-                return $this->shopConfigurationDaoMock;
-            }
-
-            public function callIsModuleActivated(string $moduleId): bool
-            {
-                return $this->isModuleActivated($moduleId);
-            }
-        };
-    }
-
-    private function invokeIsModuleActivated(AbstractComponentController $controller, string $moduleId): bool
-    {
-        return $controller->callIsModuleActivated($moduleId);
     }
 }

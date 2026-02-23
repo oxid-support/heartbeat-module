@@ -28,13 +28,13 @@ final class LogSource
      * @param bool $available Whether the source is available/reachable
      */
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $description,
-        public readonly string $origin,
-        public readonly ?string $providerId,
-        public readonly array $paths,
-        public readonly bool $available,
+        public string $id,
+        public string $name,
+        public string $description,
+        public string $origin,
+        public ?string $providerId,
+        public array $paths,
+        public bool $available,
     ) {
     }
 

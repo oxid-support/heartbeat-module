@@ -19,13 +19,11 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
 {
     protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_setup';
 
-    private const CONFIG_ACCESS_MODULE_ID = 'oe_graphql_configuration_access';
-
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
 
     public function isComponentActive(): bool
     {
-        return $this->getModuleSettingService()->getBoolean(
+        return (bool) $this->getModuleSettingService()->get(
             Module::SETTING_REQUESTLOGGER_ACTIVE,
             Module::ID
         );
@@ -53,7 +51,7 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
             return;
         }
 
-        $this->getModuleSettingService()->saveBoolean(
+        $this->getModuleSettingService()->save(
             Module::SETTING_REQUESTLOGGER_ACTIVE,
             !$this->isComponentActive(),
             Module::ID
@@ -76,7 +74,9 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
 
     public function isConfigAccessActivated(): bool
     {
-        return $this->isModuleActivated(self::CONFIG_ACCESS_MODULE_ID);
+        // In OXID 6.5, settings are managed directly via ModuleSettingBridgeInterface
+        // (no external graphql-configuration-access module needed)
+        return true;
     }
 
     protected function getApiUserStatusService(): ApiUserStatusServiceInterface

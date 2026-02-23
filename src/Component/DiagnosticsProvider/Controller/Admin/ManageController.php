@@ -28,7 +28,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     public function isComponentActive(): bool
     {
         try {
-            return $this->getModuleSettingService()->getBoolean(
+            return (bool) $this->getModuleSettingService()->get(
                 Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
                 Module::ID
             );
@@ -65,7 +65,7 @@ class ManageController extends AbstractComponentController implements TogglableC
             return;
         }
 
-        $this->getModuleSettingService()->saveBoolean(
+        $this->getModuleSettingService()->save(
             Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
             !$this->isComponentActive(),
             Module::ID

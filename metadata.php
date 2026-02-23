@@ -25,7 +25,7 @@ Includes GraphQL API for remote configuration and activation.',
             \OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController::class,
     ],
     'controllers' => [
-        // Required for OXID eShop 7.2 compatibility (7.4+ uses services.yaml oxid.view_controller tags)
+        // Controller registrations for OXID eShop 6.5
         'heartbeat_requestlogger_settings' =>
             \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController::class,
         'heartbeat_apiuser_setup' =>

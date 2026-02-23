@@ -2,9 +2,9 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "1.x" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "1.x" ]
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.3', '8.4']
+        php-version: ['8.1', '8.2']
 
     steps:
     - uses: actions/checkout@v6
@@ -53,7 +53,7 @@ jobs:
   notify-devops:
     name: Notify DevOps Repo
     needs: [build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/1.x'
     runs-on: ubuntu-latest
     steps:
       - name: Trigger submodule update in devops repo

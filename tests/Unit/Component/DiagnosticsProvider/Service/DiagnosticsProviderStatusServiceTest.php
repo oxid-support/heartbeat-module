@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\DiagnosticsProvider\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusService;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
@@ -20,13 +20,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(DiagnosticsProviderStatusService::class)]
 final class DiagnosticsProviderStatusServiceTest extends TestCase
 {
-    private ModuleSettingServiceInterface&MockObject $moduleSettingService;
+    private ModuleSettingBridgeInterface&MockObject $moduleSettingService;
     private DiagnosticsProviderStatusService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $this->service = new DiagnosticsProviderStatusService($this->moduleSettingService);
     }
 
@@ -36,7 +36,7 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID)
             ->willReturn(true);
 
@@ -47,7 +47,7 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID)
             ->willReturn(false);
 
@@ -58,7 +58,7 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $this->assertFalse($this->service->isActive());
@@ -71,12 +71,11 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
         $this->assertInstanceOf(DiagnosticsProviderStatusServiceInterface::class, $this->service);
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(DiagnosticsProviderStatusService::class);
 
         $this->assertTrue($reflection->isFinal());
-        $this->assertTrue($reflection->isReadOnly());
     }
 
     public function testConstructorHasOneParameter(): void

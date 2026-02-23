@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\LogSender\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPathType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSource;
@@ -25,11 +25,11 @@ final class LogCollectorService implements LogCollectorServiceInterface
     private array $providers;
 
     /**
-     * @param ModuleSettingServiceInterface $moduleSettingService
+     * @param ModuleSettingBridgeInterface $moduleSettingService
      * @param iterable<LogPathProviderInterface> $providers Injected via !tagged_iterator
      */
     public function __construct(
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private ModuleSettingBridgeInterface $moduleSettingService,
         iterable $providers
     ) {
         $this->providers = $providers instanceof \Traversable
@@ -99,7 +99,7 @@ final class LogCollectorService implements LogCollectorServiceInterface
     public function getStaticPaths(): array
     {
         try {
-            $configured = $this->moduleSettingService->getCollection(
+            $configured = (array) $this->moduleSettingService->get(
                 Module::SETTING_LOGSENDER_STATIC_PATHS,
                 Module::ID
             );

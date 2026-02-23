@@ -23,8 +23,8 @@ use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
 class LogPathProvider implements LogPathProviderInterface
 {
     public function __construct(
-        private readonly ShopFacadeInterface $shopFacade,
-        private readonly ModuleSettingFacadeInterface $moduleSettingFacade,
+        private ShopFacadeInterface $shopFacade,
+        private ModuleSettingFacadeInterface $moduleSettingFacade,
     ) {
     }
 
@@ -37,7 +37,7 @@ class LogPathProvider implements LogPathProviderInterface
         return [
             new LogPath(
                 path: $logDirectory,
-                type: LogPathType::DIRECTORY,
+                type: LogPathType::DIRECTORY(),
                 name: 'Request Logger Logs',
                 description: 'Log files containing recorded shop requests with correlation IDs',
                 filePattern: '*.log',

@@ -29,7 +29,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
     public function isComponentActive(): bool
     {
         try {
-            return $this->getModuleSettingService()->getBoolean(
+            return (bool) $this->getModuleSettingService()->get(
                 Module::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             );
@@ -44,7 +44,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
             return;
         }
 
-        $this->getModuleSettingService()->saveBoolean(
+        $this->getModuleSettingService()->save(
             Module::SETTING_REQUESTLOGGER_ACTIVE,
             !$this->isComponentActive(),
             Module::ID
@@ -89,15 +89,15 @@ class SettingsController extends AbstractComponentController implements Togglabl
         $moduleId = Module::ID;
 
         return [
-            'componentActive' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_ACTIVE, $moduleId),
-            'logLevel' => (string) $moduleSettingService->getString(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, $moduleId),
-            'logFrontend' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_LOG_FRONTEND, $moduleId),
-            'logAdmin' => $moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_LOG_ADMIN, $moduleId),
-            'redactAllValues' => $moduleSettingService->getBoolean(
+            'componentActive' => (bool) $moduleSettingService->get(Module::SETTING_REQUESTLOGGER_ACTIVE, $moduleId),
+            'logLevel' => (string) $moduleSettingService->get(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, $moduleId),
+            'logFrontend' => (bool) $moduleSettingService->get(Module::SETTING_REQUESTLOGGER_LOG_FRONTEND, $moduleId),
+            'logAdmin' => (bool) $moduleSettingService->get(Module::SETTING_REQUESTLOGGER_LOG_ADMIN, $moduleId),
+            'redactAllValues' => (bool) $moduleSettingService->get(
                 Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES,
                 $moduleId
             ),
-            'redactFields' => $moduleSettingService->getCollection(
+            'redactFields' => (array) $moduleSettingService->get(
                 Module::SETTING_REQUESTLOGGER_REDACT_FIELDS,
                 $moduleId
             ),
@@ -118,26 +118,26 @@ class SettingsController extends AbstractComponentController implements Togglabl
         $moduleId = Module::ID;
 
         if (isset($params['logLevel'])) {
-            $moduleSettingService->saveString(
+            $moduleSettingService->save(
                 Module::SETTING_REQUESTLOGGER_LOG_LEVEL,
                 $params['logLevel'],
                 $moduleId
             );
         }
 
-        $moduleSettingService->saveBoolean(
+        $moduleSettingService->save(
             Module::SETTING_REQUESTLOGGER_LOG_FRONTEND,
             isset($params['logFrontend']) && $params['logFrontend'] === '1',
             $moduleId
         );
 
-        $moduleSettingService->saveBoolean(
+        $moduleSettingService->save(
             Module::SETTING_REQUESTLOGGER_LOG_ADMIN,
             isset($params['logAdmin']) && $params['logAdmin'] === '1',
             $moduleId
         );
 
-        $moduleSettingService->saveBoolean(
+        $moduleSettingService->save(
             Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES,
             isset($params['redactAllValues']) && $params['redactAllValues'] === '1',
             $moduleId
@@ -147,7 +147,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
             $fields = array_filter(
                 array_map('trim', explode("\n", $params['redactFields']))
             );
-            $moduleSettingService->saveCollection(
+            $moduleSettingService->save(
                 Module::SETTING_REQUESTLOGGER_REDACT_FIELDS,
                 $fields,
                 $moduleId

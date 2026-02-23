@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Shared\Controller\Admin;
 
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
@@ -50,11 +50,11 @@ class NavigationController extends NavigationController_parent
 
         return [
             'heartbeat_apiuser_setup' => $this->isApiUserSetupComplete(),
-            'heartbeat_requestlogger_settings' => $moduleSettingService->getBoolean(
+            'heartbeat_requestlogger_settings' => (bool) $moduleSettingService->get(
                 self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             ),
-            'heartbeat_requestlogger_setup' => $this->isApiUserSetupComplete() && $moduleSettingService->getBoolean(
+            'heartbeat_requestlogger_setup' => $this->isApiUserSetupComplete() && (bool) $moduleSettingService->get(
                 self::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             ),
@@ -80,10 +80,10 @@ class NavigationController extends NavigationController_parent
     /**
      * Get Log Sender component status.
      */
-    private function getLogSenderStatus(ModuleSettingServiceInterface $moduleSettingService): bool
+    private function getLogSenderStatus(ModuleSettingBridgeInterface $moduleSettingService): bool
     {
         try {
-            return $moduleSettingService->getBoolean(
+            return (bool) $moduleSettingService->get(
                 self::SETTING_LOGSENDER_ACTIVE,
                 Module::ID
             );
@@ -95,10 +95,10 @@ class NavigationController extends NavigationController_parent
     /**
      * Get Diagnostics Provider component status.
      */
-    private function getDiagnosticsProviderStatus(ModuleSettingServiceInterface $moduleSettingService): bool
+    private function getDiagnosticsProviderStatus(ModuleSettingBridgeInterface $moduleSettingService): bool
     {
         try {
-            return $moduleSettingService->getBoolean(
+            return (bool) $moduleSettingService->get(
                 self::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
                 Module::ID
             );
@@ -107,11 +107,11 @@ class NavigationController extends NavigationController_parent
         }
     }
 
-    protected function getModuleSettingService(): ModuleSettingServiceInterface
+    protected function getModuleSettingService(): ModuleSettingBridgeInterface
     {
         return ContainerFactory::getInstance()
             ->getContainer()
-            ->get(ModuleSettingServiceInterface::class);
+            ->get(ModuleSettingBridgeInterface::class);
     }
 
     protected function getApiUserStatusService(): ApiUserStatusServiceInterface

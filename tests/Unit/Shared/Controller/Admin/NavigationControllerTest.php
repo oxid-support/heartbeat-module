@@ -25,7 +25,7 @@ if (!class_exists(NavigationController_parent::class)) {
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Shared\Controller\Admin;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController;
 use OxidSupport\Heartbeat\Module\Module;
@@ -43,9 +43,9 @@ final class NavigationControllerTest extends TestCase
         bool $apiUserSetupComplete,
         bool $requestLoggerActive
     ): void {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->willReturnMap([
                 [self::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, $requestLoggerActive],
             ]);
@@ -85,9 +85,9 @@ final class NavigationControllerTest extends TestCase
 
     public function testRenderAddsComponentStatusToViewData(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->willReturnMap([
                 [self::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, true],
             ]);
@@ -116,9 +116,9 @@ final class NavigationControllerTest extends TestCase
 
     public function testApiUserStatusReturnsFalseOnException(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->willReturn(false);
 
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
@@ -133,7 +133,7 @@ final class NavigationControllerTest extends TestCase
     }
 
     private function createControllerWithMocks(
-        ModuleSettingServiceInterface $moduleSettingService,
+        ModuleSettingBridgeInterface $moduleSettingService,
         ?ApiUserStatusServiceInterface $apiUserStatusService = null
     ): NavigationController {
         $controller = $this->getMockBuilder(NavigationController::class)

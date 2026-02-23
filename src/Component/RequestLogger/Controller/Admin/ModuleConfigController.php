@@ -47,12 +47,10 @@ class ModuleConfigController extends ModuleConfiguration
     private function isModuleActive(string $moduleId): bool
     {
         try {
-            $shopConfiguration = $this->getShopConfigurationDao()->get(
-                $this->getContext()->getCurrentShopId()
-            );
-            return $shopConfiguration
-                ->getModuleConfiguration($moduleId)
-                ->isActivated();
+            /** @var \OxidEsales\Eshop\Core\Module\Module $module */
+            $module = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
+            $module->load($moduleId);
+            return $module->isActive();
         } catch (\Exception) {
             return false;
         }

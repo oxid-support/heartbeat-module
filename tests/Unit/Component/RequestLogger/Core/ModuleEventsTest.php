@@ -13,7 +13,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\RequestLogger\Core\ModuleEvents;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -44,12 +44,12 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateGeneratesTokenWhenTokenEmptyAndPasswordIsPlaceholder(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         // Token is empty (first call returns empty)
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
@@ -72,7 +72,7 @@ final class ModuleEventsTest extends TestCase
         // Expect token to be saved
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveString')
+            ->method('save')
             ->with(
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 $this->matchesRegularExpression('/^[a-f0-9]{32}$/'),
@@ -83,7 +83,7 @@ final class ModuleEventsTest extends TestCase
         $container->method('get')
             ->willReturnCallback(function ($service) use ($moduleSettingService, $queryBuilderFactory) {
                 return match ($service) {
-                    ModuleSettingServiceInterface::class => $moduleSettingService,
+                    ModuleSettingBridgeInterface::class => $moduleSettingService,
                     QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                     default => null,
                 };
@@ -102,19 +102,19 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateDoesNotGenerateTokenWhenTokenAlreadyExists(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         // Token already exists
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new \Symfony\Component\String\UnicodeString('existing-token-12345'));
 
         // Should NOT save a new token
         $moduleSettingService
             ->expects($this->never())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
@@ -135,12 +135,12 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateDoesNotGenerateTokenWhenPasswordIsBCrypt(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         // Token is empty
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->with(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID)
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
@@ -163,13 +163,13 @@ final class ModuleEventsTest extends TestCase
         // Should NOT save a new token
         $moduleSettingService
             ->expects($this->never())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(function ($service) use ($moduleSettingService, $queryBuilderFactory) {
                 return match ($service) {
-                    ModuleSettingServiceInterface::class => $moduleSettingService,
+                    ModuleSettingBridgeInterface::class => $moduleSettingService,
                     QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                     default => null,
                 };
@@ -188,11 +188,11 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateRecognizesBCrypt2aVariant(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
@@ -210,12 +210,12 @@ final class ModuleEventsTest extends TestCase
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
         $queryBuilderFactory->method('create')->willReturn($queryBuilder);
 
-        $moduleSettingService->expects($this->never())->method('saveString');
+        $moduleSettingService->expects($this->never())->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });
@@ -233,11 +233,11 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateRecognizesBCrypt2bVariant(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
@@ -255,12 +255,12 @@ final class ModuleEventsTest extends TestCase
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
         $queryBuilderFactory->method('create')->willReturn($queryBuilder);
 
-        $moduleSettingService->expects($this->never())->method('saveString');
+        $moduleSettingService->expects($this->never())->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });
@@ -277,12 +277,12 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateGeneratesTokenWhenGetStringThrowsException(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         // Exception when getting token
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         // Password is placeholder
@@ -304,12 +304,12 @@ final class ModuleEventsTest extends TestCase
         // Should save a new token
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });
@@ -327,11 +327,11 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateGeneratesTokenWhenPasswordCheckThrowsException(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $queryBuilderFactory = $this->createMock(QueryBuilderFactoryInterface::class);
@@ -341,12 +341,12 @@ final class ModuleEventsTest extends TestCase
         // Should save a new token (password check failed = assume not set)
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });
@@ -364,11 +364,11 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateGeneratesTokenWhenUserNotFound(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         // User not found - returns null/empty
@@ -390,12 +390,12 @@ final class ModuleEventsTest extends TestCase
         // Should save a new token
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });
@@ -413,11 +413,11 @@ final class ModuleEventsTest extends TestCase
      */
     public function testOnActivateGeneratesTokenWhenPasswordIsEmptyString(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->willReturn(new \Symfony\Component\String\UnicodeString(''));
 
         $result = $this->createMock(Result::class);
@@ -437,12 +437,12 @@ final class ModuleEventsTest extends TestCase
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveString');
+            ->method('save');
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
             ->willReturnCallback(fn($service) => match ($service) {
-                ModuleSettingServiceInterface::class => $moduleSettingService,
+                ModuleSettingBridgeInterface::class => $moduleSettingService,
                 QueryBuilderFactoryInterface::class => $queryBuilderFactory,
                 default => null,
             });

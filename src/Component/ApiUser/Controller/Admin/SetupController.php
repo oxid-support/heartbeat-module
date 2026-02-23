@@ -51,7 +51,7 @@ class SetupController extends AbstractComponentController
      */
     public function getSetupToken(): string
     {
-        return (string) $this->getModuleSettingService()->getString(
+        return (string) $this->getModuleSettingService()->get(
             Module::SETTING_APIUSER_SETUP_TOKEN,
             Module::ID
         );
@@ -136,7 +136,7 @@ class SetupController extends AbstractComponentController
             // User might not exist yet, ignore
         }
 
-        $this->getModuleSettingService()->saveString(
+        $this->getModuleSettingService()->save(
             Module::SETTING_APIUSER_SETUP_TOKEN,
             $newToken,
             Module::ID

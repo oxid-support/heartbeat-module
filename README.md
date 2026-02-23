@@ -31,13 +31,13 @@ composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
 in some cases, use -W
-> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies.
+> **Note**: The OXID GraphQL Base module is installed automatically as a dependency.
 
 ### Step 2: Run Database Migrations
 
 ```bash
-./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oe_graphql_base
-./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
+./vendor/bin/oe-eshop-db_migrate migrations:migrate oe_graphql_base
+./vendor/bin/oe-eshop-db_migrate migrations:migrate oxsheartbeat
 ```
 
 ### Step 3: Clear Shop Cache
@@ -48,11 +48,12 @@ in some cases, use -W
 
 ### Step 4: Activate Modules
 
-**Important**: The GraphQL modules must be activated **before** activating the Heartbeat module.
+**Important**: The GraphQL Base module must be activated **before** activating the Heartbeat module.
+
+Activate via OXID Admin under **Extensions → Modules**, or use the CLI:
 
 ```bash
 ./vendor/bin/oe-console oe:module:activate oe_graphql_base
-./vendor/bin/oe-console oe:module:activate oe_graphql_configuration_access
 ./vendor/bin/oe-console oe:module:activate oxsheartbeat
 ```
 
@@ -64,8 +65,8 @@ For more details on OXID GraphQL installation, see the [official documentation](
 - **Module Title**: OXS :: Heartbeat
 - **Version**: 1.0.0
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.1+
-- **PHP Version**: 8.0 - 8.4
+- **Supported OXID Versions**: 6.5.x
+- **PHP Version**: 8.0 - 8.2
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
 

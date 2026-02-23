@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Shop\Facade;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacade;
 use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacadeInterface;
 use PHPUnit\Framework\TestCase;
 
 class ModuleSettingFacadeTest extends TestCase
 {
-    private ModuleSettingServiceInterface $moduleSettingService;
+    private ModuleSettingBridgeInterface $moduleSettingService;
     private ModuleSettingFacade $facade;
 
     protected function setUp(): void
     {
-        $this->moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $this->facade = new ModuleSettingFacade($this->moduleSettingService);
     }
 
@@ -29,9 +29,9 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->with('oxsheartbeat_requestlogger_log_level', 'oxsheartbeat')
-            ->willReturn(new \Symfony\Component\String\UnicodeString('debug'));
+            ->willReturn('debug');
 
         $result = $this->facade->getLogLevel();
 
@@ -42,8 +42,8 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getString')
-            ->willReturn(new \Symfony\Component\String\UnicodeString('info'));
+            ->method('get')
+            ->willReturn('info');
 
         $result = $this->facade->getLogLevel();
 
@@ -54,8 +54,8 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getString')
-            ->willReturn(new \Symfony\Component\String\UnicodeString('warning'));
+            ->method('get')
+            ->willReturn('warning');
 
         $result = $this->facade->getLogLevel();
 
@@ -66,7 +66,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getCollection')
+            ->method('get')
             ->with('oxsheartbeat_requestlogger_redact_fields', 'oxsheartbeat')
             ->willReturn(['password', 'token']);
 
@@ -79,7 +79,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getCollection')
+            ->method('get')
             ->willReturn(['api_key', 'secret']);
 
         $result = $this->facade->getRedactItems();
@@ -91,7 +91,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getCollection')
+            ->method('get')
             ->willReturn([]);
 
         $result = $this->facade->getRedactItems();
@@ -105,7 +105,7 @@ class ModuleSettingFacadeTest extends TestCase
 
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getCollection')
+            ->method('get')
             ->willReturn($items);
 
         $result = $this->facade->getRedactItems();
@@ -118,11 +118,11 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->exactly(3))
-            ->method('getString')
+            ->method('get')
             ->willReturnOnConsecutiveCalls(
-                new \Symfony\Component\String\UnicodeString('debug'),
-                new \Symfony\Component\String\UnicodeString('info'),
-                new \Symfony\Component\String\UnicodeString('error')
+                'debug',
+                'info',
+                'error'
             );
 
         $result1 = $this->facade->getLogLevel();
@@ -138,7 +138,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->exactly(2))
-            ->method('getCollection')
+            ->method('get')
             ->willReturnOnConsecutiveCalls(['password'], ['token', 'secret']);
 
         $result1 = $this->facade->getRedactItems();
@@ -152,14 +152,14 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getString')
+            ->method('get')
             ->with(
                 $this->callback(function ($arg) {
                     return strpos($arg, 'oxsheartbeat_') === 0;
                 }),
                 'oxsheartbeat'
             )
-            ->willReturn(new \Symfony\Component\String\UnicodeString('info'));
+            ->willReturn('info');
 
         $this->facade->getLogLevel();
     }
@@ -168,7 +168,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getCollection')
+            ->method('get')
             ->with(
                 $this->callback(function ($arg) {
                     return strpos($arg, 'oxsheartbeat_') === 0;
@@ -184,7 +184,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with('oxsheartbeat_requestlogger_active', 'oxsheartbeat')
             ->willReturn(true);
 
@@ -197,7 +197,7 @@ class ModuleSettingFacadeTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with('oxsheartbeat_requestlogger_active', 'oxsheartbeat')
             ->willReturn(false);
 

@@ -16,12 +16,12 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 final class LogPathInfoType
 {
     public function __construct(
-        private readonly string $path,
-        private readonly string $type,
-        private readonly string $name,
-        private readonly string $description,
-        private readonly bool $exists,
-        private readonly bool $readable,
+        private string $path,
+        private string $type,
+        private string $name,
+        private string $description,
+        private bool $exists,
+        private bool $readable,
     ) {
     }
 

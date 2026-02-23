@@ -20,7 +20,7 @@ final class LogSourceTest extends TestCase
 {
     private function createTestLogPath(): LogPath
     {
-        return new LogPath('/var/log/test.log', LogPathType::FILE, 'Test Log');
+        return new LogPath('/var/log/test.log', LogPathType::FILE(), 'Test Log');
     }
 
     public function testConstructorSetsId(): void
@@ -105,7 +105,7 @@ final class LogSourceTest extends TestCase
     public function testGetFirstPathReturnsFirstPath(): void
     {
         $path1 = $this->createTestLogPath();
-        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE, 'Other');
+        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE(), 'Other');
         $source = new LogSource('test_id', 'Test', '', 'static', null, [$path1, $path2], true);
 
         $this->assertSame($path1, $source->getFirstPath());
@@ -121,7 +121,7 @@ final class LogSourceTest extends TestCase
     public function testGetPathAtReturnsCorrectPath(): void
     {
         $path1 = $this->createTestLogPath();
-        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE, 'Other');
+        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE(), 'Other');
         $source = new LogSource('test_id', 'Test', '', 'static', null, [$path1, $path2], true);
 
         $this->assertSame($path2, $source->getPathAt(1));
@@ -137,7 +137,7 @@ final class LogSourceTest extends TestCase
     public function testGetPathCountReturnsCorrectCount(): void
     {
         $path1 = $this->createTestLogPath();
-        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE, 'Other');
+        $path2 = new LogPath('/var/log/other.log', LogPathType::FILE(), 'Other');
         $source = new LogSource('test_id', 'Test', '', 'static', null, [$path1, $path2], true);
 
         $this->assertEquals(2, $source->getPathCount());
@@ -182,15 +182,5 @@ final class LogSourceTest extends TestCase
         $reflection = new \ReflectionClass(LogSource::class);
 
         $this->assertTrue($reflection->isFinal());
-    }
-
-    public function testAllPropertiesAreReadonly(): void
-    {
-        $reflection = new \ReflectionClass(LogSource::class);
-        $properties = $reflection->getProperties();
-
-        foreach ($properties as $property) {
-            $this->assertTrue($property->isReadOnly(), "Property {$property->getName()} should be readonly");
-        }
     }
 }

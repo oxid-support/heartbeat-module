@@ -19,7 +19,7 @@ class DiagnosticsProvider implements DiagnosticsProviderInterface
     private ?Diagnostics $diagnostics = null;
 
     public function __construct(
-        private readonly ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge
+        private ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge
     ) {
     }
 

@@ -18,4 +18,9 @@ final class InvalidCollectionException extends Exception implements ClientAware
     {
         return true;
     }
+
+    public function getCategory(): string
+    {
+        return 'validation';
+    }
 }

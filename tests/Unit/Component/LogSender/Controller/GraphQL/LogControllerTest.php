@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\LogSender\Controller\GraphQL;
 
 use InvalidArgumentException;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Controller\GraphQL\LogController;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogContentType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;
@@ -32,7 +32,7 @@ final class LogControllerTest extends TestCase
     private LogCollectorServiceInterface&MockObject $mockCollector;
     private LogReaderServiceInterface&MockObject $mockReader;
     private LogSenderStatusServiceInterface&MockObject $mockStatus;
-    private ModuleSettingServiceInterface&MockObject $mockSettings;
+    private ModuleSettingBridgeInterface&MockObject $mockSettings;
 
     private string $tempDir;
     private array $tempFiles = [];
@@ -42,7 +42,7 @@ final class LogControllerTest extends TestCase
         $this->mockCollector = $this->createMock(LogCollectorServiceInterface::class);
         $this->mockReader = $this->createMock(LogReaderServiceInterface::class);
         $this->mockStatus = $this->createMock(LogSenderStatusServiceInterface::class);
-        $this->mockSettings = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->mockSettings = $this->createMock(ModuleSettingBridgeInterface::class);
 
         // Default: component is active (individual tests override for inactive scenarios)
         $this->mockStatus->method('isActive')->willReturn(true);
@@ -86,7 +86,7 @@ final class LogControllerTest extends TestCase
         $source2 = $this->createSource('source2', 'Source 2', true);
         $source3 = $this->createSource('source3', 'Source 3', true);
 
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->with(Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID)
             ->willReturn(['source1', 'source2']); // source3 not enabled
 
@@ -104,7 +104,7 @@ final class LogControllerTest extends TestCase
         $availableSource = $this->createSource('available', 'Available', true);
         $unavailableSource = $this->createSource('unavailable', 'Unavailable', false);
 
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willReturn(['available', 'unavailable']);
 
         $this->mockCollector->method('getSources')
@@ -120,7 +120,7 @@ final class LogControllerTest extends TestCase
     {
         $source = $this->createSource('source1', 'Source', true);
 
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willReturn([]);
 
         $this->mockCollector->method('getSources')
@@ -133,7 +133,7 @@ final class LogControllerTest extends TestCase
 
     public function testLogSenderSourcesReturnsEmptyArrayWhenSettingsThrowsException(): void
     {
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willThrowException(new \Exception('Settings error'));
 
         $this->mockCollector->method('getSources')
@@ -167,13 +167,14 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentReturnsContentForFileSource(): void
     {
         $filePath = $this->createTempFile('test.log', 'Log content here');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['test_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['test_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->with('test_source')
@@ -198,10 +199,10 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentWithCustomMaxBytes(): void
     {
         $filePath = $this->createTempFile('test.log', 'content');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willReturn(['test_source']);
 
         $this->mockCollector->method('getSourceById')
@@ -221,13 +222,14 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentDetectsTruncatedContent(): void
     {
         $filePath = $this->createTempFile('test.log', 'Some content');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['test_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1000);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['test_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1000],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->willReturn($source);
@@ -252,13 +254,14 @@ final class LogControllerTest extends TestCase
         // This test verifies the bug fix for directory handling
         $logFile = $this->createTempFile('test.log', 'Directory log content');
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Directory Source', [$directoryPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['dir_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['dir_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->with('dir_source')
@@ -282,13 +285,14 @@ final class LogControllerTest extends TestCase
         sleep(1); // Ensure different modification times
         $this->createTempFile('new.log', 'New content');
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['dir_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['dir_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->willReturn($source);
@@ -310,13 +314,14 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentThrowsWhenDirectoryIsEmpty(): void
     {
         // No files in directory
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['dir_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['dir_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->willReturn($source);
@@ -332,13 +337,14 @@ final class LogControllerTest extends TestCase
         $this->createTempFile('test.log', 'Log content');
         $this->createTempFile('test.txt', 'Text content'); // Should be ignored
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['dir_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['dir_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->willReturn($source);
@@ -363,7 +369,7 @@ final class LogControllerTest extends TestCase
 
     public function testLogSenderContentThrowsWhenSourceNotEnabled(): void
     {
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willReturn(['other_source']);
 
         $this->expectException(InvalidArgumentException::class);
@@ -376,7 +382,7 @@ final class LogControllerTest extends TestCase
     {
         $source = $this->createSource('test_source', 'Test', false);
 
-        $this->mockSettings->method('getCollection')
+        $this->mockSettings->method('get')
             ->willReturn(['test_source']);
 
         $this->mockCollector->method('getSourceById')
@@ -406,13 +412,14 @@ final class LogControllerTest extends TestCase
 
     public function testLogSenderContentThrowsWhenNoReadablePathFound(): void
     {
-        $nonExistentPath = new LogPath('/non/existent/path.log', LogPathType::FILE, 'Test');
+        $nonExistentPath = new LogPath('/non/existent/path.log', LogPathType::FILE(), 'Test');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$nonExistentPath], true);
 
-        $this->mockSettings->method('getCollection')
-            ->willReturn(['test_source']);
-        $this->mockSettings->method('getInteger')
-            ->willReturn(1048576);
+        $this->mockSettings->method('get')
+            ->willReturnMap([
+                [Module::SETTING_LOGSENDER_ENABLED_SOURCES, Module::ID, ['test_source']],
+                [Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID, 1048576],
+            ]);
 
         $this->mockCollector->method('getSourceById')
             ->willReturn($source);
@@ -429,7 +436,7 @@ final class LogControllerTest extends TestCase
 
     private function createSource(string $id, string $name, bool $available): LogSource
     {
-        $path = new LogPath('/var/log/' . $id . '.log', LogPathType::FILE, $name);
+        $path = new LogPath('/var/log/' . $id . '.log', LogPathType::FILE(), $name);
 
         return new LogSource(
             $id,

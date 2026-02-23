@@ -16,7 +16,7 @@ use OxidSupport\Heartbeat\Component\LogSender\Service\LogCollectorServiceInterfa
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogReaderServiceInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use TheCodingMachine\GraphQLite\Annotations\Logged;
 use TheCodingMachine\GraphQLite\Annotations\Query;
 use TheCodingMachine\GraphQLite\Annotations\Right;
@@ -24,10 +24,10 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 final class LogController
 {
     public function __construct(
-        private readonly LogCollectorServiceInterface $logCollectorService,
-        private readonly LogReaderServiceInterface $logReaderService,
-        private readonly LogSenderStatusServiceInterface $statusService,
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private LogCollectorServiceInterface $logCollectorService,
+        private LogReaderServiceInterface $logReaderService,
+        private LogSenderStatusServiceInterface $statusService,
+        private ModuleSettingBridgeInterface $moduleSettingService,
     ) {
     }
 
@@ -82,7 +82,7 @@ final class LogController
 
         // Use configured max bytes or default
         if ($maxBytes === null) {
-            $maxBytes = (int) $this->moduleSettingService->getInteger(
+            $maxBytes = (int) $this->moduleSettingService->get(
                 Module::SETTING_LOGSENDER_MAX_BYTES,
                 Module::ID
             );
@@ -116,7 +116,7 @@ final class LogController
     private function getEnabledSourceIds(): array
     {
         try {
-            $sources = $this->moduleSettingService->getCollection(
+            $sources = (array) $this->moduleSettingService->get(
                 Module::SETTING_LOGSENDER_ENABLED_SOURCES,
                 Module::ID
             );

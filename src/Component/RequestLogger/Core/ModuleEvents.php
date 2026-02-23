@@ -12,7 +12,7 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Core;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
 final class ModuleEvents
@@ -28,10 +28,10 @@ final class ModuleEvents
     public static function onActivate(): void
     {
         $container = ContainerFactory::getInstance()->getContainer();
-        $moduleSettingService = $container->get(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $container->get(ModuleSettingBridgeInterface::class);
 
         try {
-            $currentToken = (string) $moduleSettingService->getString(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID);
+            $currentToken = (string) $moduleSettingService->get(Module::SETTING_APIUSER_SETUP_TOKEN, Module::ID);
         } catch (\Throwable $e) {
             $currentToken = '';
         }
@@ -45,7 +45,7 @@ final class ModuleEvents
         }
 
         $token = Registry::getUtilsObject()->generateUId();
-        $moduleSettingService->saveString(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
+        $moduleSettingService->save(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
     }
 
     private static function isPasswordAlreadySet(\Psr\Container\ContainerInterface $container): bool

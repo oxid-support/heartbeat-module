@@ -24,7 +24,7 @@ final class OxidCoreLogPathProvider implements LogPathProviderInterface
     private const LOG_FILENAME = 'oxideshop.log';
 
     public function __construct(
-        private readonly ShopFacadeInterface $shopFacade,
+        private ShopFacadeInterface $shopFacade,
     ) {
     }
 
@@ -35,7 +35,7 @@ final class OxidCoreLogPathProvider implements LogPathProviderInterface
         return [
             new LogPath(
                 path: $logDirectory . self::LOG_FILENAME,
-                type: LogPathType::FILE,
+                type: LogPathType::FILE(),
                 name: 'OXID eShop Log',
                 description: 'Core application log file containing errors, warnings and debug information',
             ),

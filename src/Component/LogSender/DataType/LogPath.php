@@ -17,26 +17,26 @@ final class LogPath
 {
     public function __construct(
         /** Absolute path to the file or directory */
-        public readonly string $path,
+        public string $path,
         /** Type: FILE or DIRECTORY */
-        public readonly LogPathType $type,
+        public LogPathType $type,
         /** Display name for UI/API */
-        public readonly string $name,
+        public string $name,
         /** Optional description */
-        public readonly string $description = '',
+        public string $description = '',
         /** Optional glob pattern for directories (e.g., "*.log") */
-        public readonly ?string $filePattern = null,
+        public ?string $filePattern = null,
     ) {
     }
 
     public function isDirectory(): bool
     {
-        return $this->type === LogPathType::DIRECTORY;
+        return $this->type === LogPathType::DIRECTORY();
     }
 
     public function isFile(): bool
     {
-        return $this->type === LogPathType::FILE;
+        return $this->type === LogPathType::FILE();
     }
 
     public function exists(): bool

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Controller\Admin;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\ComponentControllerInterface;
@@ -37,10 +37,10 @@ final class SettingsControllerTest extends TestCase
     #[DataProvider('componentActiveDataProvider')]
     public function testIsComponentActiveReturnsCorrectValue(bool $expectedValue): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn($expectedValue);
 
@@ -59,16 +59,16 @@ final class SettingsControllerTest extends TestCase
 
     public function testToggleComponentFromActiveToInactive(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn(true);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveBoolean')
+            ->method('save')
             ->with(self::SETTING_COMPONENT_ACTIVE, false, Module::ID);
 
         $controller = $this->createControllerWithMockedService($moduleSettingService);
@@ -77,16 +77,16 @@ final class SettingsControllerTest extends TestCase
 
     public function testToggleComponentFromInactiveToActive(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn(false);
 
         $moduleSettingService
             ->expects($this->once())
-            ->method('saveBoolean')
+            ->method('save')
             ->with(self::SETTING_COMPONENT_ACTIVE, true, Module::ID);
 
         $controller = $this->createControllerWithMockedService($moduleSettingService);
@@ -95,26 +95,18 @@ final class SettingsControllerTest extends TestCase
 
     public function testGetSettingsReturnsCorrectArray(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
 
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->willReturnMap([
                 [self::SETTING_COMPONENT_ACTIVE, Module::ID, true],
                 [Module::SETTING_REQUESTLOGGER_LOG_FRONTEND, Module::ID, true],
                 [Module::SETTING_REQUESTLOGGER_LOG_ADMIN, Module::ID, false],
                 [Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES, Module::ID, false],
+                [Module::SETTING_REQUESTLOGGER_LOG_LEVEL, Module::ID, 'detailed'],
+                [Module::SETTING_REQUESTLOGGER_REDACT_FIELDS, Module::ID, ['password', 'secret']],
             ]);
-
-        $moduleSettingService
-            ->method('getString')
-            ->with(Module::SETTING_REQUESTLOGGER_LOG_LEVEL, Module::ID)
-            ->willReturn(new \Symfony\Component\String\UnicodeString('detailed'));
-
-        $moduleSettingService
-            ->method('getCollection')
-            ->with(Module::SETTING_REQUESTLOGGER_REDACT_FIELDS, Module::ID)
-            ->willReturn(['password', 'secret']);
 
         $controller = $this->createControllerWithMockedService($moduleSettingService);
         $settings = $controller->getSettings();
@@ -129,7 +121,7 @@ final class SettingsControllerTest extends TestCase
 
     public function testCanToggleAlwaysReturnsTrue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $controller = $this->createControllerWithMockedService($moduleSettingService);
 
         $this->assertTrue($controller->canToggle());
@@ -152,9 +144,9 @@ final class SettingsControllerTest extends TestCase
     #[DataProvider('statusClassDataProvider')]
     public function testGetStatusClassReturnsCorrectValue(bool $isActive, string $expectedClass): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn($isActive);
 
@@ -174,9 +166,9 @@ final class SettingsControllerTest extends TestCase
     #[DataProvider('statusTextKeyDataProvider')]
     public function testGetStatusTextKeyReturnsCorrectValue(bool $isActive, string $expectedKey): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(self::SETTING_COMPONENT_ACTIVE, Module::ID)
             ->willReturn($isActive);
 
@@ -194,7 +186,7 @@ final class SettingsControllerTest extends TestCase
     }
 
     private function createControllerWithMockedService(
-        ModuleSettingServiceInterface $moduleSettingService
+        ModuleSettingBridgeInterface $moduleSettingService
     ): SettingsController {
         $controller = $this->getMockBuilder(SettingsController::class)
             ->disableOriginalConstructor()

@@ -31,7 +31,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     public function isComponentActive(): bool
     {
         try {
-            return $this->getModuleSettingService()->getBoolean(
+            return (bool) $this->getModuleSettingService()->get(
                 Module::SETTING_LOGSENDER_ACTIVE,
                 Module::ID
             );
@@ -68,7 +68,7 @@ class ManageController extends AbstractComponentController implements TogglableC
             return;
         }
 
-        $this->getModuleSettingService()->saveBoolean(
+        $this->getModuleSettingService()->save(
             Module::SETTING_LOGSENDER_ACTIVE,
             !$this->isComponentActive(),
             Module::ID
@@ -134,7 +134,7 @@ class ManageController extends AbstractComponentController implements TogglableC
             $enabledSources[] = $sourceId;
         }
 
-        $this->getModuleSettingService()->saveCollection(
+        $this->getModuleSettingService()->save(
             Module::SETTING_LOGSENDER_ENABLED_SOURCES,
             $enabledSources,
             Module::ID
@@ -149,7 +149,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     public function getEnabledSources(): array
     {
         try {
-            $sources = $this->getModuleSettingService()->getCollection(
+            $sources = (array) $this->getModuleSettingService()->get(
                 Module::SETTING_LOGSENDER_ENABLED_SOURCES,
                 Module::ID
             );
@@ -211,7 +211,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     public function getStaticPathsText(): string
     {
         try {
-            $paths = $this->getModuleSettingService()->getCollection(
+            $paths = (array) $this->getModuleSettingService()->get(
                 Module::SETTING_LOGSENDER_STATIC_PATHS,
                 Module::ID
             );
@@ -271,7 +271,7 @@ class ManageController extends AbstractComponentController implements TogglableC
             ];
         }
 
-        $this->getModuleSettingService()->saveCollection(
+        $this->getModuleSettingService()->save(
             Module::SETTING_LOGSENDER_STATIC_PATHS,
             $paths,
             Module::ID

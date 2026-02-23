@@ -22,7 +22,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
     private const EXPECTED_MIGRATION = 'OxidSupport\\Heartbeat\\Migrations\\Version20251223000001';
 
     public function __construct(
-        private readonly QueryBuilderFactoryInterface $queryBuilderFactory
+        private QueryBuilderFactoryInterface $queryBuilderFactory
     ) {
     }
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\ApiVersion\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ApiVersionType;
 use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ComponentStatusType;
 use OxidSupport\Heartbeat\Module\Module;
@@ -17,7 +17,7 @@ use OxidSupport\Heartbeat\Module\Module;
 final class ApiVersionService implements ApiVersionServiceInterface
 {
     public function __construct(
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private ModuleSettingBridgeInterface $moduleSettingService,
     ) {
     }
 
@@ -56,7 +56,7 @@ final class ApiVersionService implements ApiVersionServiceInterface
     private function isSettingActive(string $settingKey): bool
     {
         try {
-            return $this->moduleSettingService->getBoolean($settingKey, Module::ID);
+            return (bool) $this->moduleSettingService->get($settingKey, Module::ID);
         } catch (\Throwable) {
             return false;
         }

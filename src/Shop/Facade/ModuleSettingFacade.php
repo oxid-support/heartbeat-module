@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Shop\Facade;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
 class ModuleSettingFacade implements ModuleSettingFacadeInterface
 {
-    private ModuleSettingServiceInterface $moduleSettingService;
+    private ModuleSettingBridgeInterface $moduleSettingService;
 
-    public function __construct(ModuleSettingServiceInterface $moduleSettingService)
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService)
     {
         $this->moduleSettingService = $moduleSettingService;
     }
 
     public function getLogLevel(): string
     {
-        return (string) $this->moduleSettingService->getString(
+        return (string) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_LOG_LEVEL,
             Module::ID
         );
@@ -28,7 +28,7 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
     public function getRedactItems(): array
     {
         /** @var array<int|string, string> */
-        return $this->moduleSettingService->getCollection(
+        return (array) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_REDACT_FIELDS,
             Module::ID
         );
@@ -36,7 +36,7 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
 
     public function isRedactAllValuesEnabled(): bool
     {
-        return $this->moduleSettingService->getBoolean(
+        return (bool) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES,
             Module::ID
         );
@@ -44,7 +44,7 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
 
     public function isLogFrontendEnabled(): bool
     {
-        return $this->moduleSettingService->getBoolean(
+        return (bool) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_LOG_FRONTEND,
             Module::ID
         );
@@ -52,7 +52,7 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
 
     public function isLogAdminEnabled(): bool
     {
-        return $this->moduleSettingService->getBoolean(
+        return (bool) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_LOG_ADMIN,
             Module::ID
         );
@@ -60,7 +60,7 @@ class ModuleSettingFacade implements ModuleSettingFacadeInterface
 
     public function isRequestLoggerComponentActive(): bool
     {
-        return $this->moduleSettingService->getBoolean(
+        return (bool) $this->moduleSettingService->get(
             Module::SETTING_REQUESTLOGGER_ACTIVE,
             Module::ID
         );

@@ -16,13 +16,13 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 final class LogContentType
 {
     public function __construct(
-        private readonly string $sourceId,
-        private readonly string $sourceName,
-        private readonly string $path,
-        private readonly string $content,
-        private readonly int $size,
-        private readonly int $modified,
-        private readonly bool $truncated,
+        private string $sourceId,
+        private string $sourceName,
+        private string $path,
+        private string $content,
+        private int $size,
+        private int $modified,
+        private bool $truncated,
     ) {
     }
 

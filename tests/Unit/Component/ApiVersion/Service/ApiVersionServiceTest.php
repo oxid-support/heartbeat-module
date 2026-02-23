@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\ApiVersion\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ComponentStatusType;
 use OxidSupport\Heartbeat\Component\ApiVersion\Service\ApiVersionService;
 use OxidSupport\Heartbeat\Module\Module;
@@ -24,7 +24,7 @@ final class ApiVersionServiceTest extends TestCase
         'token',
     ];
 
-    private function createService(?ModuleSettingServiceInterface $settingService = null): ApiVersionService
+    private function createService(?ModuleSettingBridgeInterface $settingService = null): ApiVersionService
     {
         return new ApiVersionService(
             $settingService ?? $this->createMockSettingService(),
@@ -35,9 +35,9 @@ final class ApiVersionServiceTest extends TestCase
         bool $requestLogger = false,
         bool $logSender = false,
         bool $diagnosticsProvider = false,
-    ): ModuleSettingServiceInterface {
-        $mock = $this->createMock(ModuleSettingServiceInterface::class);
-        $mock->method('getBoolean')->willReturnMap([
+    ): ModuleSettingBridgeInterface {
+        $mock = $this->createMock(ModuleSettingBridgeInterface::class);
+        $mock->method('get')->willReturnMap([
             [Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID, $requestLogger],
             [Module::SETTING_LOGSENDER_ACTIVE, Module::ID, $logSender],
             [Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID, $diagnosticsProvider],
@@ -85,8 +85,8 @@ final class ApiVersionServiceTest extends TestCase
 
     public function testComponentStatusDefaultsToFalseOnError(): void
     {
-        $mock = $this->createMock(ModuleSettingServiceInterface::class);
-        $mock->method('getBoolean')->willThrowException(new \RuntimeException('Setting not found'));
+        $mock = $this->createMock(ModuleSettingBridgeInterface::class);
+        $mock->method('get')->willThrowException(new \RuntimeException('Setting not found'));
 
         $service = $this->createService($mock);
         $result = $service->getApiVersion();

@@ -9,10 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Service\Remote;
 
-use OxidEsales\GraphQL\ConfigurationAccess\Module\Service\ModuleSettingServiceInterface;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\BooleanSetting;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\StringSetting;
-use OxidEsales\GraphQL\ConfigurationAccess\Shared\DataType\SettingType as ConfigAccessSettingType;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\DataType\SettingType;
 use OxidSupport\Heartbeat\Module\Module as RequestLoggerModule;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\InvalidCollectionException;
@@ -31,12 +28,12 @@ final class SettingServiceTest extends TestCase
 
     public function testGetLogLevelReturnsString(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getStringSetting')
+            ->method('get')
             ->with(self::SETTING_LOG_LEVEL, RequestLoggerModule::ID)
-            ->willReturn(new StringSetting(self::SETTING_LOG_LEVEL, 'standard'));
+            ->willReturn('standard');
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->getLogLevel();
 
@@ -45,12 +42,11 @@ final class SettingServiceTest extends TestCase
 
     public function testSetLogLevelSavesAndReturnsNewValue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeStringSetting')
-            ->with(self::SETTING_LOG_LEVEL, 'detailed', RequestLoggerModule::ID)
-            ->willReturn(new StringSetting(self::SETTING_LOG_LEVEL, 'detailed'));
+            ->method('save')
+            ->with(self::SETTING_LOG_LEVEL, 'detailed', RequestLoggerModule::ID);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->setLogLevel('detailed');
 
@@ -59,12 +55,12 @@ final class SettingServiceTest extends TestCase
 
     public function testIsLogFrontendEnabledReturnsBool(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBooleanSetting')
+            ->method('get')
             ->with(self::SETTING_LOG_FRONTEND, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_LOG_FRONTEND, true));
+            ->willReturn(true);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->isLogFrontendEnabled();
 
@@ -73,12 +69,11 @@ final class SettingServiceTest extends TestCase
 
     public function testSetLogFrontendEnabledSavesAndReturnsNewValue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeBooleanSetting')
-            ->with(self::SETTING_LOG_FRONTEND, false, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_LOG_FRONTEND, false));
+            ->method('save')
+            ->with(self::SETTING_LOG_FRONTEND, false, RequestLoggerModule::ID);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->setLogFrontendEnabled(false);
 
@@ -87,12 +82,12 @@ final class SettingServiceTest extends TestCase
 
     public function testIsLogAdminEnabledReturnsBool(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBooleanSetting')
+            ->method('get')
             ->with(self::SETTING_LOG_ADMIN, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_LOG_ADMIN, false));
+            ->willReturn(false);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->isLogAdminEnabled();
 
@@ -101,42 +96,68 @@ final class SettingServiceTest extends TestCase
 
     public function testSetLogAdminEnabledSavesAndReturnsNewValue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeBooleanSetting')
-            ->with(self::SETTING_LOG_ADMIN, true, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_LOG_ADMIN, true));
+            ->method('save')
+            ->with(self::SETTING_LOG_ADMIN, true, RequestLoggerModule::ID);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->setLogAdminEnabled(true);
 
         $this->assertTrue($result);
     }
 
-    public function testGetRedactItemsReturnsJsonEncodedString(): void
+    public function testGetRedactItemsReturnsJsonEncodedStringWhenArrayStored(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getCollectionSetting')
+            ->method('get')
             ->with(self::SETTING_REDACT, RequestLoggerModule::ID)
-            ->willReturn(new StringSetting(self::SETTING_REDACT, '["password","secret","token"]'));
+            ->willReturn(['password', 'secret', 'token']);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->getRedactItems();
 
         $this->assertSame('["password","secret","token"]', $result);
     }
 
-    public function testSetRedactItemsDecodesJsonAndSaves(): void
+    public function testGetRedactItemsReturnsStringWhenStringStored(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('get')
+            ->with(self::SETTING_REDACT, RequestLoggerModule::ID)
+            ->willReturn('["password","secret"]');
+
+        $result = $this->getSut(moduleSettingService: $moduleSettingService)->getRedactItems();
+
+        $this->assertSame('["password","secret"]', $result);
+    }
+
+    public function testGetRedactItemsReturnsFallbackForNonStringNonArray(): void
+    {
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
+        $moduleSettingService
+            ->expects($this->once())
+            ->method('get')
+            ->with(self::SETTING_REDACT, RequestLoggerModule::ID)
+            ->willReturn(42);
+
+        $result = $this->getSut(moduleSettingService: $moduleSettingService)->getRedactItems();
+
+        $this->assertSame('[]', $result);
+    }
+
+    public function testSetRedactItemsDecodesJsonAndSavesArray(): void
     {
         $jsonValue = '["password","token"]';
 
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeCollectionSetting')
-            ->with(self::SETTING_REDACT, $jsonValue, RequestLoggerModule::ID)
-            ->willReturn(new StringSetting(self::SETTING_REDACT, $jsonValue));
+            ->method('save')
+            ->with(self::SETTING_REDACT, ['password', 'token'], RequestLoggerModule::ID);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->setRedactItems($jsonValue);
 
@@ -158,11 +179,11 @@ final class SettingServiceTest extends TestCase
         $this->expectException(InvalidCollectionException::class);
         $this->expectExceptionMessage('must be a list, not an object');
 
-        // Create a mock that won't be called (exception should be thrown before)
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        // Create a mock that won't be called (exception should be thrown before save)
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->never())
-            ->method('changeCollectionSetting');
+            ->method('save');
 
         $service = new SettingService($moduleSettingService);
         // Use non-numeric keys to ensure it's a real associative array
@@ -172,14 +193,13 @@ final class SettingServiceTest extends TestCase
     public function testSetRedactItemsAcceptsObjectWithNumericStringKeys(): void
     {
         // JSON objects with numeric string keys (e.g., "0", "1") are converted
-        // to PHP arrays with integer keys, which passes array_is_list()
+        // to PHP arrays with integer keys, which passes array_values() check
         $jsonValue = '{"0": "password", "1": "token"}';
 
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeCollectionSetting')
-            ->willReturn(new StringSetting(self::SETTING_REDACT, '["password","token"]'));
+            ->method('save');
 
         $result = (new SettingService($moduleSettingService))->setRedactItems($jsonValue);
         $this->assertIsString($result);
@@ -195,12 +215,12 @@ final class SettingServiceTest extends TestCase
 
     public function testIsRedactAllValuesEnabledReturnsBool(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBooleanSetting')
+            ->method('get')
             ->with(self::SETTING_REDACT_ALL_VALUES, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_REDACT_ALL_VALUES, false));
+            ->willReturn(false);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->isRedactAllValuesEnabled();
 
@@ -209,12 +229,11 @@ final class SettingServiceTest extends TestCase
 
     public function testSetRedactAllValuesEnabledSavesAndReturnsNewValue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('changeBooleanSetting')
-            ->with(self::SETTING_REDACT_ALL_VALUES, true, RequestLoggerModule::ID)
-            ->willReturn(new BooleanSetting(self::SETTING_REDACT_ALL_VALUES, true));
+            ->method('save')
+            ->with(self::SETTING_REDACT_ALL_VALUES, true, RequestLoggerModule::ID);
 
         $result = $this->getSut(moduleSettingService: $moduleSettingService)->setRedactAllValuesEnabled(true);
 
@@ -223,22 +242,8 @@ final class SettingServiceTest extends TestCase
 
     public function testGetAllSettingsReturnsAllSettingTypes(): void
     {
-        $configAccessSettings = [
-            new ConfigAccessSettingType(self::SETTING_LOG_LEVEL, 'select'),
-            new ConfigAccessSettingType(self::SETTING_LOG_FRONTEND, 'bool'),
-            new ConfigAccessSettingType(self::SETTING_LOG_ADMIN, 'bool'),
-            new ConfigAccessSettingType(self::SETTING_REDACT, 'arr'),
-            new ConfigAccessSettingType(self::SETTING_REDACT_ALL_VALUES, 'bool'),
-        ];
-
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $moduleSettingService
-            ->expects($this->once())
-            ->method('getSettingsList')
-            ->with(RequestLoggerModule::ID)
-            ->willReturn($configAccessSettings);
-
-        $result = $this->getSut(moduleSettingService: $moduleSettingService)->getAllSettings();
+        // getAllSettings() uses an internal SETTINGS_MAP, no mock interaction needed
+        $result = $this->getSut()->getAllSettings();
 
         $this->assertCount(5, $result);
         $this->assertContainsOnlyInstancesOf(SettingType::class, $result);
@@ -254,40 +259,26 @@ final class SettingServiceTest extends TestCase
 
     public function testGetAllSettingsReturnsCorrectTypes(): void
     {
-        $configAccessSettings = [
-            new ConfigAccessSettingType(self::SETTING_LOG_LEVEL, 'select'),
-            new ConfigAccessSettingType(self::SETTING_LOG_FRONTEND, 'bool'),
-            new ConfigAccessSettingType(self::SETTING_LOG_ADMIN, 'bool'),
-            new ConfigAccessSettingType(self::SETTING_REDACT, 'arr'),
-            new ConfigAccessSettingType(self::SETTING_REDACT_ALL_VALUES, 'bool'),
-        ];
-
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
-        $moduleSettingService
-            ->expects($this->once())
-            ->method('getSettingsList')
-            ->with(RequestLoggerModule::ID)
-            ->willReturn($configAccessSettings);
-
-        $result = $this->getSut(moduleSettingService: $moduleSettingService)->getAllSettings();
+        // getAllSettings() uses an internal SETTINGS_MAP, no mock interaction needed
+        $result = $this->getSut()->getAllSettings();
 
         $settingsByName = [];
         foreach ($result as $setting) {
             $settingsByName[$setting->getName()] = $setting->getType();
         }
 
-        $this->assertSame('select', $settingsByName[self::SETTING_LOG_LEVEL]);
+        $this->assertSame('str', $settingsByName[self::SETTING_LOG_LEVEL]);
         $this->assertSame('bool', $settingsByName[self::SETTING_LOG_FRONTEND]);
         $this->assertSame('bool', $settingsByName[self::SETTING_LOG_ADMIN]);
-        $this->assertSame('arr', $settingsByName[self::SETTING_REDACT]);
+        $this->assertSame('aarr', $settingsByName[self::SETTING_REDACT]);
         $this->assertSame('bool', $settingsByName[self::SETTING_REDACT_ALL_VALUES]);
     }
 
     private function getSut(
-        ?ModuleSettingServiceInterface $moduleSettingService = null,
+        ?ModuleSettingBridgeInterface $moduleSettingService = null,
     ): SettingService {
         return new SettingService(
-            moduleSettingService: $moduleSettingService ?? $this->createStub(ModuleSettingServiceInterface::class),
+            moduleSettingService: $moduleSettingService ?? $this->createStub(ModuleSettingBridgeInterface::class),
         );
     }
 }

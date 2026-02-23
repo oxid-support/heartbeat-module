@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Service\Remote;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\RemoteComponentDisabledException;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusService;
@@ -22,7 +22,7 @@ final class RemoteComponentStatusServiceTest extends TestCase
 {
     public function testImplementsInterface(): void
     {
-        $moduleSettingService = $this->createStub(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createStub(ModuleSettingBridgeInterface::class);
         $service = new RemoteComponentStatusService($moduleSettingService);
 
         $this->assertInstanceOf(RemoteComponentStatusServiceInterface::class, $service);
@@ -30,10 +30,10 @@ final class RemoteComponentStatusServiceTest extends TestCase
 
     public function testIsActiveReturnsTrueWhenSettingIsTrue(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 
@@ -44,10 +44,10 @@ final class RemoteComponentStatusServiceTest extends TestCase
 
     public function testIsActiveReturnsFalseWhenSettingIsFalse(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
@@ -58,9 +58,9 @@ final class RemoteComponentStatusServiceTest extends TestCase
 
     public function testAssertComponentActiveDoesNotThrowWhenActive(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 
@@ -73,9 +73,9 @@ final class RemoteComponentStatusServiceTest extends TestCase
 
     public function testAssertComponentActiveThrowsWhenInactive(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
@@ -87,9 +87,9 @@ final class RemoteComponentStatusServiceTest extends TestCase
 
     public function testAssertComponentActiveThrowsCorrectExceptionType(): void
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->willReturn(false);
 
         $service = new RemoteComponentStatusService($moduleSettingService);
@@ -103,12 +103,11 @@ final class RemoteComponentStatusServiceTest extends TestCase
         }
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(RemoteComponentStatusService::class);
 
         $this->assertTrue($reflection->isFinal(), 'Class should be final');
-        $this->assertTrue($reflection->isReadOnly(), 'Class should be readonly');
     }
 
     public function testUsesCorrectSettingConstant(): void

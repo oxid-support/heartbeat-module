@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Controller\GraphQL;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\RemoteComponentDisabledException;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusService;
@@ -119,9 +119,9 @@ final class RemoteComponentBlockingTest extends TestCase
 
     private function createDisabledComponentStatusService(): RemoteComponentStatusServiceInterface
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(false);
 
@@ -130,9 +130,9 @@ final class RemoteComponentBlockingTest extends TestCase
 
     private function createEnabledComponentStatusService(): RemoteComponentStatusServiceInterface
     {
-        $moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $moduleSettingService
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID)
             ->willReturn(true);
 

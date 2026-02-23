@@ -20,7 +20,7 @@ use OxidSupport\Heartbeat\Component\ApiUser\Exception\UserNotFoundException;
 final class ApiUserService implements ApiUserServiceInterface
 {
     public function __construct(
-        private readonly QueryBuilderFactoryInterface $queryBuilderFactory
+        private QueryBuilderFactoryInterface $queryBuilderFactory
     ) {
     }
 

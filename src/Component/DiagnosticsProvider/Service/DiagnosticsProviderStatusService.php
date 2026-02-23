@@ -9,16 +9,16 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
 /**
  * Service for checking the Diagnostics Provider component status.
  */
-final readonly class DiagnosticsProviderStatusService implements DiagnosticsProviderStatusServiceInterface
+final class DiagnosticsProviderStatusService implements DiagnosticsProviderStatusServiceInterface
 {
     public function __construct(
-        private ModuleSettingServiceInterface $moduleSettingService
+        private ModuleSettingBridgeInterface $moduleSettingService
     ) {
     }
 
@@ -28,7 +28,7 @@ final readonly class DiagnosticsProviderStatusService implements DiagnosticsProv
     public function isActive(): bool
     {
         try {
-            return $this->moduleSettingService->getBoolean(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID);
+            return (bool) $this->moduleSettingService->get(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID);
         } catch (\Throwable) {
             return false;
         }

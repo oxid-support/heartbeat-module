@@ -12,13 +12,12 @@
         }
     ],
     "require": {
-        "php": "^8.2 || ^8.3 || ^8.4",
-        "oxid-esales/graphql-base": "^9.0 || ^10.0 || ^11.0 || ^12.0",
-        "oxid-esales/graphql-configuration-access": "^1.1 || ^2.0 || ^3.0"
+        "php": "^8.0 || ^8.1 || ^8.2",
+        "oxid-esales/graphql-base": "^7.0 || ^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.0",
-        "oxid-esales/oxideshop-ce": "^7.0",
+        "phpunit/phpunit": "^10.0",
+        "oxid-esales/oxideshop-ce": "dev-b-6.5.x",
         "phpstan/phpstan": "^2.0",
         "squizlabs/php_codesniffer": "^4.0",
         "phpmd/phpmd": "^2.15"
@@ -57,6 +56,9 @@
         "allow-plugins": {
             "oxid-esales/oxideshop-unified-namespace-generator": true,
             "oxid-esales/oxideshop-composer-plugin": true
+        },
+        "audit": {
+            "block-insecure": false
         }
     }
 }

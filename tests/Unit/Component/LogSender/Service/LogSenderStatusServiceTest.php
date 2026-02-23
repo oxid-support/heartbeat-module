@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\LogSender\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusService;
 use OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusServiceInterface;
 use OxidSupport\Heartbeat\Module\Module;
@@ -20,13 +20,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(LogSenderStatusService::class)]
 final class LogSenderStatusServiceTest extends TestCase
 {
-    private ModuleSettingServiceInterface&MockObject $moduleSettingService;
+    private ModuleSettingBridgeInterface&MockObject $moduleSettingService;
     private LogSenderStatusService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->moduleSettingService = $this->createMock(ModuleSettingServiceInterface::class);
+        $this->moduleSettingService = $this->createMock(ModuleSettingBridgeInterface::class);
         $this->service = new LogSenderStatusService($this->moduleSettingService);
     }
 
@@ -36,7 +36,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_LOGSENDER_ACTIVE, Module::ID)
             ->willReturn(true);
 
@@ -47,7 +47,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->with(Module::SETTING_LOGSENDER_ACTIVE, Module::ID)
             ->willReturn(false);
 
@@ -58,7 +58,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getBoolean')
+            ->method('get')
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $this->assertFalse($this->service->isActive());
@@ -70,7 +70,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getInteger')
+            ->method('get')
             ->with(Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID)
             ->willReturn(2097152); // 2 MB
 
@@ -81,7 +81,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getInteger')
+            ->method('get')
             ->willThrowException(new \RuntimeException('Setting not found'));
 
         $this->assertEquals(1048576, $this->service->getMaxBytes()); // Default 1 MB
@@ -91,7 +91,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getInteger')
+            ->method('get')
             ->willReturn(0);
 
         $this->assertEquals(1048576, $this->service->getMaxBytes()); // Default 1 MB
@@ -101,7 +101,7 @@ final class LogSenderStatusServiceTest extends TestCase
     {
         $this->moduleSettingService
             ->expects($this->once())
-            ->method('getInteger')
+            ->method('get')
             ->willReturn(-100);
 
         $this->assertEquals(1048576, $this->service->getMaxBytes()); // Default 1 MB
@@ -114,11 +114,10 @@ final class LogSenderStatusServiceTest extends TestCase
         $this->assertInstanceOf(LogSenderStatusServiceInterface::class, $this->service);
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(LogSenderStatusService::class);
 
         $this->assertTrue($reflection->isFinal());
-        $this->assertTrue($reflection->isReadOnly());
     }
 }

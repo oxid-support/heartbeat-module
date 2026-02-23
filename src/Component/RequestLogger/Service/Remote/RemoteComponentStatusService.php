@@ -9,20 +9,20 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\RemoteComponentDisabledException;
 
-final readonly class RemoteComponentStatusService implements RemoteComponentStatusServiceInterface
+final class RemoteComponentStatusService implements RemoteComponentStatusServiceInterface
 {
     public function __construct(
-        private ModuleSettingServiceInterface $moduleSettingService
+        private ModuleSettingBridgeInterface $moduleSettingService
     ) {
     }
 
     public function isActive(): bool
     {
-        return $this->moduleSettingService->getBoolean(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID);
+        return (bool) $this->moduleSettingService->get(Module::SETTING_REQUESTLOGGER_ACTIVE, Module::ID);
     }
 
     public function assertComponentActive(): void

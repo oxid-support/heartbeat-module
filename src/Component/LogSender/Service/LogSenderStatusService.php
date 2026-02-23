@@ -9,18 +9,18 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\LogSender\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
 /**
  * Service for checking the Log Sender component status.
  */
-final readonly class LogSenderStatusService implements LogSenderStatusServiceInterface
+final class LogSenderStatusService implements LogSenderStatusServiceInterface
 {
     private const DEFAULT_MAX_BYTES = 1048576; // 1 MB
 
     public function __construct(
-        private ModuleSettingServiceInterface $moduleSettingService
+        private ModuleSettingBridgeInterface $moduleSettingService
     ) {
     }
 
@@ -30,7 +30,7 @@ final readonly class LogSenderStatusService implements LogSenderStatusServiceInt
     public function isActive(): bool
     {
         try {
-            return $this->moduleSettingService->getBoolean(Module::SETTING_LOGSENDER_ACTIVE, Module::ID);
+            return (bool) $this->moduleSettingService->get(Module::SETTING_LOGSENDER_ACTIVE, Module::ID);
         } catch (\Throwable) {
             return false;
         }
@@ -42,7 +42,7 @@ final readonly class LogSenderStatusService implements LogSenderStatusServiceInt
     public function getMaxBytes(): int
     {
         try {
-            $maxBytes = $this->moduleSettingService->getInteger(Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID);
+            $maxBytes = (int) $this->moduleSettingService->get(Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID);
             return $maxBytes > 0 ? $maxBytes : self::DEFAULT_MAX_BYTES;
         } catch (\Throwable) {
             return self::DEFAULT_MAX_BYTES;

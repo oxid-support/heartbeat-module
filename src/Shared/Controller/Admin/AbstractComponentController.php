@@ -12,7 +12,7 @@ namespace OxidSupport\Heartbeat\Shared\Controller\Admin;
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ShopConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
 
 /**
@@ -27,7 +27,7 @@ abstract class AbstractComponentController extends AdminController implements Co
 {
     private ?ContextInterface $context = null;
     private ?ShopConfigurationDaoInterface $shopConfigurationDao = null;
-    private ?ModuleSettingServiceInterface $moduleSettingService = null;
+    private ?ModuleSettingBridgeInterface $moduleSettingService = null;
 
     /**
      * Default implementation: active/inactive based on isComponentActive().
@@ -59,12 +59,10 @@ abstract class AbstractComponentController extends AdminController implements Co
     protected function isModuleActivated(string $moduleId): bool
     {
         try {
-            $shopConfiguration = $this->getShopConfigurationDao()->get(
-                $this->getContext()->getCurrentShopId()
-            );
-            return $shopConfiguration
-                ->getModuleConfiguration($moduleId)
-                ->isActivated();
+            /** @var \OxidEsales\Eshop\Core\Module\Module $module */
+            $module = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
+            $module->load($moduleId);
+            return $module->isActive();
         } catch (\Exception) {
             return false;
         }
@@ -90,12 +88,12 @@ abstract class AbstractComponentController extends AdminController implements Co
         return $this->shopConfigurationDao; // @phpstan-ignore return.type
     }
 
-    protected function getModuleSettingService(): ModuleSettingServiceInterface
+    protected function getModuleSettingService(): ModuleSettingBridgeInterface
     {
         if ($this->moduleSettingService === null) {
             $this->moduleSettingService = ContainerFactory::getInstance()
                 ->getContainer()
-                ->get(ModuleSettingServiceInterface::class);
+                ->get(ModuleSettingBridgeInterface::class);
         }
         return $this->moduleSettingService; // @phpstan-ignore return.type
     }
