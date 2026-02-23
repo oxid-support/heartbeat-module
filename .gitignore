@@ -2,6 +2,7 @@
 /coverage-html/
 /.phpunit.cache/
 /tests/.phpunit.cache/
+/tests/.phpunit.result.cache
 composer.lock
 source/
 var/
