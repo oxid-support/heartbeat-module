@@ -26,9 +26,9 @@ composer require oxid-support/heartbeat
 
 #### Dev
 ```bash
-git clone https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
+git clone -b 1.x https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
-composer require oxid-support/heartbeat:@dev
+composer require oxid-support/heartbeat:1.x-dev
 ```
 in some cases, use -W
 > **Note**: The OXID GraphQL Base module is installed automatically as a dependency.
