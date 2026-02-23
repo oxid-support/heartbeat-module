@@ -12,12 +12,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // is installed into shops that provide the newer namespace at runtime.
 // For unit tests (where only the 6.5 dev package is installed) we bridge
 // the gap with an alias so PHPUnit can mock the interface.
-if (
-    !interface_exists(\OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface::class, false)
-    && interface_exists(\OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface::class)
-) {
-    class_alias(
-        \OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface::class,
-        \OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface::class
-    );
+$ns = 'OxidEsales\EshopCommunity\Internal\Framework\Module\\';
+$newInterface = $ns . 'Setting\Bridge\ModuleSettingBridgeInterface';
+$oldInterface = $ns . 'Configuration\Bridge\ModuleSettingBridgeInterface';
+
+if (!interface_exists($newInterface, false) && interface_exists($oldInterface)) {
+    class_alias($oldInterface, $newInterface);
 }
