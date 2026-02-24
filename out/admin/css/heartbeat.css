@@ -1,0 +1,905 @@
+/**
+ * OXS Heartbeat - Admin Styles
+ */
+
+/* ==========================================================================
+   Base Layout
+   ========================================================================== */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #fff;
+}
+
+h1 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* ==========================================================================
+   Component Status Badges
+   ========================================================================== */
+
+.component-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.component-status.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.component-status.inactive {
+    background: #f5f5f5;
+    color: #9e9e9e;
+}
+
+.component-status.warning {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+/* ==========================================================================
+   Toggle Switch
+   ========================================================================== */
+
+.toggle-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f0f7ff;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toggle-section h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #1976d2;
+}
+
+.toggle-section.disabled {
+    background: #f5f5f5;
+    border-color: #ccc;
+    opacity: 0.6;
+}
+
+.toggle-section.disabled h3 {
+    color: #999;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.toggle-slider.disabled {
+    cursor: not-allowed;
+}
+
+input:checked + .toggle-slider {
+    background-color: #4caf50;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* ==========================================================================
+   Settings Form
+   ========================================================================== */
+
+.settings-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.settings-group h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.setting-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.setting-row:last-child {
+    margin-bottom: 0;
+}
+
+.setting-label {
+    width: 200px;
+    font-weight: bold;
+    color: #555;
+}
+
+.setting-input {
+    flex: 1;
+}
+
+.setting-input input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.setting-input textarea {
+    width: 100%;
+    max-width: 400px;
+    height: 100px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.setting-help {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn-primary {
+    display: inline-block;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+
+.btn-save {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    background: #45a049;
+}
+
+.btn-save.unsaved {
+    background: #ff9800;
+    animation: pulse 1.5s infinite;
+}
+
+.btn-save.unsaved:hover {
+    background: #f57c00;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(255, 152, 0, 0); }
+}
+
+.btn-danger {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-danger:hover {
+    background: #d32f2f;
+}
+
+.btn-danger:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Notice Boxes
+   ========================================================================== */
+
+.warning-notice {
+    padding: 20px;
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.warning-notice h3 {
+    color: #e65100;
+    margin: 0 0 10px 0;
+}
+
+.warning-notice p {
+    color: #e65100;
+    margin: 0 0 15px 0;
+}
+
+.ready-notice {
+    padding: 15px;
+    background: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.ready-notice h3 {
+    color: #2e7d32;
+    margin: 0 0 5px 0;
+}
+
+.ready-notice p {
+    color: #2e7d32;
+    margin: 0;
+}
+
+.prerequisite-notice {
+    padding: 15px;
+    background: #fff3e0;
+    border: 1px solid #ff9800;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.prerequisite-notice h3 {
+    color: #e65100;
+    margin: 0 0 10px 0;
+}
+
+.prerequisite-notice p {
+    color: #e65100;
+    margin: 0;
+}
+
+.prerequisite-notice code {
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.setup-complete {
+    padding: 15px;
+    background: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.setup-complete h3 {
+    color: #2e7d32;
+    margin: 0 0 5px 0;
+}
+
+/* ==========================================================================
+   Workflow Steps (API User Setup)
+   ========================================================================== */
+
+.setup-workflow {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.setup-workflow h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+.workflow-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.workflow-steps li {
+    padding: 8px 0;
+    padding-left: 28px;
+    position: relative;
+    border-bottom: 1px solid #eee;
+}
+
+.workflow-steps li:last-child {
+    border-bottom: none;
+}
+
+.workflow-steps li:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}
+
+.workflow-steps li.done:before {
+    background: #4caf50;
+    content: '\2713';
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.workflow-steps li.active:before {
+    background: #2196f3;
+    content: '\2794';
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.workflow-steps li.pending:before {
+    background: #9e9e9e;
+}
+
+.workflow-steps li.warning:before {
+    background: #ff9800;
+    content: '!';
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+    font-weight: bold;
+}
+
+.workflow-steps li.done {
+    color: #4caf50;
+}
+
+.workflow-steps li.active {
+    color: #2196f3;
+    font-weight: bold;
+}
+
+.workflow-steps li.pending {
+    color: #9e9e9e;
+}
+
+.workflow-steps li.warning {
+    color: #e65100;
+}
+
+/* ==========================================================================
+   API Reset Section
+   ========================================================================== */
+
+.api-reset-section {
+    margin-top: 20px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.api-reset-section summary {
+    padding: 15px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.api-reset-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.api-reset-section summary h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.api-reset-section summary h3::before {
+    content: '\25B6';
+    margin-right: 10px;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.api-reset-section[open] summary h3::before {
+    transform: rotate(90deg);
+}
+
+.api-reset-section .reset-content {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.api-reset-section .reset-content p {
+    margin: 0 0 15px 0;
+    color: #666;
+}
+
+.api-reset-section .reset-content ul {
+    margin: 0 0 15px 0;
+    padding-left: 20px;
+}
+
+.api-reset-section .reset-content li {
+    color: #666;
+    margin: 5px 0;
+}
+
+/* ==========================================================================
+   Copy Code
+   ========================================================================== */
+
+.copy-code {
+    display: inline-block;
+    background: #e3f2fd;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid #2196f3;
+    word-break: break-all;
+}
+
+.copy-code:hover {
+    background: #bbdefb;
+}
+
+.copied-msg {
+    display: none;
+    color: #4caf50;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* ==========================================================================
+   Log Sender - Log Sources List (with integrated validation)
+   ========================================================================== */
+
+.log-sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.log-source-item {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.log-source-item.status-ok {
+    background: #f9fff9;
+    border-color: #c8e6c9;
+}
+
+.log-source-item.status-warning {
+    background: #fffaf5;
+    border-color: #ffe0b2;
+}
+
+.log-source-item.status-error {
+    background: #fff5f5;
+    border-color: #ffcdd2;
+}
+
+.log-source-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+/* Source Toggle Switch - positioned on the right */
+.source-toggle-form {
+    display: inline-flex;
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+}
+
+/* Source Toggle Button */
+.source-toggle-btn {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.source-toggle-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.source-toggle-btn .source-toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.source-toggle-btn .source-toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: 18px;
+    width: 18px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.source-toggle-btn.enabled .source-toggle-slider {
+    background-color: #4caf50;
+}
+
+.source-toggle-btn.enabled .source-toggle-knob {
+    left: 23px;
+}
+
+.source-toggle-slider.disabled {
+    opacity: 0.5;
+}
+
+/* Styling for sources not enabled for sending */
+.log-source-item.disabled .log-source-name,
+.log-source-item.disabled .log-source-description,
+.log-source-item.disabled .log-source-origin {
+    color: #888;
+}
+
+.log-source-item.disabled .log-source-path {
+    opacity: 0.6;
+}
+
+/* Keep toggle always fully visible and interactive */
+.log-source-item.disabled .source-toggle-form {
+    opacity: 1;
+}
+
+.log-source-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+}
+
+.log-source-item.status-ok .log-source-icon {
+    color: #4caf50;
+}
+
+.log-source-item.status-warning .log-source-icon {
+    color: #ff9800;
+}
+
+.log-source-item.status-error .log-source-icon {
+    color: #f44336;
+}
+
+.log-source-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.log-source-origin {
+    font-size: 11px;
+    color: #888;
+}
+
+.log-source-description {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    padding-left: 28px;
+}
+
+.log-source-path {
+    margin-top: 8px;
+    padding: 8px;
+    padding-left: 28px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.log-source-path.status-ok {
+    background: #e8f5e9;
+}
+
+.log-source-path.status-warning {
+    background: #fff3e0;
+}
+
+.log-source-path.status-error {
+    background: #ffebee;
+}
+
+.log-source-path-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.log-source-type-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.log-source-path code {
+    background: rgba(255,255,255,0.7);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #333;
+    word-break: break-all;
+}
+
+.log-source-pattern {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+
+.log-source-path-validation {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.log-source-path.status-ok .log-source-path-validation {
+    color: #2e7d32;
+}
+
+.log-source-path.status-warning .log-source-path-validation {
+    color: #e65100;
+}
+
+.log-source-path.status-error .log-source-path-validation {
+    color: #c62828;
+}
+
+.no-sources {
+    color: #888;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Log Sender - Static Paths Configuration
+   ========================================================================== */
+
+.static-paths-textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.static-paths-textarea:focus {
+    border-color: #2196f3;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.help-text {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   Log Sender - Howto Section (collapsible)
+   ========================================================================== */
+
+.howto-section {
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.howto-section summary {
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.howto-section summary::-webkit-details-marker {
+    display: none;
+}
+
+
+.howto-section summary:hover {
+    color: #333;
+}
+
+.howto-section .help-icon {
+    color: #999;
+    font-size: 11px;
+    margin-right: 6px;
+}
+
+.howto-content,
+.info-content {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #555;
+}
+
+.howto-content p,
+.info-content p {
+    margin: 0 0 8px 0;
+}
+
+.howto-content ul,
+.info-content ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.howto-content li,
+.info-content li {
+    margin: 4px 0;
+}
+
+.howto-content li strong,
+.info-content li strong {
+    color: #333;
+}
+
+/* ==========================================================================
+   Validation Messages (shared)
+   ========================================================================== */
+
+.validation-error {
+    color: #f44336;
+}
+
+.validation-warning {
+    color: #e65100;
+}
+
+.validation-info {
+    color: #666;
+}
+
+/* ==========================================================================
+   Settings Group Header with Action
+   ========================================================================== */
+
+.settings-group-header-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.settings-group-header-with-action h3 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.header-action-form {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-refresh {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    background: #fff;
+    color: #1976d2;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+    background: #e3f2fd;
+}
