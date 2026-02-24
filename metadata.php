@@ -40,12 +40,12 @@ Includes GraphQL API for remote configuration and activation.',
             \OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\Admin\ManageController::class,
     ],
     'templates' => [
-        'heartbeat_base.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_base.tpl',
-        'heartbeat_apiuser_setup.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_apiuser_setup.tpl',
-        'heartbeat_requestlogger_setup.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_requestlogger_setup.tpl',
-        'heartbeat_requestlogger_settings.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_requestlogger_settings.tpl',
-        'heartbeat_logsender_manage.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_logsender_manage.tpl',
-        'heartbeat_diagnosticsprovider_manage.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_diagnosticsprovider_manage.tpl',
+        'heartbeat_base.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_base.tpl',
+        'heartbeat_apiuser_setup.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_apiuser_setup.tpl',
+        'heartbeat_requestlogger_setup.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_requestlogger_setup.tpl',
+        'heartbeat_requestlogger_settings.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_requestlogger_settings.tpl',
+        'heartbeat_logsender_manage.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_logsender_manage.tpl',
+        'heartbeat_diagnosticsprovider_manage.tpl' => 'oxid-support/heartbeat/views/admin/tpl/heartbeat_diagnosticsprovider_manage.tpl',
     ],
     'blocks' => [
         [
