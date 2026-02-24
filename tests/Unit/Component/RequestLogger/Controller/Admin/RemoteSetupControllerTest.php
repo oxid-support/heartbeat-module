@@ -30,7 +30,7 @@ final class RemoteSetupControllerTest extends TestCase
         $property = $reflection->getProperty('_sThisTemplate');
 
         $this->assertSame(
-            '@oxsheartbeat/admin/heartbeat_requestlogger_setup',
+            'heartbeat_requestlogger_setup.tpl',
             $property->getDefaultValue()
         );
     }

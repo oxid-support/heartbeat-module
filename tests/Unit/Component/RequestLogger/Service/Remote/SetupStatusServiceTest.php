@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 final class SetupStatusServiceTest extends TestCase
 {
     private const MIGRATION_TABLE = 'oxmigrations_oxsheartbeat';
-    private const EXPECTED_MIGRATION = 'OxidSupport\\Heartbeat\\Migrations\\Version20251223000001';
+    private const EXPECTED_MIGRATION = '20251223000001';
 
     /**
      * Migration was executed - count returns 1

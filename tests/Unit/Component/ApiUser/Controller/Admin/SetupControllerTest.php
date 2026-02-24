@@ -29,7 +29,7 @@ final class SetupControllerTest extends TestCase
         $reflection = new \ReflectionClass(SetupController::class);
         $property = $reflection->getProperty('_sThisTemplate');
 
-        $this->assertEquals('@oxsheartbeat/admin/heartbeat_apiuser_setup', $property->getDefaultValue());
+        $this->assertEquals('heartbeat_apiuser_setup.tpl', $property->getDefaultValue());
     }
 
     public function testIsComponentActiveMethodExists(): void

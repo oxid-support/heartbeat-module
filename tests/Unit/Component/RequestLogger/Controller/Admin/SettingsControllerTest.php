@@ -29,7 +29,7 @@ final class SettingsControllerTest extends TestCase
         $property = $reflection->getProperty('_sThisTemplate');
 
         $this->assertSame(
-            '@oxsheartbeat/admin/heartbeat_requestlogger_settings',
+            'heartbeat_requestlogger_settings.tpl',
             $property->getDefaultValue()
         );
     }
