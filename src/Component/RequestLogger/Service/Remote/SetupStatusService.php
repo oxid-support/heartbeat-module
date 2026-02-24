@@ -14,7 +14,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInt
 final class SetupStatusService implements SetupStatusServiceInterface
 {
     private const MIGRATION_TABLE = 'oxmigrations_oxsheartbeat';
-    private const EXPECTED_MIGRATION = 'OxidSupport\\Heartbeat\\Migrations\\Version20251223000001';
+    private const EXPECTED_MIGRATION = '20251223000001';
 
     public function __construct(
         private QueryBuilderFactoryInterface $queryBuilderFactory

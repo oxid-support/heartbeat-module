@@ -19,7 +19,7 @@ use OxidSupport\Heartbeat\Module\Module;
 final class ApiUserStatusService implements ApiUserStatusServiceInterface
 {
     private const MIGRATION_TABLE = 'oxmigrations_oxsheartbeat';
-    private const EXPECTED_MIGRATION = 'OxidSupport\\Heartbeat\\Migrations\\Version20251223000001';
+    private const EXPECTED_MIGRATION = '20251223000001';
 
     public function __construct(
         private QueryBuilderFactoryInterface $queryBuilderFactory
