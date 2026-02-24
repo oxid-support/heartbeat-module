@@ -11,6 +11,11 @@
             "email": "support@oxid-esales.com"
         }
     ],
+    "extra": {
+        "oxideshop": {
+            "target-directory": "oxid-support/heartbeat"
+        }
+    },
     "require": {
         "php": "^8.0 || ^8.1",
         "oxid-esales/graphql-base": "^7.0"
