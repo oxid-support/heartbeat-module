@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Service\Remote;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\DataType\SettingType;
 use OxidSupport\Heartbeat\Module\Module as RequestLoggerModule;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\InvalidCollectionException;

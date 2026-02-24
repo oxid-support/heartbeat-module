@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Shop\Facade;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
 
 class ModuleSettingFacade implements ModuleSettingFacadeInterface

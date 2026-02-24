@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\LogSender\Service;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPathType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogSource;

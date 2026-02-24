@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\LogSender\Controller\GraphQL;
 
 use InvalidArgumentException;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\LogSender\Controller\GraphQL\LogController;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogContentType;
 use OxidSupport\Heartbeat\Component\LogSender\DataType\LogPath;

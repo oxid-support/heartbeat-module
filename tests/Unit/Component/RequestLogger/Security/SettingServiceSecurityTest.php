@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Component\RequestLogger\Security;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\InvalidCollectionException;
 use OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\SettingService;
 use PHPUnit\Framework\Attributes\CoversClass;

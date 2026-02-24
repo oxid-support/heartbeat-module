@@ -25,7 +25,7 @@ if (!class_exists(NavigationController_parent::class)) {
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Shared\Controller\Admin;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setting\Bridge\ModuleSettingBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface;
 use OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController;
 use OxidSupport\Heartbeat\Module\Module;
