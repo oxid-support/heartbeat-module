@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>[{block name="title"}][{/block}]</title>
-    <link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'css/heartbeat.css')}]">
+    <link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'out/admin/css/heartbeat.css')}]">
     [{block name="head"}][{/block}]
 </head>
 <body>

@@ -8,7 +8,7 @@
 [{assign var="apiUserPasswordSet" value=$oView->isApiUserPasswordSet()}]
 [{assign var="setupComplete" value=$oView->isSetupComplete()}]
 
-<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'css/heartbeat.css')}]">
+<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'out/admin/css/heartbeat.css')}]">
 
 [{* Page Header with Status Badge *}]
 <h1>

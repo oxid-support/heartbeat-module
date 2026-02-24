@@ -5,7 +5,7 @@
 [{assign var="configAccessActivated" value=$oView->isConfigAccessActivated()}]
 [{assign var="canToggle" value=$oView->canToggle()}]
 
-<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'css/heartbeat.css')}]">
+<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'out/admin/css/heartbeat.css')}]">
 
 [{* Page Header with Status Badge *}]
 <h1>

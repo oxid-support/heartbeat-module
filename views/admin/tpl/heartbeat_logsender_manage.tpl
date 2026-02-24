@@ -7,7 +7,7 @@
 [{assign var="availableCount" value=$oView->getAvailableSourceCount()}]
 [{assign var="totalCount" value=$oView->getTotalSourceCount()}]
 
-<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'css/heartbeat.css')}]">
+<link rel="stylesheet" href="[{$oViewConf->getModuleUrl('oxsheartbeat', 'out/admin/css/heartbeat.css')}]">
 
 [{* Page Header with Status Badge *}]
 <h1>
