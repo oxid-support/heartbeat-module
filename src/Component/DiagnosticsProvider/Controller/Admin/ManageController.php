@@ -21,7 +21,7 @@ use OxidSupport\Heartbeat\Shared\Controller\Admin\TogglableComponentInterface;
  */
 class ManageController extends AbstractComponentController implements TogglableComponentInterface
 {
-    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_diagnosticsprovider_manage';
+    protected $_sThisTemplate = 'heartbeat_diagnosticsprovider_manage.tpl';
 
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
 

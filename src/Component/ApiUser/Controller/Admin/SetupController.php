@@ -21,7 +21,7 @@ use OxidSupport\Heartbeat\Shared\Controller\Admin\AbstractComponentController;
  */
 class SetupController extends AbstractComponentController
 {
-    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_apiuser_setup';
+    protected $_sThisTemplate = 'heartbeat_apiuser_setup.tpl';
 
     private const GRAPHQL_BASE_MODULE_ID = 'oe_graphql_base';
 

@@ -22,7 +22,7 @@ use OxidSupport\Heartbeat\Shared\Controller\Admin\TogglableComponentInterface;
  */
 class SettingsController extends AbstractComponentController implements TogglableComponentInterface
 {
-    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_settings';
+    protected $_sThisTemplate = 'heartbeat_requestlogger_settings.tpl';
 
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
 

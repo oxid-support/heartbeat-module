@@ -17,7 +17,7 @@ use OxidSupport\Heartbeat\Shared\Controller\Admin\TogglableComponentInterface;
 
 class RemoteSetupController extends AbstractComponentController implements TogglableComponentInterface
 {
-    protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_setup';
+    protected $_sThisTemplate = 'heartbeat_requestlogger_setup.tpl';
 
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
 

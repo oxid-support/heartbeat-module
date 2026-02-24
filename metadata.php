@@ -39,6 +39,26 @@ Includes GraphQL API for remote configuration and activation.',
         'heartbeat_diagnosticsprovider_manage' =>
             \OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\Admin\ManageController::class,
     ],
+    'templates' => [
+        'heartbeat_base.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_base.tpl',
+        'heartbeat_apiuser_setup.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_apiuser_setup.tpl',
+        'heartbeat_requestlogger_setup.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_requestlogger_setup.tpl',
+        'heartbeat_requestlogger_settings.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_requestlogger_settings.tpl',
+        'heartbeat_logsender_manage.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_logsender_manage.tpl',
+        'heartbeat_diagnosticsprovider_manage.tpl' => 'oxs/heartbeat/views/admin/tpl/heartbeat_diagnosticsprovider_manage.tpl',
+    ],
+    'blocks' => [
+        [
+            'template' => 'navigation.tpl',
+            'block' => 'admin_navigation_menustructure',
+            'file' => 'views/admin_smarty/navigation.tpl',
+        ],
+        [
+            'template' => 'module_config.tpl',
+            'block' => 'admin_module_config_form',
+            'file' => 'views/admin_smarty/module_config.tpl',
+        ],
+    ],
     'events' => [
         'onActivate' => \OxidSupport\Heartbeat\Component\RequestLogger\Core\ModuleEvents::class . '::onActivate',
     ],
