@@ -1,0 +1,178 @@
+[{if $oView->getEditObjectId() == 'oxsheartbeat'}]
+<style>
+    .setup-workflow { margin-bottom: 20px; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; }
+    .setup-workflow h3 { margin: 0 0 15px 0; color: #333; font-size: 14px; }
+    .workflow-steps { list-style: none; padding: 0; margin: 0; }
+    .workflow-steps li { padding: 8px 0; padding-left: 28px; position: relative; border-bottom: 1px solid #eee; }
+    .workflow-steps li:last-child { border-bottom: none; }
+    .workflow-steps li:before { content: ''; position: absolute; left: 0; top: 10px; width: 18px; height: 18px; border-radius: 50%; }
+    .workflow-steps li.done:before { background: #4caf50; content: '\2713'; color: white; font-size: 12px; text-align: center; line-height: 18px; }
+    .workflow-steps li.active:before { background: #2196f3; content: '\2794'; color: white; font-size: 10px; text-align: center; line-height: 18px; }
+    .workflow-steps li.pending:before { background: #9e9e9e; }
+    .workflow-steps li.warning:before { background: #ff9800; content: '!'; color: white; font-size: 12px; text-align: center; line-height: 18px; font-weight: bold; }
+    .workflow-steps li.done { color: #4caf50; }
+    .workflow-steps li.active { color: #2196f3; font-weight: bold; }
+    .workflow-steps li.pending { color: #9e9e9e; }
+    .workflow-steps li.warning { color: #e65100; }
+    .setup-complete { padding: 15px; background: #e8f5e9; border: 1px solid #4caf50; border-radius: 4px; margin-bottom: 20px; }
+    .setup-complete h3 { color: #2e7d32; margin: 0 0 5px 0; }
+    .migration-warning { padding: 15px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px; margin-bottom: 20px; }
+    .migration-warning h3 { color: #e65100; margin: 0 0 10px 0; }
+    .migration-warning p { margin: 0 0 10px 0; }
+    .migration-warning code { background: #f5f5f5; padding: 10px; display: block; border-radius: 4px; font-size: 12px; }
+    .api-reset-section { margin-top: 20px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; }
+    .api-reset-section summary { padding: 15px; cursor: pointer; list-style: none; }
+    .api-reset-section summary::-webkit-details-marker { display: none; }
+    .api-reset-section summary h3 { margin: 0; padding: 0; border: none; color: #333; font-size: 14px; display: flex; align-items: center; }
+    .api-reset-section summary h3::before { content: '\25B6'; margin-right: 10px; font-size: 10px; transition: transform 0.2s; }
+    .api-reset-section[open] summary h3::before { transform: rotate(90deg); }
+    .api-reset-section .reset-content { padding: 15px; border-top: 1px solid #ddd; }
+    .api-reset-section .reset-content p { margin: 0 0 15px 0; color: #666; }
+    .api-reset-section .reset-content ul { margin: 0 0 15px 0; padding-left: 20px; }
+    .api-reset-section .reset-content li { color: #666; margin: 5px 0; }
+</style>
+
+[{assign var="setupToken" value=$confstrs.oxsheartbeat_SetupToken|default:''}]
+[{assign var="migrationExecuted" value=$oView->isMigrationExecuted()}]
+[{assign var="moduleActivated" value=$oView->isModuleActivated()}]
+[{assign var="graphqlBaseActivated" value=$oView->isGraphqlBaseActivated()}]
+[{assign var="configAccessActivated" value=$oView->isConfigAccessActivated()}]
+
+[{* Check actual setup status *}]
+[{if !$migrationExecuted}]
+    [{* Migration not executed - show in workflow *}]
+    <div class="setup-workflow">
+        <h3>[{oxmultilang ident="OXSHEARTBEAT_APIUSER_SETUP_TITLE"}]</h3>
+        <ol class="workflow-steps">
+            <li class="done">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_INSTALL"}]</li>
+            <li class="active">
+                [{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_MIGRATE"}]<br>
+                <small style="font-weight: normal;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_MIGRATION_REQUIRED_TEXT"}]</small><br>
+                <code id="migrationCommand" style="display: inline-block; background: #e3f2fd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 11px; cursor: pointer; border: 1px solid #2196f3;" onclick="
+                    var textarea = document.createElement('textarea');
+                    textarea.value = './vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    var msg = document.getElementById('migrationCopiedMsg');
+                    msg.style.display = 'inline';
+                    setTimeout(function() { msg.style.display = 'none'; }, 2000);
+                ">&#x1F4D1; ./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat</code>
+                <span id="migrationCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_COPIED"}]</span>
+            </li>
+            <li class="[{if $graphqlBaseActivated}]done[{else}]pending[{/if}]">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE"}]</li>
+            <li class="[{if $configAccessActivated}]done[{elseif $graphqlBaseActivated}]pending[{else}]pending[{/if}]">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS"}]</li>
+            <li class="[{if $moduleActivated}]warning[{else}]pending[{/if}]">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_ACTIVATE"}][{if $moduleActivated}]<br><small style="font-weight: normal;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_ACTIVATE_WARNING"}]</small>[{/if}]</li>
+            <li class="pending">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN"}]</li>
+            <li class="pending">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_WAIT_SUPPORT"}]</li>
+        </ol>
+    </div>
+[{elseif $setupToken == ''}]
+    [{* No token = Setup complete (token was consumed by support) *}]
+    <div class="setup-complete">
+        <h3>&#10004; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_SETUP_COMPLETE_TITLE"}]</h3>
+        <p style="margin: 0;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_SETUP_COMPLETE_TEXT"}]</p>
+    </div>
+[{else}]
+    [{* Token exists - show send token step *}]
+    <div class="setup-workflow">
+        <h3>[{oxmultilang ident="OXSHEARTBEAT_APIUSER_SETUP_TITLE"}]</h3>
+        <ol class="workflow-steps">
+            <li class="done">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_INSTALL"}]</li>
+            <li class="done">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_MIGRATE"}]</li>
+            <li class="[{if $graphqlBaseActivated}]done[{else}]active[{/if}]">
+                [{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE"}]
+                [{if !$graphqlBaseActivated}]<br>
+                <small style="font-weight: normal;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE_DESC"}]</small>
+                [{/if}]
+            </li>
+            <li class="[{if $configAccessActivated}]done[{elseif $graphqlBaseActivated}]active[{else}]pending[{/if}]">
+                [{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS"}]
+                [{if !$configAccessActivated && $graphqlBaseActivated}]<br>
+                <small style="font-weight: normal;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS_DESC"}]</small>
+                [{/if}]
+            </li>
+            <li class="done">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_ACTIVATE"}]</li>
+            <li class="[{if $graphqlBaseActivated && $configAccessActivated}]active[{else}]pending[{/if}]">
+                [{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN"}]
+                [{if $graphqlBaseActivated && $configAccessActivated}]<br>
+                <small style="font-weight: normal;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN_DESC"}]</small><br>
+                <code id="setupTokenCode" style="display: inline-block; background: #e3f2fd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 11px; cursor: pointer; border: 1px solid #2196f3; word-break: break-all;" onclick="
+                    var textarea = document.createElement('textarea');
+                    textarea.value = '[{$setupToken}]';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    var msg = document.getElementById('tokenCopiedMsg');
+                    msg.style.display = 'inline';
+                    setTimeout(function() { msg.style.display = 'none'; }, 2000);
+                ">&#x1F4D1; [{$setupToken}]</code>
+                <span id="tokenCopiedMsg" style="display: none; color: #4caf50; font-weight: bold; margin-left: 10px;">&#10004; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_COPIED"}]</span>
+                [{/if}]
+            </li>
+            <li class="pending">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_STEP_WAIT_SUPPORT"}]</li>
+        </ol>
+        [{if !$graphqlBaseActivated || !$configAccessActivated}]
+        <p style="margin-top: 15px; padding: 10px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px; color: #e65100;">
+            <strong>&#9888; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_PREREQUISITES_WARNING"}]</strong>
+        </p>
+        [{/if}]
+    </div>
+[{/if}]
+
+<details class="api-reset-section">
+    <summary><h3>[{oxmultilang ident="OXSHEARTBEAT_APIUSER_RESET_TITLE"}]</h3></summary>
+    <div class="reset-content">
+        <p>[{oxmultilang ident="OXSHEARTBEAT_APIUSER_RESET_DESCRIPTION"}]</p>
+        <ul>
+            <li>&#10060; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_WARNING_1"}]</li>
+            <li>&#10060; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_WARNING_2"}]</li>
+            <li>&#10060; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_WARNING_3"}]</li>
+            <li>&#10060; [{oxmultilang ident="OXSHEARTBEAT_APIUSER_WARNING_4"}]</li>
+        </ul>
+        <div style="margin: 15px 0 0 0; padding: 15px; background: #fff3e0; border: 1px solid #ff9800; border-radius: 4px;">
+            <form method="post" action="[{$oViewConf->getSelfLink()}]" onsubmit="return confirm('[{oxmultilang ident="OXSHEARTBEAT_APIUSER_CONFIRM_DIALOG"}]');">
+                [{$oViewConf->getHiddenSid()}]
+                <input type="hidden" name="cl" value="heartbeat_password_reset">
+                <input type="hidden" name="fnc" value="resetPassword">
+                <input type="hidden" name="oxid" value="[{$oView->getEditObjectId()}]">
+                <label style="cursor: pointer; color: #e65100; display: block; margin-bottom: 15px;">
+                    <input type="checkbox" id="confirmReset" onchange="
+                        var btn = document.getElementById('resetBtn');
+                        if (this.checked) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                            btn.style.cursor = 'pointer';
+                        } else {
+                            btn.disabled = true;
+                            btn.style.opacity = '0.5';
+                            btn.style.cursor = 'not-allowed';
+                        }
+                    ">
+                    [{oxmultilang ident="OXSHEARTBEAT_APIUSER_CONFIRM_RESET"}]
+                </label>
+                <button type="submit" id="resetBtn" disabled style="display: block; background: #dc3545; color: white; border: none; padding: 8px 16px; font-size: 13px; cursor: not-allowed; opacity: 0.5; border-radius: 4px;">[{oxmultilang ident="OXSHEARTBEAT_APIUSER_RESET_BUTTON"}]</button>
+            </form>
+        </div>
+    </div>
+</details>
+[{/if}]
+
+[{$smarty.block.parent}]
+
+[{block name="admin_module_config_var_type_str" prepend}]
+    [{if $module_var == 'oxsheartbeat_SetupToken'}]
+        <input type="text" class="txt" style="width: 350px;" name="confstrs[[{$module_var}]]" value="[{$confstrs.$module_var}]" readonly onclick="
+            this.select();
+            document.execCommand('copy');
+            var msg = document.createElement('span');
+            msg.textContent = ' \u2713 [{oxmultilang ident="OXSHEARTBEAT_APIUSER_COPIED"}]';
+            msg.style.cssText = 'color: green; font-weight: bold; margin-left: 10px;';
+            this.parentNode.insertBefore(msg, this.nextSibling);
+            setTimeout(function() { msg.remove(); }, 2000);
+        ">
+    [{else}]
+    [{/if}]
+[{/block}]
