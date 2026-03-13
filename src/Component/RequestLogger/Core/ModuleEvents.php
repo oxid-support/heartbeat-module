@@ -72,7 +72,7 @@ final class ModuleEvents
     private static function clearCache(): void
     {
         $config = Registry::getConfig();
-        $tmpDir = realpath($config->getShopConfVar('sCompileDir'));
+        $tmpDir = realpath((string) $config->getShopConfVar('sCompileDir'));
 
         Registry::getUtils()->commitFileCache();
 
