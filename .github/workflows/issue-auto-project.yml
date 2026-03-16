@@ -15,15 +15,28 @@ jobs:
       - name: Add to project based on labels
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
           LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
         run: |
+          add_to_project() {
+            local project_id="$1"
+            gh api graphql -f query="
+              mutation {
+                addProjectV2ItemById(input: {projectId: \"$project_id\", contentId: \"$ISSUE_NODE_ID\"}) {
+                  item { id }
+                }
+              }" --silent
+          }
+
           if echo "$LABELS" | grep -qw "feature"; then
-            gh issue edit "$ISSUE_URL" --add-project "Heartbeat Features"
+            echo "Adding to Heartbeat Features..."
+            add_to_project "PVT_kwDOBKCETs4BPU4-"
           fi
           if echo "$LABELS" | grep -qwE "ci|dx|security"; then
-            gh issue edit "$ISSUE_URL" --add-project "Heartbeat CI/CD"
+            echo "Adding to Heartbeat CI/CD..."
+            add_to_project "PVT_kwDOBKCETs4BPBj5"
           fi
           if echo "$LABELS" | grep -qw "bug"; then
-            gh issue edit "$ISSUE_URL" --add-project "Heartbeat Bugs and Feedback"
+            echo "Adding to Heartbeat Bugs and Feedback..."
+            add_to_project "PVT_kwDOBKCETs4BQC7V"
           fi
