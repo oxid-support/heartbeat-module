@@ -1,0 +1,29 @@
+name: Auto-assign issues to projects
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  issues: read
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Add to project based on labels
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+        run: |
+          if echo "$LABELS" | grep -qw "feature"; then
+            gh issue edit "$ISSUE_URL" --add-project "Heartbeat Features"
+          fi
+          if echo "$LABELS" | grep -qwE "ci|dx|security"; then
+            gh issue edit "$ISSUE_URL" --add-project "Heartbeat CI/CD"
+          fi
+          if echo "$LABELS" | grep -qw "bug"; then
+            gh issue edit "$ISSUE_URL" --add-project "Heartbeat Bugs and Feedback"
+          fi
