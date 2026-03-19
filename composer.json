@@ -21,7 +21,8 @@
         "oxid-esales/oxideshop-ce": "^7.0",
         "phpstan/phpstan": "^2.0",
         "squizlabs/php_codesniffer": "^4.0",
-        "phpmd/phpmd": "^2.15"
+        "phpmd/phpmd": "^2.15",
+        "vimeo/psalm": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -49,6 +50,8 @@
             "@phpstan",
             "@phpmd"
         ],
+
+        "psalm": "psalm --taint-analysis",
 
         "tests-unit": "phpunit -c tests/phpunit.xml --testsuite='Unit Tests'",
         "tests-coverage": "XDEBUG_MODE=coverage phpunit -c tests/phpunit.xml --coverage-text --coverage-html=tests/Reports/CoverageHtml"

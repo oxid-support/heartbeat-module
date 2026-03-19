@@ -50,6 +50,33 @@ jobs:
     - name: Run Unit Tests
       run: composer run-script tests-unit
 
+  psalm-taint-analysis:
+    name: Psalm Taint Analysis
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Cache Composer packages
+      uses: actions/cache@v5
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-8.2-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-8.2-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run Psalm Taint Analysis
+      run: composer run-script psalm
+
   notify-devops:
     name: Notify DevOps Repo
     needs: [build]
