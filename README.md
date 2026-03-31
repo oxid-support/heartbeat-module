@@ -18,10 +18,16 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 
 ### Step 1: Install via Composer
 
-#### Live
+#### OXID 7.x (Version 2.x)
 ```bash
 composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
-composer require oxid-support/heartbeat
+composer require oxid-support/heartbeat:"^2.0"
+```
+
+#### OXID 6.5 (Version 1.x)
+```bash
+composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
+composer require oxid-support/heartbeat:"^1.0"
 ```
 
 #### Dev
@@ -31,7 +37,7 @@ composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
 in some cases, use -W
-> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies.
+> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies. For OXID 6.5, see the [b-6.5.x branch README](https://github.com/oxid-support/heartbeat-module/tree/b-6.5.x) for specific installation instructions.
 
 ### Step 2: Run Database Migrations
 
@@ -62,10 +68,10 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 - **Module ID**: `oxsheartbeat`
 - **Module Title**: OXS :: Heartbeat
-- **Version**: 1.0.0
+- **Version**: 2.0.0
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.1+
-- **PHP Version**: 8.0 - 8.4
+- **Supported OXID Versions**: 7.1+ (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
+- **PHP Version**: 8.2 - 8.4
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
 
