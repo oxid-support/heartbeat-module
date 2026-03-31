@@ -9,11 +9,13 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\RequestLogger\Core;
 
+use OxidEsales\DoctrineMigrationWrapper\MigrationsBuilder;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidSupport\Heartbeat\Module\Module;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 final class ModuleEvents
 {
@@ -27,6 +29,10 @@ final class ModuleEvents
      */
     public static function onActivate(): void
     {
+        self::executeModuleMigrations();
+        self::regenerateViews();
+        self::clearCache();
+
         $container = ContainerFactory::getInstance()->getContainer();
         $moduleSettingService = $container->get(ModuleSettingBridgeInterface::class);
 
@@ -46,6 +52,34 @@ final class ModuleEvents
 
         $token = Registry::getUtilsObject()->generateUId();
         $moduleSettingService->save(Module::SETTING_APIUSER_SETUP_TOKEN, $token, Module::ID);
+    }
+
+    private static function executeModuleMigrations(): void
+    {
+        $migrations = (new MigrationsBuilder())->build();
+        $output = new BufferedOutput();
+        $migrations->setOutput($output);
+        if ($migrations->execute('migrations:up-to-date', Module::ID)) {
+            $migrations->execute('migrations:migrate', Module::ID);
+        }
+    }
+
+    private static function regenerateViews(): void
+    {
+        oxNew(\OxidEsales\Eshop\Core\DbMetaDataHandler::class)->updateViews();
+    }
+
+    private static function clearCache(): void
+    {
+        $tmpDir = realpath(Registry::getConfig()->getConfigParam('sCompileDir'));
+
+        Registry::getUtils()->commitFileCache();
+
+        $files = array_merge(
+            glob($tmpDir . '/smarty/*.php') ?: [],
+            glob($tmpDir . '/*.txt') ?: []
+        );
+        array_map('unlink', $files);
     }
 
     private static function isPasswordAlreadySet(\Psr\Container\ContainerInterface $container): bool
