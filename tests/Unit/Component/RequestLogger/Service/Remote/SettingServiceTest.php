@@ -267,7 +267,7 @@ final class SettingServiceTest extends TestCase
             $settingsByName[$setting->getName()] = $setting->getType();
         }
 
-        $this->assertSame('str', $settingsByName[self::SETTING_LOG_LEVEL]);
+        $this->assertSame('select', $settingsByName[self::SETTING_LOG_LEVEL]);
         $this->assertSame('bool', $settingsByName[self::SETTING_LOG_FRONTEND]);
         $this->assertSame('bool', $settingsByName[self::SETTING_LOG_ADMIN]);
         $this->assertSame('aarr', $settingsByName[self::SETTING_REDACT]);

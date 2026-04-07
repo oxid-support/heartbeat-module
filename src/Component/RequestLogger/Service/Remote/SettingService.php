@@ -28,7 +28,7 @@ final class SettingService implements SettingServiceInterface
 
     /** @var array<string, string> Setting name => type mapping for getAllSettings() */
     private const SETTINGS_MAP = [
-        self::SETTING_LOG_LEVEL => 'str',
+        self::SETTING_LOG_LEVEL => 'select',
         self::SETTING_LOG_FRONTEND => 'bool',
         self::SETTING_LOG_ADMIN => 'bool',
         self::SETTING_REDACT => 'aarr',
