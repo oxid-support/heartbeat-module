@@ -25,6 +25,7 @@ final class SettingService implements SettingServiceInterface
     private const SETTING_LOG_ADMIN = RequestLoggerModule::SETTING_REQUESTLOGGER_LOG_ADMIN;
     private const SETTING_REDACT = RequestLoggerModule::SETTING_REQUESTLOGGER_REDACT_FIELDS;
     private const SETTING_REDACT_ALL_VALUES = RequestLoggerModule::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES;
+    private const SETTING_ACTIVE = RequestLoggerModule::SETTING_REQUESTLOGGER_ACTIVE;
 
     /** @var array<string, string> Setting name => type mapping for getAllSettings() */
     private const SETTINGS_MAP = [
@@ -33,6 +34,7 @@ final class SettingService implements SettingServiceInterface
         self::SETTING_LOG_ADMIN => 'bool',
         self::SETTING_REDACT => 'aarr',
         self::SETTING_REDACT_ALL_VALUES => 'bool',
+        self::SETTING_ACTIVE => 'bool',
     ];
 
     public function __construct(
