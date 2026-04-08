@@ -21,7 +21,7 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 #### Live
 ```bash
 composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
-composer require oxid-support/heartbeat
+composer require oxid-support/heartbeat:"^1.0"
 ```
 
 #### Dev
