@@ -1,0 +1,69 @@
+# Changelog for the OXID 7 Line
+
+All notable changes to the Heartbeat module on the OXID 7 line are documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.0.1] - Unreleased
+
+### Added
+- Explicit `oxid-esales/oxideshop-ce: ">=7.0, <7.5"` constraint in composer.json `require`.
+  This makes Composer the first line of defense against incompatible OXID combinations.
+
+### Changed
+- `src/Shop/Extend/Core/ShopControl.php`: replaced the OXID 7.1+-only
+  `OxidEsales\EshopCommunity\Core\Di\ContainerFacade::get()` with the OXID 7.0+ compatible
+  `OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::getInstance()->getContainer()->get()`.
+  This makes the module work on OXID 7.0 in addition to 7.1+.
+- `services.yaml`: removed all six `oxid.view_controller` tag registrations.
+  Controllers are registered exclusively via the `controllers` array in `metadata.php` now.
+  This complies with the OXID 7.3+ documentation that explicitly forbids registering controllers in both places.
+- `metadata.php`: removed the comment about "Required for OXID eShop 7.2 compatibility (7.4+ uses services.yaml tags)"
+  because the dual-registration was already a workaround, not a requirement.
+- `src/Module/Module.php`: fixed `VERSION` constant which was stuck at `1.0.0` while metadata.php was `2.0.0`.
+  Both are now in sync at `2.0.1`.
+
+### Why
+The combination of (a) the explicit constraint and (b) the code cleanup means: Composer reliably installs the right 
+module version for any supported OXID, and the supported range is honest about what the code actually does.
+
+### Customer impact
+- Customers on OXID 7.1-7.4 with `^2.0`: receive 2.0.1 automatically on next `composer update`.
+  No action required, no breaking changes.
+- Customers on OXID 7.0: can now install and run the module.
+
+### Upgrade
+```bash
+composer update --no-dev
+vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
+rm -rf source/tmp/*
+```
+The module stays activated; no re-activation needed.
+
+## [2.0.0] - 2026
+
+Initial 2.x release. See git history for details.
+
+### Retroactive metadata correction (applied when 2.0.1 was released)
+
+Tag `2.0.0` was force-pushed at the time of the 2.0.1 release with an explicit
+`oxid-esales/oxideshop-ce: ">=7.1, <7.5"` constraint added to `composer.json`.
+
+**The code is unchanged.** The constraint reflects what 2.0.0 has always actually
+required: its `ShopControl` extension uses `OxidEsales\EshopCommunity\Core\Di\ContainerFacade`
+which was introduced in OXID 7.1.0 and does not exist in OXID 7.0.
+
+Effect on customers:
+
+- On OXID 7.1-7.4 with `^2.0`: no behavioural change, 2.0.0 still resolves and runs
+  identically.
+- On OXID 7.0 with `composer require oxid-support/heartbeat`: Composer now rejects
+  2.0.0 (constraint mismatch) and falls through to 2.0.1, which works on 7.0+ thanks
+  to the ContainerFactory fix. Customer ends up with 2.0.1 installed automatically.
+  If the customer pins 2.0.0 explicitly, Composer refuses with a clear "could not
+  be resolved" error instead of installing successfully and crashing at first request.
+- On OXID 7.5+ with `^2.0`: Composer now refuses, signalling that the customer needs
+  to either upgrade their module constraint to `^X` (where X is the next compatible
+  major) or wait for a compatible module release.
+
+This is a one-off metadata-only correction. No further force-pushes of 2.0.0 are planned.

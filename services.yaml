@@ -92,8 +92,6 @@ services:
     OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController:
         public: true
         autowire: false
-        tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_requestlogger_settings' }
 
     # ==========================================================================
     # Component: ApiUser - Services
@@ -115,8 +113,6 @@ services:
     OxidSupport\Heartbeat\Component\ApiUser\Controller\Admin\SetupController:
         public: true
         autowire: false
-        tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_apiuser_setup' }
 
     # Component: ApiUser - Controller/GraphQL
     OxidSupport\Heartbeat\Component\ApiUser\Controller\GraphQL\PasswordController:
@@ -153,14 +149,10 @@ services:
     OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\PasswordResetController:
         public: true
         autowire: false
-        tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_requestlogger_password_reset' }
 
     OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\RemoteSetupController:
         public: true
         autowire: false
-        tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_requestlogger_setup' }
 
     # Component: RequestLogger - Remote Framework (GraphQL)
     OxidSupport\Heartbeat\Component\RequestLogger\Framework\NamespaceMapper:
@@ -197,8 +189,6 @@ services:
     OxidSupport\Heartbeat\Component\LogSender\Controller\Admin\ManageController:
         public: true
         autowire: false
-        tags:
-            - { name: 'oxid.view_controller', controller_key: 'heartbeat_logsender_manage' }
 
     # Component: LogSender - Controller/GraphQL
     OxidSupport\Heartbeat\Component\LogSender\Controller\GraphQL\LogController:

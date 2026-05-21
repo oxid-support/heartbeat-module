@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace OxidSupport\Heartbeat\Shop\Extend\Core;
 
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
-use OxidEsales\EshopCommunity\Core\Di\ContainerFacade;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface;
 // phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
@@ -21,10 +21,11 @@ class ShopControl extends CoreShopControl
      */
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
+        $container = ContainerFactory::getInstance()->getContainer();
         /** @var ShopFacadeInterface $shopFacade */
-        $shopFacade = ContainerFacade::get(ShopFacadeInterface::class);
+        $shopFacade = $container->get(ShopFacadeInterface::class);
         /** @var ModuleSettingFacadeInterface $settingsFacade */
-        $settingsFacade = ContainerFacade::get(ModuleSettingFacadeInterface::class);
+        $settingsFacade = $container->get(ModuleSettingFacadeInterface::class);
 
         if (!$settingsFacade->isRequestLoggerComponentActive()) {
             parent::start($controllerKey, $function, $parameters, $viewsChain);
@@ -41,7 +42,7 @@ class ShopControl extends CoreShopControl
         }
 
         /** @var ShopRequestRecorderInterface $recorder */
-        $recorder = ContainerFacade::get(ShopRequestRecorderInterface::class);
+        $recorder = $container->get(ShopRequestRecorderInterface::class);
 
         $this->logstart($recorder);
 
@@ -70,12 +71,13 @@ class ShopControl extends CoreShopControl
         ShopRequestRecorderInterface $recorder
     ): void {
 
+        $container = ContainerFactory::getInstance()->getContainer();
         /** @var ShopFacadeInterface $facade */
-        $facade = ContainerFacade::get(ShopFacadeInterface::class);
+        $facade = $container->get(ShopFacadeInterface::class);
         /** @var SensitiveDataRedactorInterface $redactor */
-        $redactor = ContainerFacade::get(SensitiveDataRedactorInterface::class);
+        $redactor = $container->get(SensitiveDataRedactorInterface::class);
         /** @var ModuleSettingFacadeInterface $settingsFacade */
-        $settingsFacade = ContainerFacade::get(ModuleSettingFacadeInterface::class);
+        $settingsFacade = $container->get(ModuleSettingFacadeInterface::class);
 
         $referer   = $_SERVER['HTTP_REFERER'] ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;

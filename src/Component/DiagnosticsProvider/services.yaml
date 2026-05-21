@@ -20,8 +20,6 @@ services:
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Controller\Admin\ManageController:
     public: true
     autowire: false
-    tags:
-      - { name: 'oxid.view_controller', controller_key: 'heartbeat_diagnosticsprovider_manage' }
 
   # Framework (GraphQL)
   OxidSupport\Heartbeat\Component\DiagnosticsProvider\Framework\NamespaceMapper:

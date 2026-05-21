@@ -13,7 +13,7 @@ $aModule = [
 It includes detailed request logging, capturing what users do inside the shop.
 Records key request data such as visited pages, parameters, and context, making user flows and issues traceable.
 Includes GraphQL API for remote configuration and activation.',
-    'version' => '2.0.0',
+    'version' => '2.0.1',
     'author' => 'OXID Support',
     'email' => 'support@oxid-esales.com',
     'url' => 'https://oxid-esales.com',
@@ -25,7 +25,6 @@ Includes GraphQL API for remote configuration and activation.',
             \OxidSupport\Heartbeat\Shared\Controller\Admin\NavigationController::class,
     ],
     'controllers' => [
-        // Required for OXID eShop 7.2 compatibility (7.4+ uses services.yaml oxid.view_controller tags)
         'heartbeat_requestlogger_settings' =>
             \OxidSupport\Heartbeat\Component\RequestLogger\Controller\Admin\SettingsController::class,
         'heartbeat_apiuser_setup' =>
