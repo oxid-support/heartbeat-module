@@ -18,26 +18,20 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 
 ### Step 1: Install via Composer
 
-#### OXID 7.x (Version 2.x)
 ```bash
-composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
-composer require oxid-support/heartbeat:"^2.0"
+composer require oxid-support/heartbeat
 ```
 
-#### OXID 6.5 (Version 1.x)
-```bash
-composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
-composer require oxid-support/heartbeat:"^1.0"
-```
+Composer automatically selects the version that matches your OXID installation. No version constraint or repository configuration required.
 
-#### Dev
+#### For local development
 ```bash
 git clone https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:@dev
 ```
-in some cases, use -W
-> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies. For OXID 6.5, see the [b-6.5.x branch README](https://github.com/oxid-support/heartbeat-module/tree/b-6.5.x) for specific installation instructions.
+
+> **Note**: The OXID GraphQL Base and GraphQL Configuration Access modules are installed automatically as dependencies.
 
 ### Step 2: Run Database Migrations
 
@@ -68,12 +62,54 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 - **Module ID**: `oxsheartbeat`
 - **Module Title**: OXS :: Heartbeat
-- **Version**: 2.0.0
+- **Version**: 2.0.1
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.1+ (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
+- **Supported OXID Versions**: 7.0 - 7.4 (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
 - **PHP Version**: 8.2 - 8.4
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
+
+---
+
+## Compatibility
+
+* **Module 2.0.1+ ("OXID 7 line")**: OXID 7.0 to 7.4.x
+* **Module 1.x ("OXID 6 line")**: OXID 6.5
+
+Composer picks the right module version based on the installed OXID core. Customers never need to specify a module version manually.
+
+## Branch structure
+
+This repo follows a reactive stabilization-branch pattern (similar to Symfony and Doctrine):
+
+* **`main`** carries active development for the newest supported OXID version
+* **`b-6.5.x`** maintenance branch for the OXID 6.5 line
+* Future stabilization branches `b-<X.Y>.x` will be created reactively if and when OXID introduces a BC-break and the older line still needs to be supported
+
+Where to open your PR:
+
+* Bug or feature for OXID 7.x → `main`
+* Bug for OXID 6.5 only → `b-6.5.x`
+
+## Updating an existing installation
+
+When a new module version is released:
+
+```bash
+composer update --no-dev
+vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
+rm -rf source/tmp/*
+```
+
+The module remains activated; no re-activation needed. Cache clear (`rm -rf source/tmp/*`) is required in production to pick up new DI container configuration.
+
+When upgrading OXID itself (e.g. 7.2 → 7.5):
+
+```bash
+composer require oxid-support/heartbeat
+```
+
+This re-resolves the constraint and picks the module version matching the new OXID. If no module version supports the new OXID yet, Composer fails with a clear error message rather than silently installing an incompatible version.
 
 ---
 
