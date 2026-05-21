@@ -36,7 +36,7 @@ module version for any supported OXID, and the supported range is honest about w
 ```bash
 composer update --no-dev
 vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
-rm -rf source/tmp/*
+vendor/bin/oe-console oe:cache:clear
 ```
 The module stays activated; no re-activation needed.
 

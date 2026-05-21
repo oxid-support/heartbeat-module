@@ -98,10 +98,10 @@ When a new module version is released:
 ```bash
 composer update --no-dev
 vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
-rm -rf source/tmp/*
+vendor/bin/oe-console oe:cache:clear
 ```
 
-The module remains activated; no re-activation needed. Cache clear (`rm -rf source/tmp/*`) is required in production to pick up new DI container configuration.
+The module remains activated; no re-activation needed. Cache clear is required in production to pick up new DI container configuration.
 
 When upgrading OXID itself (e.g. 7.2 → 7.5):
 
