@@ -97,19 +97,22 @@ When a new module version is released:
 
 ```bash
 composer update --no-dev
-vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
-vendor/bin/oe-console oe:cache:clear
+./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
+./vendor/bin/oe-console oe:cache:clear
 ```
 
 The module remains activated; no re-activation needed. Cache clear is required in production to pick up new DI container configuration.
 
-When upgrading OXID itself (e.g. 7.2 → 7.5):
+When upgrading OXID itself to another minor or major version:
 
 ```bash
 composer require oxid-support/heartbeat
 ```
 
-This re-resolves the constraint and picks the module version matching the new OXID. If no module version supports the new OXID yet, Composer fails with a clear error message rather than silently installing an incompatible version.
+This re-resolves the constraint and picks the module version that matches the new OXID. Two possible outcomes:
+
+* **A compatible module version is published** (e.g. you upgrade from 7.2 to 7.3 and Heartbeat supports both): Composer installs the matching version automatically.
+* **No module version supports the new OXID yet** (e.g. you upgrade to a brand-new OXID major before Heartbeat has been adapted): Composer fails with a clear error message rather than silently installing an incompatible version. In that case wait for the next Heartbeat release or temporarily remove the module before the OXID upgrade.
 
 ---
 
