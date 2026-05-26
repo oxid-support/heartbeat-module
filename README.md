@@ -18,13 +18,14 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 
 ### Step 1: Install via Composer
 
-#### Live
 ```bash
 composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
-composer require oxid-support/heartbeat:"^1.0"
+composer require oxid-support/heartbeat
 ```
 
-#### Dev
+Composer automatically selects the version that matches your OXID installation. No module version constraint required.
+
+#### For local development
 ```bash
 git clone -b b-6.5.x https://github.com/oxid-support/heartbeat-module.git repo/oxs/heartbeat
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
@@ -69,6 +70,60 @@ For more details on OXID GraphQL installation, see the [official documentation](
 - **PHP Version**: 8.0 - 8.1
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
+
+---
+
+## Compatibility
+
+* **Module 2.x ("OXID 7 line")**: OXID 7.0 to 7.4.x (use branch `main`)
+* **Module 1.x ("OXID 6 line")**: OXID 6.5 (this branch)
+
+Composer picks the right module version based on the installed OXID eShop. Customers never need to specify a module version manually.
+
+## Branch structure
+
+This repo follows a reactive stabilization-branch pattern (similar to Symfony and Doctrine):
+
+* **`main`** carries active development for the newest supported OXID version
+* **`b-6.5.x`** maintenance branch for the OXID 6.5 line
+* Future stabilization branches `b-<X.Y>.x` will be created reactively if and when OXID introduces a BC-break and the older line still needs to be supported
+
+Where to open your PR:
+
+* Bug or feature for OXID 7.x → `main`
+* Bug for OXID 6.5 only → `b-6.5.x`
+
+## Release policy
+
+Each OXID eShop release (patch, minor or major) is reviewed for compatibility with the maintained module lines. One of two outcomes:
+
+* **Compatible without code changes** → a module patch release widens the `oxid-esales/oxideshop-ce` constraint inside the existing module line (e.g. a future 1.0.x covers OXID eShop 6.5 + 6.6 once verified).
+* **Breaking change in OXID eShop** → a new module major is cut on a fresh `b-<X.Y>.x` stabilization branch (e.g. 2.x for OXID eShop 7).
+
+In either case the module follows OXID eShop, not the other way around. Customers always `composer require oxid-support/heartbeat` without a manual version pin; Composer resolves to the correct module version for the installed OXID eShop.
+
+## Updating an existing installation
+
+When a new module version is released:
+
+```bash
+composer update --no-dev
+./vendor/bin/oe-eshop-db_migrate migrations:migrate oxsheartbeat
+./vendor/bin/oe-console oe:cache:clear
+```
+
+The module remains activated; no re-activation needed. Cache clear is required in production to pick up new DI container configuration.
+
+When upgrading OXID itself to another minor or major version:
+
+```bash
+composer require oxid-support/heartbeat
+```
+
+This re-resolves the constraint and picks the module version that matches the new OXID. Two possible outcomes:
+
+* **A compatible module version is published**: Composer installs the matching version automatically.
+* **No module version supports the new OXID yet** (e.g. you upgrade from OXID 6.5 to 7.x before switching the module line): Composer fails with a clear error message rather than silently installing an incompatible version. In that case wait for the next Heartbeat release or temporarily remove the module before the OXID upgrade.
 
 ---
 
