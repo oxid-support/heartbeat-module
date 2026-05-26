@@ -75,22 +75,22 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 ## Compatibility
 
-* **Module 2.x ("OXID 7 line")**: OXID 7.0 to 7.4.x (use branch `main`)
+* **Module 2.x ("OXID 7 line")**: OXID 7.0 to 7.4.x (branch `b-7.0.x`)
 * **Module 1.x ("OXID 6 line")**: OXID 6.5 (this branch)
 
 Composer picks the right module version based on the installed OXID eShop. Customers never need to specify a module version manually.
 
 ## Branch structure
 
-This repo follows a reactive stabilization-branch pattern (similar to Symfony and Doctrine):
+This repo follows a reactive stabilization-branch pattern (similar to Symfony and Doctrine). Every supported OXID line gets its own `b-<X.Y>.x` branch as a peer; there is no privileged `main` branch. The most recent line is configured as the default branch on GitHub so a fresh clone lands on it.
 
-* **`main`** carries active development for the newest supported OXID version
+* **`b-7.0.x`** maintenance branch for the OXID 7.0–7.x line (currently the default)
 * **`b-6.5.x`** maintenance branch for the OXID 6.5 line
-* Future stabilization branches `b-<X.Y>.x` will be created reactively if and when OXID introduces a BC-break and the older line still needs to be supported
+* Future lines (e.g. `b-7.5.x`) will be cut reactively when OXID introduces a BC-break and the previous line still needs to be supported
 
 Where to open your PR:
 
-* Bug or feature for OXID 7.x → `main`
+* Bug or feature for OXID 7.x → `b-7.0.x`
 * Bug for OXID 6.5 only → `b-6.5.x`
 
 ## Release policy
