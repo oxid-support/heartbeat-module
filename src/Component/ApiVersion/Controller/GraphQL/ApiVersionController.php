@@ -16,7 +16,7 @@ use TheCodingMachine\GraphQLite\Annotations\Query;
 final class ApiVersionController
 {
     public function __construct(
-        private readonly ApiVersionServiceInterface $apiVersionService,
+        private ApiVersionServiceInterface $apiVersionService,
     ) {
     }
 

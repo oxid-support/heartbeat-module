@@ -16,13 +16,13 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 final class LogSourceType
 {
     public function __construct(
-        private readonly string $id,
-        private readonly string $name,
-        private readonly string $description,
-        private readonly string $origin,
-        private readonly bool $available,
+        private string $id,
+        private string $name,
+        private string $description,
+        private string $origin,
+        private bool $available,
         /** @var LogPath[] */
-        private readonly array $paths,
+        private array $paths,
     ) {
     }
 

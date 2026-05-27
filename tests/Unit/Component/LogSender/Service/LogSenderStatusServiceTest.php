@@ -114,11 +114,10 @@ final class LogSenderStatusServiceTest extends TestCase
         $this->assertInstanceOf(LogSenderStatusServiceInterface::class, $this->service);
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(LogSenderStatusService::class);
 
         $this->assertTrue($reflection->isFinal());
-        $this->assertTrue($reflection->isReadOnly());
     }
 }

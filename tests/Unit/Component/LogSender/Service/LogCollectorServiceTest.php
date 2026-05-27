@@ -142,7 +142,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Provider Logs',
         );
 
@@ -171,7 +171,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Inactive Logs',
         );
 
@@ -199,7 +199,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: '/nonexistent/path',
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Missing Logs',
         );
 
@@ -228,7 +228,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Existing Logs',
         );
 
@@ -255,7 +255,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: '/nonexistent/path',
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Missing Logs',
         );
 
@@ -309,7 +309,7 @@ final class LogCollectorServiceTest extends TestCase
 
         $logPath = new LogPath(
             path: $this->testDir,
-            type: LogPathType::DIRECTORY,
+            type: LogPathType::DIRECTORY(),
             name: 'Provider Logs',
         );
 
@@ -383,7 +383,7 @@ final class LogCollectorServiceTest extends TestCase
         $this->assertCount(1, $paths);
         $this->assertInstanceOf(LogPath::class, $paths[0]);
         $this->assertEquals('/var/log/test.log', $paths[0]->path);
-        $this->assertEquals(LogPathType::FILE, $paths[0]->type);
+        $this->assertEquals(LogPathType::FILE(), $paths[0]->type);
         $this->assertEquals('Test Log', $paths[0]->name);
         $this->assertEquals('A test log file', $paths[0]->description);
         $this->assertEquals('*.log', $paths[0]->filePattern);

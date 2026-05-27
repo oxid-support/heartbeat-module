@@ -176,52 +176,23 @@ final class RemoteSetupControllerTest extends TestCase
         $this->assertFalse($controller->isApiUserSetupComplete());
     }
 
-    public function testIsConfigAccessActivatedReturnsTrueWhenActivated(): void
+    public function testIsConfigAccessActivatedAlwaysReturnsTrue(): void
     {
-        $controller = $this->createControllerWithModuleActivationState('oe_graphql_configuration_access', true);
+        // On the 3.x line graphql-configuration-access is not used; the check always
+        // returns true so that canToggle() only depends on API user setup completeness.
+        $controller = $this->createControllerWithMocks();
 
         $this->assertTrue($controller->isConfigAccessActivated());
     }
 
-    public function testIsConfigAccessActivatedReturnsFalseWhenNotActivated(): void
-    {
-        $controller = $this->createControllerWithModuleActivationState('oe_graphql_configuration_access', false);
-
-        $this->assertFalse($controller->isConfigAccessActivated());
-    }
-
-    public function testIsConfigAccessActivatedReturnsFalseOnException(): void
-    {
-        $context = $this->createMock(ContextInterface::class);
-        $context
-            ->method('getCurrentShopId')
-            ->willReturn(1);
-
-        $shopConfigurationDao = $this->createMock(ShopConfigurationDaoInterface::class);
-        $shopConfigurationDao
-            ->method('get')
-            ->willThrowException(new \Exception('Configuration error'));
-
-        $controller = $this->createControllerWithMocks(
-            context: $context,
-            shopConfigurationDao: $shopConfigurationDao,
-        );
-
-        $this->assertFalse($controller->isConfigAccessActivated());
-    }
-
-    public function testCanToggleReturnsTrueWhenAllPrerequisitesMet(): void
+    public function testCanToggleReturnsTrueWhenApiUserSetupComplete(): void
     {
         $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
         $apiUserStatusService
             ->method('isSetupComplete')
             ->willReturn(true);
 
-        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
-            'oe_graphql_configuration_access',
-            true,
-            $apiUserStatusService
-        );
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
 
         $this->assertTrue($controller->canToggle());
     }
@@ -233,27 +204,7 @@ final class RemoteSetupControllerTest extends TestCase
             ->method('isSetupComplete')
             ->willReturn(false);
 
-        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
-            'oe_graphql_configuration_access',
-            true,
-            $apiUserStatusService
-        );
-
-        $this->assertFalse($controller->canToggle());
-    }
-
-    public function testCanToggleReturnsFalseWhenConfigAccessNotActivated(): void
-    {
-        $apiUserStatusService = $this->createMock(ApiUserStatusServiceInterface::class);
-        $apiUserStatusService
-            ->method('isSetupComplete')
-            ->willReturn(true);
-
-        $controller = $this->createControllerWithModuleActivationStateAndApiUser(
-            'oe_graphql_configuration_access',
-            false,
-            $apiUserStatusService
-        );
+        $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
 
         $this->assertFalse($controller->canToggle());
     }

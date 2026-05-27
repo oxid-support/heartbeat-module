@@ -13,7 +13,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServ
 use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\RemoteComponentDisabledException;
 
-final readonly class RemoteComponentStatusService implements RemoteComponentStatusServiceInterface
+final class RemoteComponentStatusService implements RemoteComponentStatusServiceInterface
 {
     public function __construct(
         private ModuleSettingServiceInterface $moduleSettingService

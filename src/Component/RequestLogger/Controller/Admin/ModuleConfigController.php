@@ -41,7 +41,10 @@ class ModuleConfigController extends ModuleConfiguration
 
     public function isConfigAccessActivated(): bool
     {
-        return $this->isModuleActive(self::CONFIG_ACCESS_MODULE_ID);
+        // The 3.x line targets OXID 7.0, where graphql-configuration-access has no
+        // compatible version. Settings are managed directly via ModuleSettingBridgeInterface,
+        // so no external module needs to be active.
+        return true;
     }
 
     private function isModuleActive(string $moduleId): bool

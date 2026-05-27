@@ -89,7 +89,7 @@ final class OxidCoreLogPathProviderTest extends TestCase
         $provider = new OxidCoreLogPathProvider($shopFacade);
         $paths = $provider->getLogPaths();
 
-        $this->assertEquals(LogPathType::FILE, $paths[0]->type);
+        $this->assertEquals(LogPathType::FILE(), $paths[0]->type);
     }
 
     public function testGetLogPathsHasCorrectName(): void

@@ -29,7 +29,7 @@ final class LogCollectorService implements LogCollectorServiceInterface
      * @param iterable<LogPathProviderInterface> $providers Injected via !tagged_iterator
      */
     public function __construct(
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private ModuleSettingServiceInterface $moduleSettingService,
         iterable $providers
     ) {
         $this->providers = $providers instanceof \Traversable

@@ -23,8 +23,8 @@ final class DiagnosticsSectionType
      * @param KeyValueType[] $items
      */
     public function __construct(
-        private readonly string $name,
-        private readonly array $items,
+        private string $name,
+        private array $items,
     ) {
     }
 

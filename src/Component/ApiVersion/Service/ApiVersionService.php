@@ -17,7 +17,7 @@ use OxidSupport\Heartbeat\Module\Module;
 final class ApiVersionService implements ApiVersionServiceInterface
 {
     public function __construct(
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private ModuleSettingServiceInterface $moduleSettingService,
     ) {
     }
 

@@ -19,8 +19,8 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 final class DiagnosticsController
 {
     public function __construct(
-        private readonly DiagnosticsProviderInterface $diagnosticsProvider,
-        private readonly DiagnosticsProviderStatusServiceInterface $statusService
+        private DiagnosticsProviderInterface $diagnosticsProvider,
+        private DiagnosticsProviderStatusServiceInterface $statusService
     ) {
     }
 

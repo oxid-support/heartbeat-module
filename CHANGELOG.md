@@ -1,109 +1,77 @@
-# Changelog for the OXID 7 Line
+# Changelog for the OXID 7.0 Line
 
-All notable changes to the Heartbeat module on the OXID 7 line are documented in this file.
+All notable changes to the Heartbeat module on the OXID 7.0 line are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.2] - 2026-05-27
+## [3.0.0] - 2026-05-27
 
-### Changed
-- `oxid-esales/oxideshop-ce` constraint widened to `">=7.1, <7.6"` (was `">=7.0, <7.5"` in 2.0.1).
-  - Upper bound bumped from `<7.5` to `<7.6` to include OXID eShop 7.5 (= ce 7.5.x).
-  - Lower bound bumped from `>=7.0` to `>=7.1` to match what the module actually delivers
-    on the 2.x line. The original `>=7.0` claim in 2.0.1 was empty: although the
-    `ContainerFacade → ContainerFactory` refactor enabled OXID 7.0 from the module's
-    own perspective, the required `oxid-esales/graphql-configuration-access ^1.1` has
-    no version that supports ce 7.0.x (only its excluded v1.0.0 does). Composer rejected
-    every real 7.0 install. Tag 2.0.1 was retroactively force-pushed on 2026-05-27 to
-    the same `">=7.1, <7.5"` constraint to stop advertising the empty 7.0 support.
-- `metadata.php` and `src/Module/Module.php`: bump and sync version to `2.0.2`.
-- `metadata.php` now reads the version from `HeartbeatModule::VERSION` instead of duplicating
-  the literal string. `Module.php` is the single source of truth from this release on;
-  future patches only have to bump the constant.
+Initial release of the 3.x line, dedicated to OXID eShop 7.0. Forked from tag `2.0.2`
+with one structural change: the `oxid-esales/graphql-configuration-access` dependency
+is removed.
 
-### Why
-- OXID eShop 7.5 ships today and is binary-compatible with the 2.x heartbeat code; only
-  the composer constraint was blocking the install. Widening it is the entire patch.
-- Honesty about which OXID versions the 2.x line actually supports (7.1-7.5, not 7.0).
+### Why a separate line for 7.0
+On the 2.x line, Heartbeat depends on `graphql-configuration-access ^1.1 || ^2.0 || ^3.0`.
+None of these constraints allow `oxideshop-ce` 7.0.x — the only graphql-configuration-access
+release that does (`v1.0.0`) is explicitly excluded. Effectively, the 2.x line cannot be
+installed on OXID 7.0 at all, despite earlier composer.json wording suggesting otherwise.
+The honest fix for 7.0 is a separate line that drops the dependency and uses OXID's own
+`ModuleSettingBridgeInterface` directly (same pattern as the 1.x line on OXID 6.5).
+
+### Constraint
+- `oxid-esales/oxideshop-ce: "~7.0.0"` — only the OXID 7.0.x marketing line.
+- `oxid-esales/graphql-base: "^8.0"` — the graphql-base series compatible with ce 7.0.
+- `oxid-esales/graphql-configuration-access`: removed.
+- `php: "^8.0 || ^8.1 || ^8.2 || ^8.3 || ^8.4"` — covers the full PHP range OXID 7.0
+  supports. The 2.x-derived code had to be downgraded for this: `final readonly class`
+  (PHP 8.2+) became `final class`, promoted `readonly` parameters became plain promoted
+  parameters, and `LogPathType` enum was replaced with a class-based pseudo-enum (1.x
+  pattern) because backed enums + `match` are PHP 8.1+.
+
+### Code changes versus 2.0.2
+- `src/Component/RequestLogger/Service/Remote/SettingService.php`: rewritten to use
+  `ModuleSettingBridgeInterface` directly (ported from the 1.x implementation), no
+  longer references `OxidEsales\GraphQL\ConfigurationAccess\…`.
+- `src/Component/RequestLogger/Controller/Admin/ModuleConfigController.php` +
+  `RemoteSetupController.php`: `isConfigAccessActivated()` now hard-returns `true`
+  because no external module is required.
+- `final readonly class` → `final class` (3 service classes); `private readonly` /
+  `public readonly` promoted parameters → plain promoted parameters (~21 sites).
+  Both syntaxes are PHP 8.1/8.2+ and are not compatible with OXID 7.0's PHP 8.0 floor.
+- `src/Component/LogSender/DataType/LogPathType.php`: backed enum + `match` replaced
+  with the 1.x class-based pseudo-enum (FILE_VALUE / DIRECTORY_VALUE constants,
+  static FILE() / DIRECTORY() singletons, switch statements in label methods).
+  All callers updated from `LogPathType::FILE` → `LogPathType::FILE()`.
+- `composer.json`: see above.
+- `metadata.php` and `src/Module/Module.php`: version bumped to `3.0.0`.
+
+### Validation
+- PHPUnit: 891 tests, 0 failures.
+- Psalm with `phpVersion="8.0"`: 0 ParseErrors.
+- PHPCompatibility scan testVersion 8.0-8.4: 0 errors.
+
+### Feature parity
+All 17 heartbeat GraphQL operations registered identically to the 2.x line.
+`@Logged` + `@Right` authorization layer, GraphQLite schema build, JWT token flow
+unchanged. Customer-visible behaviour from the dashboard side is identical to 2.x.
+The only structural difference is the internal Settings storage layer; the GraphQL
+contract is unchanged.
 
 ### Customer impact
-- Customers on OXID 7.1-7.4 with `^2.0`: receive 2.0.2 automatically on next
-  `composer update`. No behavioural change, no breaking changes.
-- Customers on OXID 7.5: can now install Heartbeat 2.0.2 with a plain
-  `composer require oxid-support/heartbeat`. Composer picks v12 of graphql-base and
-  v3 of graphql-configuration-access transitively (both compatible with ce 7.5).
-- Customers on OXID 7.0: still no installable Heartbeat 2.x. A dedicated 3.x line
-  (planned, on a `b-7.0.x` branch with graphql-configuration-access dependency dropped)
-  will fill that gap.
+- Customers on OXID 7.0 with `composer require oxid-support/heartbeat`: now resolve to
+  Heartbeat 3.0.0 cleanly.
+- Customers on OXID 7.1-7.5: keep getting 2.x; their `^2.0` Composer constraint will
+  not match 3.x (different major).
+- Customers on OXID 6.5: keep getting 1.x.
 
 ### Upgrade
 ```bash
-composer update oxid-support/heartbeat
+composer require oxid-support/heartbeat
 ./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
 ./vendor/bin/oe-console oe:cache:clear
+./vendor/bin/oe-console oe:module:activate oxsheartbeat
 ```
-The module stays activated; no re-activation needed.
 
-## [2.0.1] - 2026-05-21
-
-### Added
-- Explicit `oxid-esales/oxideshop-ce: ">=7.0, <7.5"` constraint in composer.json `require`.
-  This makes Composer the first line of defense against incompatible OXID combinations.
-
-### Changed
-- `src/Shop/Extend/Core/ShopControl.php`: replaced the OXID 7.1+-only
-  `OxidEsales\EshopCommunity\Core\Di\ContainerFacade::get()` with the OXID 7.0+ compatible
-  `OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::getInstance()->getContainer()->get()`.
-  This makes the module work on OXID 7.0 in addition to 7.1+.
-- `services.yaml`: removed all six `oxid.view_controller` tag registrations.
-  Controllers are registered exclusively via the `controllers` array in `metadata.php` now.
-  This complies with the OXID 7.3+ documentation that explicitly forbids registering controllers in both places.
-- `metadata.php`: removed the comment about "Required for OXID eShop 7.2 compatibility (7.4+ uses services.yaml tags)"
-  because the dual-registration was already a workaround, not a requirement.
-- `src/Module/Module.php`: fixed `VERSION` constant which was stuck at `1.0.0` while metadata.php was `2.0.0`.
-  Both are now in sync at `2.0.1`.
-
-### Why
-The combination of (a) the explicit constraint and (b) the code cleanup means: Composer reliably installs the right 
-module version for any supported OXID, and the supported range is honest about what the code actually does.
-
-### Customer impact
-- Customers on OXID 7.1-7.4 with `^2.0`: receive 2.0.1 automatically on next `composer update`.
-  No action required, no breaking changes.
-- Customers on OXID 7.0: can now install and run the module.
-
-### Upgrade
-```bash
-composer update --no-dev
-vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
-vendor/bin/oe-console oe:cache:clear
-```
-The module stays activated; no re-activation needed.
-
-## [2.0.0] - 2026
-
-Initial 2.x release. See git history for details.
-
-### Retroactive metadata correction (applied when 2.0.1 was released)
-
-Tag `2.0.0` was force-pushed at the time of the 2.0.1 release with an explicit
-`oxid-esales/oxideshop-ce: ">=7.1, <7.5"` constraint added to `composer.json`.
-
-**The code is unchanged.** The constraint reflects what 2.0.0 has always actually
-required: its `ShopControl` extension uses `OxidEsales\EshopCommunity\Core\Di\ContainerFacade`
-which was introduced in OXID 7.1.0 and does not exist in OXID 7.0.
-
-Effect on customers:
-
-- On OXID 7.1-7.4 with `^2.0`: no behavioural change, 2.0.0 still resolves and runs
-  identically.
-- On OXID 7.0 with `composer require oxid-support/heartbeat`: Composer now rejects
-  2.0.0 (constraint mismatch) and falls through to 2.0.1, which works on 7.0+ thanks
-  to the ContainerFactory fix. Customer ends up with 2.0.1 installed automatically.
-  If the customer pins 2.0.0 explicitly, Composer refuses with a clear "could not
-  be resolved" error instead of installing successfully and crashing at first request.
-- On OXID 7.5+ with `^2.0`: Composer now refuses, signalling that the customer needs
-  to either upgrade their module constraint to `^X` (where X is the next compatible
-  major) or wait for a compatible module release.
-
-This is a one-off metadata-only correction. No further force-pushes of 2.0.0 are planned.
+### Branch
+The 3.x line lives on the `b-7.0.x` branch. Patches for OXID 7.0 should be opened
+against that branch.

@@ -24,10 +24,10 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 final class LogController
 {
     public function __construct(
-        private readonly LogCollectorServiceInterface $logCollectorService,
-        private readonly LogReaderServiceInterface $logReaderService,
-        private readonly LogSenderStatusServiceInterface $statusService,
-        private readonly ModuleSettingServiceInterface $moduleSettingService,
+        private LogCollectorServiceInterface $logCollectorService,
+        private LogReaderServiceInterface $logReaderService,
+        private LogSenderStatusServiceInterface $statusService,
+        private ModuleSettingServiceInterface $moduleSettingService,
     ) {
     }
 

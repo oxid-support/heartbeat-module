@@ -22,8 +22,8 @@ final class DiagnosticsType
      * @param DiagnosticsSectionType[] $sections
      */
     public function __construct(
-        private readonly array $sections,
-        private readonly string $phpDecoder,
+        private array $sections,
+        private string $phpDecoder,
     ) {
     }
 

@@ -15,7 +15,7 @@ use OxidSupport\Heartbeat\Module\Module;
 /**
  * Service for checking the Diagnostics Provider component status.
  */
-final readonly class DiagnosticsProviderStatusService implements DiagnosticsProviderStatusServiceInterface
+final class DiagnosticsProviderStatusService implements DiagnosticsProviderStatusServiceInterface
 {
     public function __construct(
         private ModuleSettingServiceInterface $moduleSettingService

@@ -19,8 +19,8 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 final class KeyValueType
 {
     public function __construct(
-        private readonly string $key,
-        private readonly string $value,
+        private string $key,
+        private string $value,
     ) {
     }
 

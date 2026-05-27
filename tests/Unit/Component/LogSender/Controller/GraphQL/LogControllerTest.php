@@ -167,7 +167,7 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentReturnsContentForFileSource(): void
     {
         $filePath = $this->createTempFile('test.log', 'Log content here');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -198,7 +198,7 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentWithCustomMaxBytes(): void
     {
         $filePath = $this->createTempFile('test.log', 'content');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -221,7 +221,7 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentDetectsTruncatedContent(): void
     {
         $filePath = $this->createTempFile('test.log', 'Some content');
-        $logPath = new LogPath($filePath, LogPathType::FILE, 'Test Log');
+        $logPath = new LogPath($filePath, LogPathType::FILE(), 'Test Log');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$logPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -252,7 +252,7 @@ final class LogControllerTest extends TestCase
         // This test verifies the bug fix for directory handling
         $logFile = $this->createTempFile('test.log', 'Directory log content');
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Directory Source', [$directoryPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -282,7 +282,7 @@ final class LogControllerTest extends TestCase
         sleep(1); // Ensure different modification times
         $this->createTempFile('new.log', 'New content');
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -310,7 +310,7 @@ final class LogControllerTest extends TestCase
     public function testLogSenderContentThrowsWhenDirectoryIsEmpty(): void
     {
         // No files in directory
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -332,7 +332,7 @@ final class LogControllerTest extends TestCase
         $this->createTempFile('test.log', 'Log content');
         $this->createTempFile('test.txt', 'Text content'); // Should be ignored
 
-        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY, 'Logs', '', '*.log');
+        $directoryPath = new LogPath($this->tempDir . '/', LogPathType::DIRECTORY(), 'Logs', '', '*.log');
         $source = $this->createSourceWithPaths('dir_source', 'Dir', [$directoryPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -406,7 +406,7 @@ final class LogControllerTest extends TestCase
 
     public function testLogSenderContentThrowsWhenNoReadablePathFound(): void
     {
-        $nonExistentPath = new LogPath('/non/existent/path.log', LogPathType::FILE, 'Test');
+        $nonExistentPath = new LogPath('/non/existent/path.log', LogPathType::FILE(), 'Test');
         $source = $this->createSourceWithPaths('test_source', 'Test', [$nonExistentPath], true);
 
         $this->mockSettings->method('getCollection')
@@ -429,7 +429,7 @@ final class LogControllerTest extends TestCase
 
     private function createSource(string $id, string $name, bool $available): LogSource
     {
-        $path = new LogPath('/var/log/' . $id . '.log', LogPathType::FILE, $name);
+        $path = new LogPath('/var/log/' . $id . '.log', LogPathType::FILE(), $name);
 
         return new LogSource(
             $id,
