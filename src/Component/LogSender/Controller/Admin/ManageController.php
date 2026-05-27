@@ -35,7 +35,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 Module::SETTING_LOGSENDER_ACTIVE,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -87,7 +87,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -108,7 +108,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 $data['enabled'] = in_array($source->id, $enabledSources, true);
                 return $data;
             }, $sources);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -154,7 +154,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 Module::ID
             );
             return array_values($sources);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -223,14 +223,14 @@ class ManageController extends AbstractComponentController implements TogglableC
                 }
                 $path = $config['path'];
                 // Add trailing slash for directories to preserve type
-                if (isset($config['type']) && $config['type'] === 'directory' && !str_ends_with($path, '/')) {
+                if (isset($config['type']) && $config['type'] === 'directory' && substr($path, -1) !== '/') {
                     $path .= '/';
                 }
                 $lines[] = $path;
             }
 
             return implode("\n", $lines);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return '';
         }
     }
@@ -261,7 +261,7 @@ class ManageController extends AbstractComponentController implements TogglableC
 
         $paths = [];
         foreach ($lines as $line) {
-            $isDirectory = str_ends_with($line, '/');
+            $isDirectory = substr($line, -1) === '/';
             $path = rtrim($line, '/');
 
             $paths[] = [

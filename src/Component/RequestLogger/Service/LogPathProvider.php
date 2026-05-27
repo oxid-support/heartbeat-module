@@ -22,13 +22,18 @@ use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
  */
 class LogPathProvider implements LogPathProviderInterface
 {
-    public function __construct(
-        private ShopFacadeInterface $shopFacade,
-        private ModuleSettingFacadeInterface $moduleSettingFacade,
-    ) {
-    }
-
     private const LOG_DIRECTORY_NAME = 'oxs-request-logger';
+
+    private ShopFacadeInterface $shopFacade;
+    private ModuleSettingFacadeInterface $moduleSettingFacade;
+
+    public function __construct(
+        ShopFacadeInterface $shopFacade,
+        ModuleSettingFacadeInterface $moduleSettingFacade
+    ) {
+        $this->shopFacade = $shopFacade;
+        $this->moduleSettingFacade = $moduleSettingFacade;
+    }
 
     public function getLogPaths(): array
     {
@@ -36,11 +41,11 @@ class LogPathProvider implements LogPathProviderInterface
 
         return [
             new LogPath(
-                path: $logDirectory,
-                type: LogPathType::DIRECTORY(),
-                name: 'Request Logger Logs',
-                description: 'Log files containing recorded shop requests with correlation IDs',
-                filePattern: '*.log',
+                $logDirectory,
+                LogPathType::DIRECTORY(),
+                'Request Logger Logs',
+                'Log files containing recorded shop requests with correlation IDs',
+                '*.log'
             ),
         ];
     }

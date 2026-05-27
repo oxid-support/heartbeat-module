@@ -67,7 +67,7 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

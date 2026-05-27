@@ -16,19 +16,21 @@ use OxidSupport\Heartbeat\Module\Module;
 
 final class ApiVersionService implements ApiVersionServiceInterface
 {
-    public function __construct(
-        private ModuleSettingBridgeInterface $moduleSettingService,
-    ) {
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService)
+    {
+        $this->moduleSettingService = $moduleSettingService;
     }
 
     public function getApiVersion(): ApiVersionType
     {
         return new ApiVersionType(
-            apiVersion: Module::API_VERSION,
-            apiSchemaHash: self::computeSchemaHash(Module::SUPPORTED_OPERATIONS),
-            moduleVersion: Module::VERSION,
-            supportedOperations: Module::SUPPORTED_OPERATIONS,
-            componentStatus: $this->getComponentStatuses(),
+            Module::API_VERSION,
+            self::computeSchemaHash(Module::SUPPORTED_OPERATIONS),
+            Module::VERSION,
+            Module::SUPPORTED_OPERATIONS,
+            $this->getComponentStatuses()
         );
     }
 
@@ -40,15 +42,15 @@ final class ApiVersionService implements ApiVersionServiceInterface
         return [
             new ComponentStatusType(
                 'requestLogger',
-                $this->isSettingActive(Module::SETTING_REQUESTLOGGER_ACTIVE),
+                $this->isSettingActive(Module::SETTING_REQUESTLOGGER_ACTIVE)
             ),
             new ComponentStatusType(
                 'logSender',
-                $this->isSettingActive(Module::SETTING_LOGSENDER_ACTIVE),
+                $this->isSettingActive(Module::SETTING_LOGSENDER_ACTIVE)
             ),
             new ComponentStatusType(
                 'diagnosticsProvider',
-                $this->isSettingActive(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE),
+                $this->isSettingActive(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE)
             ),
         ];
     }
@@ -57,7 +59,7 @@ final class ApiVersionService implements ApiVersionServiceInterface
     {
         try {
             return (bool) $this->moduleSettingService->get($settingKey, Module::ID);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

@@ -17,9 +17,11 @@ use OxidSupport\Heartbeat\Module\Module;
  */
 final class DiagnosticsProviderStatusService implements DiagnosticsProviderStatusServiceInterface
 {
-    public function __construct(
-        private ModuleSettingBridgeInterface $moduleSettingService
-    ) {
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService)
+    {
+        $this->moduleSettingService = $moduleSettingService;
     }
 
     /**
@@ -29,7 +31,7 @@ final class DiagnosticsProviderStatusService implements DiagnosticsProviderStatu
     {
         try {
             return (bool) $this->moduleSettingService->get(Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE, Module::ID);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

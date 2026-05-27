@@ -12,45 +12,74 @@ namespace OxidSupport\Heartbeat\Component\LogSender\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
-#[Type]
+/**
+ * @Type
+ */
 final class LogSourceType
 {
+    private string $id;
+    private string $name;
+    private string $description;
+    private string $origin;
+    private bool $available;
+
+    /** @var LogPath[] */
+    private array $paths;
+
+    /**
+     * @param LogPath[] $paths
+     */
     public function __construct(
-        private string $id,
-        private string $name,
-        private string $description,
-        private string $origin,
-        private bool $available,
-        /** @var LogPath[] */
-        private array $paths,
+        string $id,
+        string $name,
+        string $description,
+        string $origin,
+        bool $available,
+        array $paths
     ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->origin = $origin;
+        $this->available = $available;
+        $this->paths = $paths;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getOrigin(): string
     {
         return $this->origin;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isAvailable(): bool
     {
         return $this->available;
@@ -58,8 +87,9 @@ final class LogSourceType
 
     /**
      * @return LogPathInfoType[]
+     *
+     * @Field
      */
-    #[Field]
     public function getPaths(): array
     {
         return array_map(
@@ -83,7 +113,7 @@ final class LogSourceType
             $source->description,
             $source->origin,
             $source->available,
-            $source->paths,
+            $source->paths
         );
     }
 }

@@ -21,9 +21,11 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
     private const MIGRATION_TABLE = 'oxmigrations_oxsheartbeat';
     private const EXPECTED_MIGRATION = '20251223000001';
 
-    public function __construct(
-        private QueryBuilderFactoryInterface $queryBuilderFactory
-    ) {
+    private QueryBuilderFactoryInterface $queryBuilderFactory;
+
+    public function __construct(QueryBuilderFactoryInterface $queryBuilderFactory)
+    {
+        $this->queryBuilderFactory = $queryBuilderFactory;
     }
 
     public function isMigrationExecuted(): bool
@@ -38,7 +40,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 ->execute();
 
             return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             // Table doesn't exist or other error - migration not executed
             return false;
         }
@@ -56,7 +58,7 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
                 ->execute();
 
             return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -82,8 +84,8 @@ final class ApiUserStatusService implements ApiUserStatusServiceInterface
 
             // Password is set if it's a valid bcrypt hash (starts with $2y$)
             // The placeholder '---' or empty string means password not set
-            return !empty($password) && str_starts_with($password, '$2y$');
-        } catch (\Exception) {
+            return !empty($password) && strpos($password, '$2y$') === 0;
+        } catch (\Exception $e) {
             return false;
         }
     }

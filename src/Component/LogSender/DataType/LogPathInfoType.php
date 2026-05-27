@@ -12,50 +12,77 @@ namespace OxidSupport\Heartbeat\Component\LogSender\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
-#[Type]
+/**
+ * @Type
+ */
 final class LogPathInfoType
 {
+    private string $path;
+    private string $type;
+    private string $name;
+    private string $description;
+    private bool $exists;
+    private bool $readable;
+
     public function __construct(
-        private string $path,
-        private string $type,
-        private string $name,
-        private string $description,
-        private bool $exists,
-        private bool $readable,
+        string $path,
+        string $type,
+        string $name,
+        string $description,
+        bool $exists,
+        bool $readable
     ) {
+        $this->path = $path;
+        $this->type = $type;
+        $this->name = $name;
+        $this->description = $description;
+        $this->exists = $exists;
+        $this->readable = $readable;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isExists(): bool
     {
         return $this->exists;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isReadable(): bool
     {
         return $this->readable;

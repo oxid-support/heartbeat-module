@@ -95,7 +95,7 @@ final class ModuleEvents
 
             $password = $queryBuilder->execute()->fetchOne();
 
-            return $password && str_starts_with($password, '$');
+            return $password && strpos($password, '$') === 0;
         } catch (\Throwable $e) {
             return false;
         }

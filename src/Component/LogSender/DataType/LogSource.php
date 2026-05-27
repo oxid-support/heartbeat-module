@@ -18,6 +18,17 @@ final class LogSource
     public const ORIGIN_STATIC = 'static';
     public const ORIGIN_PROVIDER = 'provider';
 
+    public string $id;
+    public string $name;
+    public string $description;
+    public string $origin;
+    public ?string $providerId;
+
+    /** @var LogPath[] */
+    public array $paths;
+
+    public bool $available;
+
     /**
      * @param string $id Unique identifier for this source
      * @param string $name Display name
@@ -28,14 +39,21 @@ final class LogSource
      * @param bool $available Whether the source is available/reachable
      */
     public function __construct(
-        public string $id,
-        public string $name,
-        public string $description,
-        public string $origin,
-        public ?string $providerId,
-        public array $paths,
-        public bool $available,
+        string $id,
+        string $name,
+        string $description,
+        string $origin,
+        ?string $providerId,
+        array $paths,
+        bool $available
     ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->origin = $origin;
+        $this->providerId = $providerId;
+        $this->paths = $paths;
+        $this->available = $available;
     }
 
     public function isStatic(): bool

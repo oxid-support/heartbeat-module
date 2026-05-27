@@ -15,20 +15,28 @@ use OxidEsales\Eshop\Core\Module\Module;
 
 /**
  * Represents a diagnostics section with multiple key-value pairs
+ *
+ * @Type
  */
-#[Type]
 final class DiagnosticsSectionType
 {
+    private string $name;
+
+    /** @var KeyValueType[] */
+    private array $items;
+
     /**
      * @param KeyValueType[] $items
      */
-    public function __construct(
-        private string $name,
-        private array $items,
-    ) {
+    public function __construct(string $name, array $items)
+    {
+        $this->name = $name;
+        $this->items = $items;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getName(): string
     {
         return $this->name;
@@ -36,8 +44,9 @@ final class DiagnosticsSectionType
 
     /**
      * @return KeyValueType[]
+     *
+     * @Field
      */
-    #[Field]
     public function getItems(): array
     {
         return $this->items;

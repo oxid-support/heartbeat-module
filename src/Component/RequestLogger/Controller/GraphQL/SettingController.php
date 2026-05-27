@@ -19,106 +19,134 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 
 final class SettingController
 {
+    private SettingServiceInterface $settingService;
+    private RemoteComponentStatusServiceInterface $componentStatusService;
+
     public function __construct(
-        private SettingServiceInterface $settingService,
-        private RemoteComponentStatusServiceInterface $componentStatusService
+        SettingServiceInterface $settingService,
+        RemoteComponentStatusServiceInterface $componentStatusService
     ) {
+        $this->settingService = $settingService;
+        $this->componentStatusService = $componentStatusService;
     }
 
-    /** @return SettingType[] */
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @return SettingType[]
+     *
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerSettings(): array
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->getAllSettings();
     }
 
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerLogLevel(): string
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->getLogLevel();
     }
 
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerLogFrontend(): bool
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->isLogFrontendEnabled();
     }
 
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerLogAdmin(): bool
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->isLogAdminEnabled();
     }
 
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerRedact(): string
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->getRedactItems();
     }
 
-    #[Query]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_VIEW')]
+    /**
+     * @Query
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_VIEW")
+     */
     public function requestLoggerRedactAllValues(): bool
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->isRedactAllValuesEnabled();
     }
 
-    #[Mutation]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_CHANGE')]
+    /**
+     * @Mutation
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_CHANGE")
+     */
     public function requestLoggerLogLevelChange(string $value): string
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->setLogLevel($value);
     }
 
-    #[Mutation]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_CHANGE')]
+    /**
+     * @Mutation
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_CHANGE")
+     */
     public function requestLoggerLogFrontendChange(bool $value): bool
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->setLogFrontendEnabled($value);
     }
 
-    #[Mutation]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_CHANGE')]
+    /**
+     * @Mutation
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_CHANGE")
+     */
     public function requestLoggerLogAdminChange(bool $value): bool
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->setLogAdminEnabled($value);
     }
 
-    #[Mutation]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_CHANGE')]
+    /**
+     * @Mutation
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_CHANGE")
+     */
     public function requestLoggerRedactChange(string $value): string
     {
         $this->componentStatusService->assertComponentActive();
         return $this->settingService->setRedactItems($value);
     }
 
-    #[Mutation]
-    #[Logged]
-    #[Right('REQUEST_LOGGER_CHANGE')]
+    /**
+     * @Mutation
+     * @Logged
+     * @Right(name="REQUEST_LOGGER_CHANGE")
+     */
     public function requestLoggerRedactAllValuesChange(bool $value): bool
     {
         $this->componentStatusService->assertComponentActive();

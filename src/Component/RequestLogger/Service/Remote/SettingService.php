@@ -37,9 +37,11 @@ final class SettingService implements SettingServiceInterface
         self::SETTING_ACTIVE => 'bool',
     ];
 
-    public function __construct(
-        private ModuleSettingBridgeInterface $moduleSettingService
-    ) {
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService)
+    {
+        $this->moduleSettingService = $moduleSettingService;
     }
 
     public function getLogLevel(): string

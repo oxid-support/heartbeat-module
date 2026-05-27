@@ -15,16 +15,19 @@ use TheCodingMachine\GraphQLite\Annotations\Query;
 
 final class ApiVersionController
 {
-    public function __construct(
-        private ApiVersionServiceInterface $apiVersionService,
-    ) {
+    private ApiVersionServiceInterface $apiVersionService;
+
+    public function __construct(ApiVersionServiceInterface $apiVersionService)
+    {
+        $this->apiVersionService = $apiVersionService;
     }
 
     /**
      * Returns API version information for compatibility checks.
      * No authentication required - this is a discovery/health endpoint.
+     *
+     * @Query
      */
-    #[Query]
     public function heartbeatApiVersion(): ApiVersionType
     {
         return $this->apiVersionService->getApiVersion();

@@ -18,18 +18,24 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 
 final class DiagnosticsController
 {
+    private DiagnosticsProviderInterface $diagnosticsProvider;
+    private DiagnosticsProviderStatusServiceInterface $statusService;
+
     public function __construct(
-        private DiagnosticsProviderInterface $diagnosticsProvider,
-        private DiagnosticsProviderStatusServiceInterface $statusService
+        DiagnosticsProviderInterface $diagnosticsProvider,
+        DiagnosticsProviderStatusServiceInterface $statusService
     ) {
+        $this->diagnosticsProvider = $diagnosticsProvider;
+        $this->statusService = $statusService;
     }
 
     /**
      * Get comprehensive diagnostics information about the shop
+     *
+     * @Query
+     * @Logged
+     * @Right(name="LOG_SENDER_VIEW")
      */
-    #[Query]
-    #[Logged]
-    #[Right('LOG_SENDER_VIEW')]
     public function diagnostics(): ?DiagnosticsType
     {
         if (!$this->statusService->isActive()) {

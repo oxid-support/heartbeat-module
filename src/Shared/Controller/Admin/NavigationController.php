@@ -72,7 +72,7 @@ class NavigationController extends NavigationController_parent
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -87,7 +87,7 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_LOGSENDER_ACTIVE,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -102,7 +102,7 @@ class NavigationController extends NavigationController_parent
                 self::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

@@ -16,9 +16,11 @@ final class SetupStatusService implements SetupStatusServiceInterface
     private const MIGRATION_TABLE = 'oxmigrations_oxsheartbeat';
     private const EXPECTED_MIGRATION = '20251223000001';
 
-    public function __construct(
-        private QueryBuilderFactoryInterface $queryBuilderFactory
-    ) {
+    private QueryBuilderFactoryInterface $queryBuilderFactory;
+
+    public function __construct(QueryBuilderFactoryInterface $queryBuilderFactory)
+    {
+        $this->queryBuilderFactory = $queryBuilderFactory;
     }
 
     public function isMigrationExecuted(): bool
@@ -33,7 +35,7 @@ final class SetupStatusService implements SetupStatusServiceInterface
                 ->execute();
 
             return (int) $result->fetchOne() > 0; // @phpstan-ignore method.nonObject
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

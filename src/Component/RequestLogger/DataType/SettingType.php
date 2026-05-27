@@ -12,29 +12,41 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
-#[Type(name: 'RequestLoggerSettingType')]
+/**
+ * @Type(name="RequestLoggerSettingType")
+ */
 final class SettingType
 {
-    public function __construct(
-        private string $name,
-        private string $type,
-        private bool $supported = true
-    ) {
+    private string $name;
+    private string $type;
+    private bool $supported;
+
+    public function __construct(string $name, string $type, bool $supported = true)
+    {
+        $this->name = $name;
+        $this->type = $type;
+        $this->supported = $supported;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isSupported(): bool
     {
         return $this->supported;

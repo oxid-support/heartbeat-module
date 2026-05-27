@@ -80,7 +80,7 @@ class SetupController extends AbstractComponentController
     {
         try {
             return $this->getApiUserStatusService()->isMigrationExecuted();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -92,7 +92,7 @@ class SetupController extends AbstractComponentController
     {
         try {
             return $this->getApiUserStatusService()->isApiUserCreated();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -104,7 +104,7 @@ class SetupController extends AbstractComponentController
     {
         try {
             return $this->getApiUserStatusService()->isApiUserPasswordSet();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -116,7 +116,7 @@ class SetupController extends AbstractComponentController
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -132,7 +132,7 @@ class SetupController extends AbstractComponentController
         // Reset the API user password to placeholder
         try {
             $this->getApiUserService()->resetPasswordForApiUser();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             // User might not exist yet, ignore
         }
 

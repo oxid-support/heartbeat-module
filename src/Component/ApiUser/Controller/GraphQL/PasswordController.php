@@ -22,18 +22,26 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 
 final class PasswordController
 {
+    private ApiUserServiceInterface $apiUserService;
+    private ModuleSettingBridgeInterface $moduleSettingService;
+    private TokenGeneratorInterface $tokenGenerator;
+
     public function __construct(
-        private ApiUserServiceInterface $apiUserService,
-        private ModuleSettingBridgeInterface $moduleSettingService,
-        private TokenGeneratorInterface $tokenGenerator
+        ApiUserServiceInterface $apiUserService,
+        ModuleSettingBridgeInterface $moduleSettingService,
+        TokenGeneratorInterface $tokenGenerator
     ) {
+        $this->apiUserService = $apiUserService;
+        $this->moduleSettingService = $moduleSettingService;
+        $this->tokenGenerator = $tokenGenerator;
     }
 
     /**
      * Set the password for the Heartbeat API user.
      * Requires a valid setup token. Token is invalidated after use.
+     *
+     * @Mutation
      */
-    #[Mutation]
     public function heartbeatSetPassword(string $token, string $password): bool
     {
         $this->assertSetupAvailable();
@@ -54,10 +62,11 @@ final class PasswordController
      * Reset the password for the Heartbeat API user to a placeholder value.
      * This generates a new setup token that can be used with heartbeatSetPassword.
      * Requires admin authentication.
+     *
+     * @Mutation
+     * @Logged
+     * @Right(name="OXSHEARTBEAT_PASSWORD_RESET")
      */
-    #[Mutation]
-    #[Logged]
-    #[Right('OXSHEARTBEAT_PASSWORD_RESET')]
     public function heartbeatResetPassword(): string
     {
         // Generate new setup token
@@ -82,7 +91,7 @@ final class PasswordController
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             throw new SetupNotAvailableException();
         }
 
@@ -98,7 +107,7 @@ final class PasswordController
                 Module::SETTING_APIUSER_SETUP_TOKEN,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             throw new InvalidTokenException();
         }
 

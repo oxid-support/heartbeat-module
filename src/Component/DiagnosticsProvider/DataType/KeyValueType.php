@@ -14,23 +14,31 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
  * Represents a key-value pair for diagnostics data
+ *
+ * @Type
  */
-#[Type]
 final class KeyValueType
 {
-    public function __construct(
-        private string $key,
-        private string $value,
-    ) {
+    private string $key;
+    private string $value;
+
+    public function __construct(string $key, string $value)
+    {
+        $this->key = $key;
+        $this->value = $value;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getValue(): string
     {
         return $this->value;

@@ -21,6 +21,8 @@ use OxidSupport\Heartbeat\Module\Module;
  */
 final class LogCollectorService implements LogCollectorServiceInterface
 {
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
     /** @var LogPathProviderInterface[] */
     private array $providers;
 
@@ -28,10 +30,9 @@ final class LogCollectorService implements LogCollectorServiceInterface
      * @param ModuleSettingBridgeInterface $moduleSettingService
      * @param iterable<LogPathProviderInterface> $providers Injected via !tagged_iterator
      */
-    public function __construct(
-        private ModuleSettingBridgeInterface $moduleSettingService,
-        iterable $providers
-    ) {
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService, iterable $providers)
+    {
+        $this->moduleSettingService = $moduleSettingService;
         $this->providers = $providers instanceof \Traversable
             ? iterator_to_array($providers)
             : (array) $providers;
@@ -48,13 +49,13 @@ final class LogCollectorService implements LogCollectorServiceInterface
         $staticPaths = $this->getStaticPaths();
         foreach ($staticPaths as $index => $path) {
             $sources[] = new LogSource(
-                id: 'static_' . $index,
-                name: $path->name,
-                description: $path->description,
-                origin: LogSource::ORIGIN_STATIC,
-                providerId: null,
-                paths: [$path],
-                available: $path->exists(),
+                'static_' . $index,
+                $path->name,
+                $path->description,
+                LogSource::ORIGIN_STATIC,
+                null,
+                [$path],
+                $path->exists()
             );
         }
 
@@ -64,13 +65,13 @@ final class LogCollectorService implements LogCollectorServiceInterface
             $pathsAvailable = $this->checkAllPathsAvailable($paths);
 
             $sources[] = new LogSource(
-                id: 'provider_' . $provider->getProviderId(),
-                name: $provider->getProviderName(),
-                description: $provider->getProviderDescription(),
-                origin: LogSource::ORIGIN_PROVIDER,
-                providerId: $provider->getProviderId(),
-                paths: $paths,
-                available: $provider->isActive() && $pathsAvailable,
+                'provider_' . $provider->getProviderId(),
+                $provider->getProviderName(),
+                $provider->getProviderDescription(),
+                LogSource::ORIGIN_PROVIDER,
+                $provider->getProviderId(),
+                $paths,
+                $provider->isActive() && $pathsAvailable
             );
         }
 
@@ -103,7 +104,7 @@ final class LogCollectorService implements LogCollectorServiceInterface
                 Module::SETTING_LOGSENDER_STATIC_PATHS,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             // Setting not configured yet
             return [];
         }
@@ -120,11 +121,11 @@ final class LogCollectorService implements LogCollectorServiceInterface
             }
 
             $paths[] = new LogPath(
-                path: $config['path'],
-                type: $type,
-                name: $config['name'] ?? basename($config['path']),
-                description: $config['description'] ?? '',
-                filePattern: $config['pattern'] ?? null,
+                $config['path'],
+                $type,
+                $config['name'] ?? basename($config['path']),
+                $config['description'] ?? '',
+                $config['pattern'] ?? null
             );
         }
 

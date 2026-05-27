@@ -47,7 +47,7 @@ class ModuleConfigController extends ModuleConfiguration
             $module = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
             $module->load($moduleId);
             return $module->isActive();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -60,7 +60,7 @@ class ModuleConfigController extends ModuleConfiguration
 
         try {
             return $this->getSetupStatusService()->isMigrationExecuted();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

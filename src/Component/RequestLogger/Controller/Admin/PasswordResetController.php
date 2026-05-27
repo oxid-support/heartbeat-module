@@ -37,7 +37,7 @@ final class PasswordResetController extends AdminController
             );
 
             return 'module_config?oxid=' . Module::ID . '&resetSuccess=1&newToken=' . $token;
-        } catch (UserNotFoundException) {
+        } catch (UserNotFoundException $e) {
             return 'module_config?oxid=' . Module::ID . '&resetError=USER_NOT_FOUND';
         }
     }

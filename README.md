@@ -64,10 +64,10 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 - **Module ID**: `oxsheartbeat`
 - **Module Title**: OXS :: Heartbeat
-- **Version**: 1.0.0
+- **Version**: 1.0.1
 - **Author**: support@oxid-esales.com
 - **Supported OXID Versions**: 6.5.x
-- **PHP Version**: 8.0 - 8.1
+- **PHP Version**: 7.4 / 8.0 / 8.1
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
 

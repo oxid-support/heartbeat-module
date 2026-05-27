@@ -17,10 +17,11 @@ use OxidEsales\Eshop\Core\Registry;
 class DiagnosticsProvider implements DiagnosticsProviderInterface
 {
     private ?Diagnostics $diagnostics = null;
+    private ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge;
 
-    public function __construct(
-        private ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge
-    ) {
+    public function __construct(ShopConfigurationDaoBridgeInterface $shopConfigurationDaoBridge)
+    {
+        $this->shopConfigurationDaoBridge = $shopConfigurationDaoBridge;
     }
 
     public function getDiagnosticsModel(): Diagnostics

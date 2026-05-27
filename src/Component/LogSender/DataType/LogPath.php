@@ -15,18 +15,33 @@ namespace OxidSupport\Heartbeat\Component\LogSender\DataType;
  */
 final class LogPath
 {
+    /** Absolute path to the file or directory */
+    public string $path;
+
+    /** Type: FILE or DIRECTORY */
+    public LogPathType $type;
+
+    /** Display name for UI/API */
+    public string $name;
+
+    /** Optional description */
+    public string $description;
+
+    /** Optional glob pattern for directories (e.g., "*.log") */
+    public ?string $filePattern;
+
     public function __construct(
-        /** Absolute path to the file or directory */
-        public string $path,
-        /** Type: FILE or DIRECTORY */
-        public LogPathType $type,
-        /** Display name for UI/API */
-        public string $name,
-        /** Optional description */
-        public string $description = '',
-        /** Optional glob pattern for directories (e.g., "*.log") */
-        public ?string $filePattern = null,
+        string $path,
+        LogPathType $type,
+        string $name,
+        string $description = '',
+        ?string $filePattern = null
     ) {
+        $this->path = $path;
+        $this->type = $type;
+        $this->name = $name;
+        $this->description = $description;
+        $this->filePattern = $filePattern;
     }
 
     public function isDirectory(): bool

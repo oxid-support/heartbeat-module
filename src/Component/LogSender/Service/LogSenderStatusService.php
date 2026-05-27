@@ -19,9 +19,11 @@ final class LogSenderStatusService implements LogSenderStatusServiceInterface
 {
     private const DEFAULT_MAX_BYTES = 1048576; // 1 MB
 
-    public function __construct(
-        private ModuleSettingBridgeInterface $moduleSettingService
-    ) {
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
+    public function __construct(ModuleSettingBridgeInterface $moduleSettingService)
+    {
+        $this->moduleSettingService = $moduleSettingService;
     }
 
     /**
@@ -31,7 +33,7 @@ final class LogSenderStatusService implements LogSenderStatusServiceInterface
     {
         try {
             return (bool) $this->moduleSettingService->get(Module::SETTING_LOGSENDER_ACTIVE, Module::ID);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -44,7 +46,7 @@ final class LogSenderStatusService implements LogSenderStatusServiceInterface
         try {
             $maxBytes = (int) $this->moduleSettingService->get(Module::SETTING_LOGSENDER_MAX_BYTES, Module::ID);
             return $maxBytes > 0 ? $maxBytes : self::DEFAULT_MAX_BYTES;
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return self::DEFAULT_MAX_BYTES;
         }
     }

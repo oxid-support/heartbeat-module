@@ -33,7 +33,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
                 Module::SETTING_REQUESTLOGGER_ACTIVE,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -63,7 +63,7 @@ class SettingsController extends AbstractComponentController implements Togglabl
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

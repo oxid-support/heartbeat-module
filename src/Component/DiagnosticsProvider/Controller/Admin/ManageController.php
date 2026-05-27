@@ -32,7 +32,7 @@ class ManageController extends AbstractComponentController implements TogglableC
                 Module::SETTING_DIAGNOSTICSPROVIDER_ACTIVE,
                 Module::ID
             );
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -84,7 +84,7 @@ class ManageController extends AbstractComponentController implements TogglableC
     {
         try {
             return $this->getApiUserStatusService()->isSetupComplete();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

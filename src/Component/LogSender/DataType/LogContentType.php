@@ -12,57 +12,88 @@ namespace OxidSupport\Heartbeat\Component\LogSender\DataType;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
-#[Type]
+/**
+ * @Type
+ */
 final class LogContentType
 {
+    private string $sourceId;
+    private string $sourceName;
+    private string $path;
+    private string $content;
+    private int $size;
+    private int $modified;
+    private bool $truncated;
+
     public function __construct(
-        private string $sourceId,
-        private string $sourceName,
-        private string $path,
-        private string $content,
-        private int $size,
-        private int $modified,
-        private bool $truncated,
+        string $sourceId,
+        string $sourceName,
+        string $path,
+        string $content,
+        int $size,
+        int $modified,
+        bool $truncated
     ) {
+        $this->sourceId = $sourceId;
+        $this->sourceName = $sourceName;
+        $this->path = $path;
+        $this->content = $content;
+        $this->size = $size;
+        $this->modified = $modified;
+        $this->truncated = $truncated;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getSourceId(): string
     {
         return $this->sourceId;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getSourceName(): string
     {
         return $this->sourceName;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getContent(): string
     {
         return $this->content;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getSize(): int
     {
         return $this->size;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getModified(): int
     {
         return $this->modified;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isTruncated(): bool
     {
         return $this->truncated;

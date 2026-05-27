@@ -63,7 +63,7 @@ abstract class AbstractComponentController extends AdminController implements Co
             $module = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
             $module->load($moduleId);
             return $module->isActive();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             return false;
         }
     }

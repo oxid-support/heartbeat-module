@@ -48,28 +48,37 @@ final class LogPathType
 
     public static function tryFrom(string $value): ?self
     {
-        return match ($value) {
-            self::FILE_VALUE => self::FILE(),
-            self::DIRECTORY_VALUE => self::DIRECTORY(),
-            default => null,
-        };
+        switch ($value) {
+            case self::FILE_VALUE:
+                return self::FILE();
+            case self::DIRECTORY_VALUE:
+                return self::DIRECTORY();
+            default:
+                return null;
+        }
     }
 
     public function getLabel(): string
     {
-        return match ($this->value) {
-            self::FILE_VALUE => 'File',
-            self::DIRECTORY_VALUE => 'Directory',
-            default => '',
-        };
+        switch ($this->value) {
+            case self::FILE_VALUE:
+                return 'File';
+            case self::DIRECTORY_VALUE:
+                return 'Directory';
+            default:
+                return '';
+        }
     }
 
     public function getLabelDe(): string
     {
-        return match ($this->value) {
-            self::FILE_VALUE => 'Datei',
-            self::DIRECTORY_VALUE => 'Verzeichnis',
-            default => '',
-        };
+        switch ($this->value) {
+            case self::FILE_VALUE:
+                return 'Datei';
+            case self::DIRECTORY_VALUE:
+                return 'Verzeichnis';
+            default:
+                return '';
+        }
     }
 }

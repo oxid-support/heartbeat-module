@@ -15,23 +15,31 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 /**
  * GraphQL type for component activation status.
  * Allows the dashboard to check which components are enabled before calling their operations.
+ *
+ * @Type
  */
-#[Type]
 final class ComponentStatusType
 {
-    public function __construct(
-        private string $name,
-        private bool $active,
-    ) {
+    private string $name;
+    private bool $active;
+
+    public function __construct(string $name, bool $active)
+    {
+        $this->name = $name;
+        $this->active = $active;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function isActive(): bool
     {
         return $this->active;

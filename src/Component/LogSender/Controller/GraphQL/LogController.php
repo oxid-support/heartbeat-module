@@ -23,22 +23,32 @@ use TheCodingMachine\GraphQLite\Annotations\Right;
 
 final class LogController
 {
+    private LogCollectorServiceInterface $logCollectorService;
+    private LogReaderServiceInterface $logReaderService;
+    private LogSenderStatusServiceInterface $statusService;
+    private ModuleSettingBridgeInterface $moduleSettingService;
+
     public function __construct(
-        private LogCollectorServiceInterface $logCollectorService,
-        private LogReaderServiceInterface $logReaderService,
-        private LogSenderStatusServiceInterface $statusService,
-        private ModuleSettingBridgeInterface $moduleSettingService,
+        LogCollectorServiceInterface $logCollectorService,
+        LogReaderServiceInterface $logReaderService,
+        LogSenderStatusServiceInterface $statusService,
+        ModuleSettingBridgeInterface $moduleSettingService
     ) {
+        $this->logCollectorService = $logCollectorService;
+        $this->logReaderService = $logReaderService;
+        $this->statusService = $statusService;
+        $this->moduleSettingService = $moduleSettingService;
     }
 
     /**
      * Get all enabled log sources.
      *
      * @return LogSourceType[]
+     *
+     * @Query
+     * @Logged
+     * @Right(name="LOG_SENDER_VIEW")
      */
-    #[Query]
-    #[Logged]
-    #[Right('LOG_SENDER_VIEW')]
     public function logSenderSources(): array
     {
         if (!$this->statusService->isActive()) {
@@ -60,10 +70,11 @@ final class LogController
 
     /**
      * Get content from a specific log source.
+     *
+     * @Query
+     * @Logged
+     * @Right(name="LOG_SENDER_VIEW")
      */
-    #[Query]
-    #[Logged]
-    #[Right('LOG_SENDER_VIEW')]
     public function logSenderContent(string $sourceId, ?int $maxBytes = null): ?LogContentType
     {
         if (!$this->statusService->isActive()) {
@@ -97,7 +108,7 @@ final class LogController
 
         $content = $this->logReaderService->readFile($filePath, $maxBytes);
         $fileInfo = $this->logReaderService->getFileInfo($filePath);
-        $truncated = str_starts_with($content, '[...truncated...]');
+        $truncated = strpos($content, '[...truncated...]') === 0;
 
         return new LogContentType(
             $source->id,
@@ -106,7 +117,7 @@ final class LogController
             $content,
             $fileInfo['size'],
             $fileInfo['modified'],
-            $truncated,
+            $truncated
         );
     }
 
@@ -121,7 +132,7 @@ final class LogController
                 Module::ID
             );
             return array_values($sources);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

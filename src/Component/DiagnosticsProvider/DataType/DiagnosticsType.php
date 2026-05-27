@@ -14,29 +14,38 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
  * Main diagnostics data type containing all diagnostic information
+ *
+ * @Type
  */
-#[Type]
 final class DiagnosticsType
 {
+    /** @var DiagnosticsSectionType[] */
+    private array $sections;
+
+    private string $phpDecoder;
+
     /**
      * @param DiagnosticsSectionType[] $sections
      */
-    public function __construct(
-        private array $sections,
-        private string $phpDecoder,
-    ) {
+    public function __construct(array $sections, string $phpDecoder)
+    {
+        $this->sections = $sections;
+        $this->phpDecoder = $phpDecoder;
     }
 
     /**
      * @return DiagnosticsSectionType[]
+     *
+     * @Field
      */
-    #[Field]
     public function getSections(): array
     {
         return $this->sections;
     }
 
-    #[Field]
+    /**
+     * @Field
+     */
     public function getPhpDecoder(): string
     {
         return $this->phpDecoder;
@@ -60,14 +69,29 @@ final class DiagnosticsType
         foreach ($arrayKeys as $key) {
             if (isset($diagnostics[$key]) && is_array($diagnostics[$key])) {
                 // Convert key to readable name
-                $sectionName = match ($key) {
-                    'aShopDetails' => 'Shop Details',
-                    'aModuleList' => 'Module List',
-                    'aInfo' => 'System Information',
-                    'aCollations' => 'Database Collations',
-                    'aPhpConfigparams' => 'PHP Configuration',
-                    'aServerInfo' => 'Server Information',
-                };
+                switch ($key) {
+                    case 'aShopDetails':
+                        $sectionName = 'Shop Details';
+                        break;
+                    case 'aModuleList':
+                        $sectionName = 'Module List';
+                        break;
+                    case 'aInfo':
+                        $sectionName = 'System Information';
+                        break;
+                    case 'aCollations':
+                        $sectionName = 'Database Collations';
+                        break;
+                    case 'aPhpConfigparams':
+                        $sectionName = 'PHP Configuration';
+                        break;
+                    case 'aServerInfo':
+                        $sectionName = 'Server Information';
+                        break;
+                    default:
+                        $sectionName = $key;
+                        break;
+                }
 
                 $sections[] = DiagnosticsSectionType::fromArray($sectionName, $diagnostics[$key]);
             }
