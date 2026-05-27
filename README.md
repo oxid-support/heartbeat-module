@@ -19,11 +19,12 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 ### Step 1: Install via Composer
 
 ```bash
-composer config repositories.oxid-support/heartbeat vcs https://github.com/oxid-support/heartbeat-module
 composer require oxid-support/heartbeat
 ```
 
-Composer automatically selects the version that matches your OXID installation. No module version constraint required.
+Composer automatically selects the version that matches your OXID installation; no module version constraint required.
+
+> **Important**: The `oxideshop-composer-plugin` will prompt whether `source/modules/oxid-support/heartbeat/` may be overwritten. Confirm with `yes`. Default is `no`, which leaves `source/modules/` unchanged and prevents OXID from picking up the module.
 
 #### For local development
 ```bash
@@ -31,7 +32,7 @@ git clone -b b-6.5.x https://github.com/oxid-support/heartbeat-module.git repo/o
 composer config repositories.oxid-support/heartbeat path repo/oxs/heartbeat
 composer require oxid-support/heartbeat:dev-b-6.5.x
 ```
-in some cases, use -W
+
 > **Note**: The OXID GraphQL Base module is installed automatically as a dependency.
 
 ### Step 2: Run Database Migrations
@@ -107,12 +108,21 @@ In either case the module follows OXID eShop, not the other way around. Customer
 When a new module version is released:
 
 ```bash
-composer update --no-dev
-./vendor/bin/oe-eshop-db_migrate migrations:migrate oxsheartbeat
-./vendor/bin/oe-console oe:cache:clear
+composer update oxid-support/heartbeat
 ```
 
-The module remains activated; no re-activation needed. Cache clear is required in production to pick up new DI container configuration.
+> **Important**: When Composer asks whether `source/modules/oxid-support/heartbeat/` may be overwritten, confirm with `yes`. The default `no` leaves `source/modules/` on the old version even though `vendor/` is updated, and OXID will keep loading the old `metadata.php`.
+
+Then refresh the shop:
+
+```bash
+./vendor/bin/oe-eshop-db_migrate migrations:migrate oxsheartbeat
+./vendor/bin/oe-console oe:cache:clear
+./vendor/bin/oe-console oe:module:deactivate oxsheartbeat
+./vendor/bin/oe-console oe:module:activate oxsheartbeat
+```
+
+The deactivate + activate re-reads the new `metadata.php` into OXID's database-cached module registry (version number shown in the admin, controller registrations, settings layout). Module configuration values (API user token, request logger settings, etc.) are preserved.
 
 When upgrading OXID itself to another minor or major version:
 
