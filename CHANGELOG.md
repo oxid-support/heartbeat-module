@@ -42,6 +42,11 @@ Concretely:
 - README update section: added explicit warning about the `oxideshop-composer-plugin` overwrite
   prompt (default `no`) and an `oe:module:deactivate` + `oe:module:activate` step that
   re-reads the new `metadata.php` into OXID's DB-cached module registry on 6.5.
+- README install step: added `-W` (`--with-all-dependencies`) to `composer require`. Current
+  OXID eShop 6.5 ships with `psr/http-message 2.0` in the lock, while the 1.x module line's
+  `graphql-base ^7.0` transitively asks for `psr/http-message 1.x`. Without `-W`, Composer
+  refuses the install with a transitive-conflict error on a fresh OXID 6.5 shop. `-W`
+  reconciles by downgrading `psr/http-message` to 1.1.
 
 ### Why
 The combination of (a) the explicit constraint and (b) the PHP-version-aware code

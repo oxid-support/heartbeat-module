@@ -19,10 +19,12 @@ All components are accessible via GraphQL API, allowing OXID Support to remotely
 ### Step 1: Install via Composer
 
 ```bash
-composer require oxid-support/heartbeat
+composer require oxid-support/heartbeat -W
 ```
 
 Composer automatically selects the version that matches your OXID installation; no module version constraint required.
+
+> **Why `-W` (`--with-all-dependencies`)**: on current OXID eShop 6.5 the composer lock pins `psr/http-message 2.0`, while the GraphQL stack used by the 1.x module line transitively asks for `psr/http-message 1.x`. `-W` lets Composer reconcile the difference (downgrade `psr/http-message` to 1.1) instead of rejecting the install.
 
 > **Important**: The `oxideshop-composer-plugin` will prompt whether `source/modules/oxid-support/heartbeat/` may be overwritten. Confirm with `yes`. Default is `no`, which leaves `source/modules/` unchanged and prevents OXID from picking up the module.
 
