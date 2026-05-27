@@ -149,29 +149,25 @@ final class LogPathInfoTypeTest extends TestCase
         $this->assertTrue($reflection->isFinal());
     }
 
-    public function testHasTypeAttribute(): void
+    public function testHasTypeAnnotation(): void
     {
         $reflection = new \ReflectionClass(LogPathInfoType::class);
-        $attributes = $reflection->getAttributes();
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Type', $attributeNames);
+        $this->assertStringContainsString('@Type', $reflection->getDocComment());
     }
 
-    public function testAllGettersHaveFieldAttributes(): void
+    public function testAllGettersHaveFieldAnnotations(): void
     {
         $reflection = new \ReflectionClass(LogPathInfoType::class);
         $getters = ['getPath', 'getType', 'getName', 'getDescription', 'isExists', 'isReadable'];
 
         foreach ($getters as $getter) {
             $method = $reflection->getMethod($getter);
-            $attributes = $method->getAttributes();
-            $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
 
-            $this->assertContains(
-                'TheCodingMachine\GraphQLite\Annotations\Field',
-                $attributeNames,
-                "Method $getter should have Field attribute"
+            $this->assertStringContainsString(
+                '@Field',
+                $method->getDocComment(),
+                "Method $getter should have @Field annotation"
             );
         }
     }

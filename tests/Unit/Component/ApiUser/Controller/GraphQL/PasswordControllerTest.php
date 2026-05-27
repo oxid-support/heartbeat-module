@@ -17,64 +17,59 @@ use ReflectionMethod;
 #[CoversClass(PasswordController::class)]
 final class PasswordControllerTest extends TestCase
 {
-    public function testSetPasswordMethodHasMutationAttribute(): void
+    public function testSetPasswordMethodHasMutationAnnotation(): void
     {
         $reflection = new ReflectionMethod(PasswordController::class, 'heartbeatSetPassword');
-        $attributes = $this->getAttributeNames($reflection);
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Mutation',
-            $attributes,
-            "heartbeatSetPassword must have #[Mutation] attribute"
+        $this->assertStringContainsString(
+            '@Mutation',
+            $reflection->getDocComment(),
+            "heartbeatSetPassword must have @Mutation annotation"
         );
     }
 
     public function testSetPasswordUsesTokenAuthNotSessionAuth(): void
     {
         $reflection = new ReflectionMethod(PasswordController::class, 'heartbeatSetPassword');
-        $attributes = $this->getAttributeNames($reflection);
 
-        // Should NOT have #[Logged] - uses token-based auth instead
-        $this->assertNotContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "heartbeatSetPassword must NOT have #[Logged] - uses token auth"
+        // Should NOT have @Logged - uses token-based auth instead
+        $this->assertStringNotContainsString(
+            '@Logged',
+            $reflection->getDocComment(),
+            "heartbeatSetPassword must NOT have @Logged - uses token auth"
         );
     }
 
-    public function testResetPasswordMethodHasMutationAttribute(): void
+    public function testResetPasswordMethodHasMutationAnnotation(): void
     {
         $reflection = new ReflectionMethod(PasswordController::class, 'heartbeatResetPassword');
-        $attributes = $this->getAttributeNames($reflection);
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Mutation',
-            $attributes,
-            "heartbeatResetPassword must have #[Mutation] attribute"
+        $this->assertStringContainsString(
+            '@Mutation',
+            $reflection->getDocComment(),
+            "heartbeatResetPassword must have @Mutation annotation"
         );
     }
 
     public function testResetPasswordRequiresAuthentication(): void
     {
         $reflection = new ReflectionMethod(PasswordController::class, 'heartbeatResetPassword');
-        $attributes = $this->getAttributeNames($reflection);
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "heartbeatResetPassword must have #[Logged] attribute"
+        $this->assertStringContainsString(
+            '@Logged',
+            $reflection->getDocComment(),
+            "heartbeatResetPassword must have @Logged annotation"
         );
     }
 
     public function testResetPasswordRequiresSpecificRight(): void
     {
         $reflection = new ReflectionMethod(PasswordController::class, 'heartbeatResetPassword');
-        $attributes = $this->getAttributeNames($reflection);
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Right',
-            $attributes,
-            "heartbeatResetPassword must have #[Right] attribute"
+        $this->assertStringContainsString(
+            '@Right',
+            $reflection->getDocComment(),
+            "heartbeatResetPassword must have @Right annotation"
         );
     }
 
@@ -128,13 +123,5 @@ final class PasswordControllerTest extends TestCase
 
         $this->assertNotNull($returnType);
         $this->assertEquals('string', $returnType->getName());
-    }
-
-    private function getAttributeNames(ReflectionMethod $reflection): array
-    {
-        return array_map(
-            fn($attr) => $attr->getName(),
-            $reflection->getAttributes()
-        );
     }
 }

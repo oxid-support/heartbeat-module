@@ -51,34 +51,25 @@ final class DiagnosticsControllerTest extends TestCase
         $this->assertTrue($returnType->allowsNull());
     }
 
-    public function testDiagnosticsHasQueryAttribute(): void
+    public function testDiagnosticsHasQueryAnnotation(): void
     {
-        $reflection = new ReflectionClass(DiagnosticsController::class);
-        $method = $reflection->getMethod('diagnostics');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(DiagnosticsController::class))->getMethod('diagnostics');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Query', $attributeNames);
+        $this->assertStringContainsString('@Query', $method->getDocComment());
     }
 
-    public function testDiagnosticsHasLoggedAttribute(): void
+    public function testDiagnosticsHasLoggedAnnotation(): void
     {
-        $reflection = new ReflectionClass(DiagnosticsController::class);
-        $method = $reflection->getMethod('diagnostics');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(DiagnosticsController::class))->getMethod('diagnostics');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Logged', $attributeNames);
+        $this->assertStringContainsString('@Logged', $method->getDocComment());
     }
 
-    public function testDiagnosticsHasRightAttribute(): void
+    public function testDiagnosticsHasRightAnnotation(): void
     {
-        $reflection = new ReflectionClass(DiagnosticsController::class);
-        $method = $reflection->getMethod('diagnostics');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(DiagnosticsController::class))->getMethod('diagnostics');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Right', $attributeNames);
+        $this->assertStringContainsString('@Right', $method->getDocComment());
     }
 
     public function testDiagnosticsHasNoParameters(): void

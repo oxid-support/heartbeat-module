@@ -24,13 +24,11 @@ final class KeyValueTypeTest extends TestCase
         $this->assertTrue($reflection->isFinal());
     }
 
-    public function testHasTypeAttribute(): void
+    public function testHasTypeAnnotation(): void
     {
         $reflection = new ReflectionClass(KeyValueType::class);
-        $attributes = $reflection->getAttributes();
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Type', $attributeNames);
+        $this->assertStringContainsString('@Type', $reflection->getDocComment());
     }
 
     public function testGetKeyReturnsString(): void
@@ -61,24 +59,18 @@ final class KeyValueTypeTest extends TestCase
         $this->assertTrue($reflection->hasMethod('getValue'));
     }
 
-    public function testGetKeyHasFieldAttribute(): void
+    public function testGetKeyHasFieldAnnotation(): void
     {
-        $reflection = new ReflectionClass(KeyValueType::class);
-        $method = $reflection->getMethod('getKey');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(KeyValueType::class))->getMethod('getKey');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Field', $attributeNames);
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
-    public function testGetValueHasFieldAttribute(): void
+    public function testGetValueHasFieldAnnotation(): void
     {
-        $reflection = new ReflectionClass(KeyValueType::class);
-        $method = $reflection->getMethod('getValue');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(KeyValueType::class))->getMethod('getValue');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Field', $attributeNames);
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
     public function testGetKeyReturnsTypeString(): void

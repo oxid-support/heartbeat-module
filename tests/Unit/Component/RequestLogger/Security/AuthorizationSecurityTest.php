@@ -27,18 +27,18 @@ class AuthorizationSecurityTest extends TestCase
     public function testSettingControllerMethodsRequireAuth(string $method): void
     {
         $reflection = new ReflectionMethod(SettingController::class, $method);
-        $attributes = $this->getAttributeNames($reflection);
+        $docComment = $reflection->getDocComment();
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Logged',
-            $attributes,
-            "$method must have #[Logged] attribute"
+        $this->assertStringContainsString(
+            '@Logged',
+            $docComment,
+            "$method must have @Logged annotation"
         );
 
-        $this->assertContains(
-            'TheCodingMachine\GraphQLite\Annotations\Right',
-            $attributes,
-            "$method must have #[Right] attribute"
+        $this->assertStringContainsString(
+            '@Right',
+            $docComment,
+            "$method must have @Right annotation"
         );
     }
 
@@ -134,11 +134,10 @@ class AuthorizationSecurityTest extends TestCase
 
         foreach ($readMethods as [$class, $method]) {
             $reflection = new ReflectionMethod($class, $method);
-            $attributes = $this->getAttributeNames($reflection);
 
-            $this->assertContains(
-                'TheCodingMachine\GraphQLite\Annotations\Query',
-                $attributes,
+            $this->assertStringContainsString(
+                '@Query',
+                $reflection->getDocComment(),
                 "$class::$method should be a Query, not a Mutation"
             );
         }
@@ -156,25 +155,12 @@ class AuthorizationSecurityTest extends TestCase
 
         foreach ($writeMethods as [$class, $method]) {
             $reflection = new ReflectionMethod($class, $method);
-            $attributes = $this->getAttributeNames($reflection);
 
-            $this->assertContains(
-                'TheCodingMachine\GraphQLite\Annotations\Mutation',
-                $attributes,
+            $this->assertStringContainsString(
+                '@Mutation',
+                $reflection->getDocComment(),
                 "$class::$method should be a Mutation, not a Query"
             );
         }
-    }
-
-    // ===========================================
-    // HELPER METHODS
-    // ===========================================
-
-    private function getAttributeNames(ReflectionMethod $reflection): array
-    {
-        return array_map(
-            fn($attr) => $attr->getName(),
-            $reflection->getAttributes()
-        );
     }
 }

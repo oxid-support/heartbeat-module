@@ -93,71 +93,32 @@ final class SettingTypeTest extends TestCase
         $this->assertTrue($reflection->isFinal());
     }
 
-    public function testHasTypeAttribute(): void
+    public function testHasTypeAnnotation(): void
     {
         $reflection = new \ReflectionClass(SettingType::class);
-        $attributes = $reflection->getAttributes();
 
-        $hasTypeAttribute = false;
-        foreach ($attributes as $attribute) {
-            if (str_contains($attribute->getName(), 'Type')) {
-                $hasTypeAttribute = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($hasTypeAttribute, 'SettingType should have GraphQLite Type attribute');
+        $this->assertStringContainsString('@Type', $reflection->getDocComment());
     }
 
-    public function testGetNameHasFieldAttribute(): void
+    public function testGetNameHasFieldAnnotation(): void
     {
-        $reflection = new \ReflectionClass(SettingType::class);
-        $method = $reflection->getMethod('getName');
-        $attributes = $method->getAttributes();
+        $method = (new \ReflectionClass(SettingType::class))->getMethod('getName');
 
-        $hasFieldAttribute = false;
-        foreach ($attributes as $attribute) {
-            if (str_contains($attribute->getName(), 'Field')) {
-                $hasFieldAttribute = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($hasFieldAttribute, 'getName should have GraphQLite Field attribute');
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
-    public function testGetTypeHasFieldAttribute(): void
+    public function testGetTypeHasFieldAnnotation(): void
     {
-        $reflection = new \ReflectionClass(SettingType::class);
-        $method = $reflection->getMethod('getType');
-        $attributes = $method->getAttributes();
+        $method = (new \ReflectionClass(SettingType::class))->getMethod('getType');
 
-        $hasFieldAttribute = false;
-        foreach ($attributes as $attribute) {
-            if (str_contains($attribute->getName(), 'Field')) {
-                $hasFieldAttribute = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($hasFieldAttribute, 'getType should have GraphQLite Field attribute');
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
-    public function testIsSupportedHasFieldAttribute(): void
+    public function testIsSupportedHasFieldAnnotation(): void
     {
-        $reflection = new \ReflectionClass(SettingType::class);
-        $method = $reflection->getMethod('isSupported');
-        $attributes = $method->getAttributes();
+        $method = (new \ReflectionClass(SettingType::class))->getMethod('isSupported');
 
-        $hasFieldAttribute = false;
-        foreach ($attributes as $attribute) {
-            if (str_contains($attribute->getName(), 'Field')) {
-                $hasFieldAttribute = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($hasFieldAttribute, 'isSupported should have GraphQLite Field attribute');
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
     public function testAllPropertiesArePrivate(): void

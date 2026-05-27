@@ -14,8 +14,6 @@ use OxidSupport\Heartbeat\Component\ApiVersion\DataType\ComponentStatusType;
 use OxidSupport\Heartbeat\Component\ApiVersion\Service\ApiVersionService;
 use OxidSupport\Heartbeat\Module\Module;
 use PHPUnit\Framework\TestCase;
-use TheCodingMachine\GraphQLite\Annotations\Mutation;
-use TheCodingMachine\GraphQLite\Annotations\Query;
 
 final class ApiVersionServiceTest extends TestCase
 {
@@ -150,8 +148,9 @@ final class ApiVersionServiceTest extends TestCase
             $reflection = new \ReflectionClass($className);
 
             foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                $isQuery = !empty($method->getAttributes(Query::class));
-                $isMutation = !empty($method->getAttributes(Mutation::class));
+                $docComment = $method->getDocComment();
+                $isQuery = $docComment !== false && str_contains($docComment, '@Query');
+                $isMutation = $docComment !== false && str_contains($docComment, '@Mutation');
 
                 if ($isQuery || $isMutation) {
                     $actualOperations[] = $method->getName();

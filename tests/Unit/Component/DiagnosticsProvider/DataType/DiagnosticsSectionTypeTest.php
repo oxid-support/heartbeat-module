@@ -25,13 +25,11 @@ final class DiagnosticsSectionTypeTest extends TestCase
         $this->assertTrue($reflection->isFinal());
     }
 
-    public function testHasTypeAttribute(): void
+    public function testHasTypeAnnotation(): void
     {
         $reflection = new ReflectionClass(DiagnosticsSectionType::class);
-        $attributes = $reflection->getAttributes();
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Type', $attributeNames);
+        $this->assertStringContainsString('@Type', $reflection->getDocComment());
     }
 
     public function testGetNameReturnsString(): void
@@ -67,24 +65,18 @@ final class DiagnosticsSectionTypeTest extends TestCase
         $this->assertTrue($reflection->hasMethod('getItems'));
     }
 
-    public function testGetNameHasFieldAttribute(): void
+    public function testGetNameHasFieldAnnotation(): void
     {
-        $reflection = new ReflectionClass(DiagnosticsSectionType::class);
-        $method = $reflection->getMethod('getName');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(DiagnosticsSectionType::class))->getMethod('getName');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Field', $attributeNames);
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
-    public function testGetItemsHasFieldAttribute(): void
+    public function testGetItemsHasFieldAnnotation(): void
     {
-        $reflection = new ReflectionClass(DiagnosticsSectionType::class);
-        $method = $reflection->getMethod('getItems');
-        $attributes = $method->getAttributes();
+        $method = (new ReflectionClass(DiagnosticsSectionType::class))->getMethod('getItems');
 
-        $attributeNames = array_map(fn($a) => $a->getName(), $attributes);
-        $this->assertContains('TheCodingMachine\GraphQLite\Annotations\Field', $attributeNames);
+        $this->assertStringContainsString('@Field', $method->getDocComment());
     }
 
     public function testGetNameReturnsTypeString(): void

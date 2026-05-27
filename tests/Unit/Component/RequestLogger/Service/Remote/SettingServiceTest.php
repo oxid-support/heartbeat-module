@@ -25,6 +25,7 @@ final class SettingServiceTest extends TestCase
     private const SETTING_LOG_ADMIN = RequestLoggerModule::SETTING_REQUESTLOGGER_LOG_ADMIN;
     private const SETTING_REDACT = RequestLoggerModule::SETTING_REQUESTLOGGER_REDACT_FIELDS;
     private const SETTING_REDACT_ALL_VALUES = RequestLoggerModule::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES;
+    private const SETTING_ACTIVE = RequestLoggerModule::SETTING_REQUESTLOGGER_ACTIVE;
 
     public function testGetLogLevelReturnsString(): void
     {
@@ -245,7 +246,7 @@ final class SettingServiceTest extends TestCase
         // getAllSettings() uses an internal SETTINGS_MAP, no mock interaction needed
         $result = $this->getSut()->getAllSettings();
 
-        $this->assertCount(5, $result);
+        $this->assertCount(6, $result);
         $this->assertContainsOnlyInstancesOf(SettingType::class, $result);
 
         $names = array_map(fn (SettingType $s) => $s->getName(), $result);
@@ -255,6 +256,7 @@ final class SettingServiceTest extends TestCase
         $this->assertContains(self::SETTING_LOG_ADMIN, $names);
         $this->assertContains(self::SETTING_REDACT, $names);
         $this->assertContains(self::SETTING_REDACT_ALL_VALUES, $names);
+        $this->assertContains(self::SETTING_ACTIVE, $names);
     }
 
     public function testGetAllSettingsReturnsCorrectTypes(): void
@@ -272,6 +274,7 @@ final class SettingServiceTest extends TestCase
         $this->assertSame('bool', $settingsByName[self::SETTING_LOG_ADMIN]);
         $this->assertSame('aarr', $settingsByName[self::SETTING_REDACT]);
         $this->assertSame('bool', $settingsByName[self::SETTING_REDACT_ALL_VALUES]);
+        $this->assertSame('bool', $settingsByName[self::SETTING_ACTIVE]);
     }
 
     private function getSut(
