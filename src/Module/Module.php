@@ -13,8 +13,8 @@ final class Module
 {
     public const ID = 'oxsheartbeat';
 
-    // Module version (must match metadata.php 'version')
-    public const VERSION = '2.0.1';
+    // Module version — single source of truth. metadata.php reads this via HeartbeatModule::VERSION.
+    public const VERSION = '2.0.2';
 
     // API version contract
     public const API_VERSION = '1.0.0';

@@ -4,6 +4,46 @@ All notable changes to the Heartbeat module on the OXID 7 line are documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-05-27
+
+### Changed
+- `oxid-esales/oxideshop-ce` constraint widened to `">=7.1, <7.6"` (was `">=7.0, <7.5"` in 2.0.1).
+  - Upper bound bumped from `<7.5` to `<7.6` to include OXID eShop 7.5 (= ce 7.5.x).
+  - Lower bound bumped from `>=7.0` to `>=7.1` to match what the module actually delivers
+    on the 2.x line. The original `>=7.0` claim in 2.0.1 was empty: although the
+    `ContainerFacade → ContainerFactory` refactor enabled OXID 7.0 from the module's
+    own perspective, the required `oxid-esales/graphql-configuration-access ^1.1` has
+    no version that supports ce 7.0.x (only its excluded v1.0.0 does). Composer rejected
+    every real 7.0 install. Tag 2.0.1 was retroactively force-pushed on 2026-05-27 to
+    the same `">=7.1, <7.5"` constraint to stop advertising the empty 7.0 support.
+- `metadata.php` and `src/Module/Module.php`: bump and sync version to `2.0.2`.
+- `metadata.php` now reads the version from `HeartbeatModule::VERSION` instead of duplicating
+  the literal string. `Module.php` is the single source of truth from this release on;
+  future patches only have to bump the constant.
+
+### Why
+- OXID eShop 7.5 ships today and is binary-compatible with the 2.x heartbeat code; only
+  the composer constraint was blocking the install. Widening it is the entire patch.
+- Honesty about which OXID versions the 2.x line actually supports (7.1-7.5, not 7.0).
+
+### Customer impact
+- Customers on OXID 7.1-7.4 with `^2.0`: receive 2.0.2 automatically on next
+  `composer update`. No behavioural change, no breaking changes.
+- Customers on OXID 7.5: can now install Heartbeat 2.0.2 with a plain
+  `composer require oxid-support/heartbeat`. Composer picks v12 of graphql-base and
+  v3 of graphql-configuration-access transitively (both compatible with ce 7.5).
+- Customers on OXID 7.0: still no installable Heartbeat 2.x. A dedicated 3.x line
+  (planned, on a `b-7.0.x` branch with graphql-configuration-access dependency dropped)
+  will fill that gap.
+
+### Upgrade
+```bash
+composer update oxid-support/heartbeat
+./vendor/bin/oe-eshop-doctrine_migration migrations:migrate oxsheartbeat
+./vendor/bin/oe-console oe:cache:clear
+```
+The module stays activated; no re-activation needed.
+
 ## [2.0.1] - 2026-05-21
 
 ### Added

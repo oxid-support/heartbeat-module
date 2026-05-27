@@ -62,9 +62,9 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 - **Module ID**: `oxsheartbeat`
 - **Module Title**: OXS :: Heartbeat
-- **Version**: 2.0.1
+- **Version**: 2.0.2
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.0 - 7.4 (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
+- **Supported OXID Versions**: 7.1 - 7.5 (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
 - **PHP Version**: 8.2 - 8.4
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
@@ -73,7 +73,7 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 ## Compatibility
 
-* **Module 2.0.1+ ("OXID 7 line")**: OXID 7.0 to 7.4.x
+* **Module 2.0.2+ ("OXID 7 line")**: OXID 7.1 to 7.5.x
 * **Module 1.x ("OXID 6 line")**: OXID 6.5
 
 Composer picks the right module version based on the installed OXID core. Customers never need to specify a module version manually.
