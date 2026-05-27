@@ -4,7 +4,7 @@ All notable changes to the Heartbeat module on the OXID 6.5 line are documented 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.1] - 2026-05-26
+## [1.0.1] - 2026-05-27
 
 ### Added
 - Explicit `oxid-esales/oxideshop-ce: ">=6.12, <7.0"` constraint in composer.json `require`.
@@ -33,6 +33,15 @@ Concretely:
 - `composer.json`: `oxid-esales/oxideshop-ce: dev-b-6.5.x` removed from `require-dev`
   since the explicit constraint in `require` makes it redundant.
 - `metadata.php` and `src/Module/Module.php`: bump and sync version to `1.0.1`.
+- Unit tests adjusted accordingly: GraphQLite annotation presence is asserted via docblock
+  substring instead of `ReflectionClass::getAttributes()`. GraphQLite v5 (shipped with
+  graphql-base ^7.0) recognises both notations at runtime, so the runtime behaviour is
+  unchanged; only the test assertions were aligned.
+- README install section: dropped obsolete `composer config repositories.oxid-support/heartbeat
+  vcs ...` step (module is on Packagist).
+- README update section: added explicit warning about the `oxideshop-composer-plugin` overwrite
+  prompt (default `no`) and an `oe:module:deactivate` + `oe:module:activate` step that
+  re-reads the new `metadata.php` into OXID's DB-cached module registry on 6.5.
 
 ### Why
 The combination of (a) the explicit constraint and (b) the PHP-version-aware code
