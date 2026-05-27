@@ -18,6 +18,7 @@
     },
     "require": {
         "php": "^8.0 || ^8.1",
+        "oxid-esales/oxideshop-ce": ">=6.12, <7.0",
         "oxid-esales/graphql-base": "^7.0"
     },
     "require-dev": {
