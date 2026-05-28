@@ -1,5 +1,13 @@
 # OXS :: Heartbeat
 
+> **You are on branch `b-7.1.x`** (Heartbeat 2.x, for OXID eShop 7.1 to 7.5).
+>
+> Other supported lines:
+> * **OXID 6.5** → branch [`b-6.5.x`](https://github.com/oxid-support/heartbeat-module/tree/b-6.5.x) (Heartbeat 1.x)
+> * **OXID 7.0** → branch [`b-7.0.x`](https://github.com/oxid-support/heartbeat-module/tree/b-7.0.x) (Heartbeat 3.x)
+>
+> Customers installing via `composer require oxid-support/heartbeat` get the matching version automatically; this switcher is for source browsing and contributors.
+
 **OXS Heartbeat** is an OXID eShop module that enables **remote monitoring and support** for OXID shops.
 
 It provides:
@@ -64,7 +72,7 @@ For more details on OXID GraphQL installation, see the [official documentation](
 - **Module Title**: OXS :: Heartbeat
 - **Version**: 2.0.2
 - **Author**: support@oxid-esales.com
-- **Supported OXID Versions**: 7.1 - 7.5 (for OXID 6.5, use branch `b-6.5.x` / version 1.x)
+- **Supported OXID Versions**: 7.1 to 7.5 (for OXID 6.5 see `b-6.5.x` / 1.x, for OXID 7.0 see `b-7.0.x` / 3.x)
 - **PHP Version**: 8.2 - 8.4
 
 > **Local Storage Only**: This module writes logs exclusively to server's local filesystem (`OX_BASE_PATH/log/oxs-heartbeat/`). No data is transmitted to external services or third parties.
@@ -73,22 +81,26 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 ## Compatibility
 
-* **Module 2.0.2+ ("OXID 7 line")**: OXID 7.1 to 7.5.x
-* **Module 1.x ("OXID 6 line")**: OXID 6.5
+* **Module 2.x**: OXID 7.1 to 7.5.x
+* **Module 3.x**: OXID 7.0.x
+* **Module 1.x**: OXID 6.5
 
 Composer picks the right module version based on the installed OXID core. Customers never need to specify a module version manually.
 
 ## Branch structure
 
-This repo follows a reactive stabilization-branch pattern (similar to Symfony and Doctrine):
+This repo follows a Symfony / Doctrine style stabilization-branch layout. One long-lived branch per supported OXID line, no `main`:
 
-* **`main`** carries active development for the newest supported OXID version
-* **`b-6.5.x`** maintenance branch for the OXID 6.5 line
-* Future stabilization branches `b-<X.Y>.x` will be created reactively if and when OXID introduces a BC-break and the older line still needs to be supported
+* **`b-7.1.x`** (default) active development for the OXID 7.1 to 7.5 line, Heartbeat 2.x
+* **`b-7.0.x`** maintenance branch for the OXID 7.0 line, Heartbeat 3.x
+* **`b-6.5.x`** maintenance branch for the OXID 6.5 line, Heartbeat 1.x
+
+When OXID introduces a new line that needs separate maintenance, a new `b-<X.Y>.x` branch is cut from the current default.
 
 Where to open your PR:
 
-* Bug or feature for OXID 7.x → `main`
+* Bug or feature for OXID 7.1 to 7.5 → `b-7.1.x`
+* Bug for OXID 7.0 only → `b-7.0.x`
 * Bug for OXID 6.5 only → `b-6.5.x`
 
 ## Updating an existing installation
