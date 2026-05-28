@@ -14,7 +14,7 @@ use OxidSupport\Heartbeat\Component\RequestLogger\DataType\SettingType;
 use OxidSupport\Heartbeat\Module\Module as RequestLoggerModule;
 use OxidSupport\Heartbeat\Component\RequestLogger\Exception\InvalidCollectionException;
 
-final readonly class SettingService implements SettingServiceInterface
+final class SettingService implements SettingServiceInterface
 {
     private const SETTING_LOG_LEVEL = RequestLoggerModule::SETTING_REQUESTLOGGER_LOG_LEVEL;
     private const SETTING_LOG_FRONTEND = RequestLoggerModule::SETTING_REQUESTLOGGER_LOG_FRONTEND;
@@ -23,7 +23,7 @@ final readonly class SettingService implements SettingServiceInterface
     private const SETTING_REDACT_ALL_VALUES = RequestLoggerModule::SETTING_REQUESTLOGGER_REDACT_ALL_VALUES;
 
     public function __construct(
-        private ConfigAccessSettingService $moduleSettingService
+        private readonly ConfigAccessSettingService $moduleSettingService
     ) {
     }
 

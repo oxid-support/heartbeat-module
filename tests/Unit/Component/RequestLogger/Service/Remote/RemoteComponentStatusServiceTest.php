@@ -103,12 +103,11 @@ final class RemoteComponentStatusServiceTest extends TestCase
         }
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(RemoteComponentStatusService::class);
 
         $this->assertTrue($reflection->isFinal(), 'Class should be final');
-        $this->assertTrue($reflection->isReadOnly(), 'Class should be readonly');
     }
 
     public function testUsesCorrectSettingConstant(): void

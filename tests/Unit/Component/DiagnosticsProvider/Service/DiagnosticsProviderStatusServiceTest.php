@@ -71,12 +71,11 @@ final class DiagnosticsProviderStatusServiceTest extends TestCase
         $this->assertInstanceOf(DiagnosticsProviderStatusServiceInterface::class, $this->service);
     }
 
-    public function testClassIsFinalAndReadonly(): void
+    public function testClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(DiagnosticsProviderStatusService::class);
 
         $this->assertTrue($reflection->isFinal());
-        $this->assertTrue($reflection->isReadOnly());
     }
 
     public function testConstructorHasOneParameter(): void

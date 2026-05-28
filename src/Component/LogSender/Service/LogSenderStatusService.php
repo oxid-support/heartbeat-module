@@ -15,12 +15,12 @@ use OxidSupport\Heartbeat\Module\Module;
 /**
  * Service for checking the Log Sender component status.
  */
-final readonly class LogSenderStatusService implements LogSenderStatusServiceInterface
+final class LogSenderStatusService implements LogSenderStatusServiceInterface
 {
     private const DEFAULT_MAX_BYTES = 1048576; // 1 MB
 
     public function __construct(
-        private ModuleSettingServiceInterface $moduleSettingService
+        private readonly ModuleSettingServiceInterface $moduleSettingService
     ) {
     }
 
