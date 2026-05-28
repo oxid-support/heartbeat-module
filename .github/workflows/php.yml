@@ -10,14 +10,37 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  phpcompatibility:
+    name: PHP Compatibility Check
+    runs-on: ubuntu-latest
 
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install PHPCompatibility (global)
+      run: |
+        composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+        composer global require --no-progress \
+          squizlabs/php_codesniffer:^4 \
+          phpcompatibility/php-compatibility:dev-develop \
+          dealerdirect/phpcodesniffer-composer-installer
+
+    - name: Run PHPCompatibility
+      run: ~/.composer/vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 8.0-8.1 -p src/
+
+  build:
+    needs: phpcompatibility
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.3', '8.4']
+        php-version: ['8.0', '8.1']
 
     steps:
     - uses: actions/checkout@v6
@@ -26,6 +49,9 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
+
+    - name: PHP Lint
+      run: find src/ -name '*.php' -print0 | xargs -0 -n1 php -l
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -52,6 +78,7 @@ jobs:
 
   psalm-taint-analysis:
     name: Psalm Taint Analysis
+    needs: phpcompatibility
     runs-on: ubuntu-latest
     continue-on-error: true
 
@@ -61,15 +88,15 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
+        php-version: '8.1'
 
     - name: Cache Composer packages
       uses: actions/cache@v5
       with:
         path: vendor
-        key: ${{ runner.os }}-php-8.2-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-8.2-
+          ${{ runner.os }}-php-8.1-
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
