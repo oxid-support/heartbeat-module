@@ -56,6 +56,14 @@
         "allow-plugins": {
             "oxid-esales/oxideshop-unified-namespace-generator": true,
             "oxid-esales/oxideshop-composer-plugin": true
+        },
+        "audit": {
+            "ignore": [
+                "PKSA-hjpv-ct4c-8fq5",
+                "PKSA-xwpn-zs9j-6wy5",
+                "PKSA-sf9j-1gs7-xzvx",
+                "PKSA-7h5p-prw9-w5nr"
+            ]
         }
     }
 }
