@@ -12,7 +12,6 @@
         }
     ],
     "require": {
-        "php": "^8.0 || ^8.1 || ^8.2 || ^8.3 || ^8.4",
         "oxid-esales/oxideshop-ce": "~7.0.0",
         "oxid-esales/graphql-base": "^8.0"
     },
@@ -62,7 +61,20 @@
                 "PKSA-hjpv-ct4c-8fq5",
                 "PKSA-xwpn-zs9j-6wy5",
                 "PKSA-sf9j-1gs7-xzvx",
-                "PKSA-7h5p-prw9-w5nr"
+                "PKSA-7h5p-prw9-w5nr",
+                "PKSA-2q9d-8kh9-49wx",
+                "PKSA-pght-23ww-rrdy",
+                "PKSA-6y8p-nrf4-ysf5",
+                "PKSA-yr6f-z9sx-cps3",
+                "PKSA-28zg-9h7g-fhvp",
+                "PKSA-54c6-f9b9-7wg4",
+                "PKSA-wy1k-8qg5-z8xd",
+                "PKSA-31hv-m6rg-8ryk",
+                "PKSA-98zc-53yc-qt81",
+                "PKSA-t4kv-1sv2-1mzx",
+                "PKSA-wc9h-gs49-76tm",
+                "PKSA-thph-wfk6-pp4j",
+                "PKSA-hgp5-21g7-7phg"
             ]
         }
     }
