@@ -65,15 +65,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-${{ matrix.php-version }}-
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress -W
+    # PHP 7.4 and 8.0 cannot install dev deps (phpunit 10+ requires PHP 8.1+).
+    # Only verify Composer resolve + PHP lint on those matrix entries.
+    - name: Install dependencies (no-dev, PHP 7.4 / 8.0)
+      if: matrix.php-version == '7.4' || matrix.php-version == '8.0'
+      run: composer install --prefer-dist --no-progress --no-dev
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Install dependencies (full, PHP 8.1+)
+      if: matrix.php-version == '8.1'
+      run: composer install --prefer-dist --no-progress
 
     - name: Run static tests suite
+      if: matrix.php-version == '8.1'
       run: composer run-script static
+
     - name: Run Unit Tests
+      if: matrix.php-version == '8.1'
       run: composer run-script tests-unit
 
   notify-devops:
