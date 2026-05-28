@@ -23,7 +23,6 @@ class ModuleConfigController extends ModuleConfiguration
     private ?SetupStatusServiceInterface $setupStatusService = null;
 
     private const GRAPHQL_BASE_MODULE_ID = 'oe_graphql_base';
-    private const CONFIG_ACCESS_MODULE_ID = 'oe_graphql_configuration_access';
 
     public function isModuleActivated(): bool
     {
