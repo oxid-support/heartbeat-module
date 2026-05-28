@@ -19,8 +19,6 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
 {
     protected $_sThisTemplate = '@oxsheartbeat/admin/heartbeat_requestlogger_setup';
 
-    private const CONFIG_ACCESS_MODULE_ID = 'oe_graphql_configuration_access';
-
     private ?ApiUserStatusServiceInterface $apiUserStatusService = null;
 
     public function isComponentActive(): bool
