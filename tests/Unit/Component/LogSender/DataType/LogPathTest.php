@@ -260,5 +260,4 @@ final class LogPathTest extends TestCase
 
         $this->assertTrue($reflection->isFinal());
     }
-
 }

@@ -183,5 +183,4 @@ final class LogSourceTest extends TestCase
 
         $this->assertTrue($reflection->isFinal());
     }
-
 }
