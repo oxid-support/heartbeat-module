@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Shop\Extend\Core;
 
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface;
@@ -12,6 +13,7 @@ use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequ
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\SymbolTracker;
 use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacadeInterface;
 use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
+use Psr\Container\ContainerInterface;
 
 class ShopControl extends CoreShopControl
 {
@@ -21,29 +23,18 @@ class ShopControl extends CoreShopControl
      */
     public function start($controllerKey = null, $function = null, $parameters = null, $viewsChain = null): void
     {
-        /** @var ShopFacadeInterface $shopFacade */
-        $shopFacade = ContainerFactory::getInstance()->getContainer()->get(ShopFacadeInterface::class);
-        /** @var ModuleSettingFacadeInterface $settingsFacade */
-        $settingsFacade = ContainerFactory::getInstance()->getContainer()->get(ModuleSettingFacadeInterface::class);
+        $recorder = $this->resolveRecorder();
 
-        if (!$settingsFacade->isRequestLoggerComponentActive()) {
+        if ($recorder === null) {
             parent::start($controllerKey, $function, $parameters, $viewsChain);
             return;
         }
 
-        $isAdmin = $shopFacade->isAdmin();
-        $shouldLog = ($isAdmin && $settingsFacade->isLogAdminEnabled())
-            || (!$isAdmin && $settingsFacade->isLogFrontendEnabled());
-
-        if (!$shouldLog) {
-            parent::start($controllerKey, $function, $parameters, $viewsChain);
-            return;
+        try {
+            $this->logStart($recorder);
+        } catch (\Throwable $e) {
+            $this->reportSkippedLogging($e->getMessage(), $e);
         }
-
-        /** @var ShopRequestRecorderInterface $recorder */
-        $recorder = ContainerFactory::getInstance()->getContainer()->get(ShopRequestRecorderInterface::class);
-
-        $this->logstart($recorder);
 
         SymbolTracker::enable();
         $calculateDurationTimestampStart = microtime(true);
@@ -53,16 +44,103 @@ class ShopControl extends CoreShopControl
         } finally {
             $calculateDurationTimestampStop = microtime(true);
 
-            $this->logSymbols(
-                $recorder,
-                SymbolTracker::report()
-            );
+            try {
+                $this->logSymbols(
+                    $recorder,
+                    SymbolTracker::report()
+                );
 
-            $this->logFinish(
-                $recorder,
-                $calculateDurationTimestampStart,
-                $calculateDurationTimestampStop
+                $this->logFinish(
+                    $recorder,
+                    $calculateDurationTimestampStart,
+                    $calculateDurationTimestampStop
+                );
+            } catch (\Throwable $e) {
+                $this->reportSkippedLogging($e->getMessage(), $e);
+            }
+        }
+    }
+
+    /**
+     * Returns the recorder when this request is to be logged, and null when the request
+     * logger has to stay out of the way.
+     *
+     * This class extension sits in the chain as soon as the module is active, which says
+     * nothing about the container knowing the module's services. A request that boots
+     * while the module imports are missing from generated_services.yaml caches a container
+     * without them, and that cache outlives the request, so taking the services
+     * unconditionally turned every following request into "You have requested a
+     * non-existent service" and the shop answered with the maintenance page until the next
+     * module configuration change. See OXS-3379.
+     */
+    private function resolveRecorder(): ?ShopRequestRecorderInterface
+    {
+        $container = ContainerFactory::getInstance()->getContainer();
+
+        if (!$this->hasModuleServices($container)) {
+            // Drop the incomplete container instead of leaving the shop in that state:
+            // the next request then compiles a complete one. See OXS-3379.
+            ContainerFactory::resetContainer();
+            $this->reportSkippedLogging('the container carries no heartbeat services, its cache was dropped');
+
+            return null;
+        }
+
+        try {
+            /** @var ModuleSettingFacadeInterface $settingsFacade */
+            $settingsFacade = $container->get(ModuleSettingFacadeInterface::class);
+
+            if (!$settingsFacade->isRequestLoggerComponentActive()) {
+                return null;
+            }
+
+            /** @var ShopFacadeInterface $shopFacade */
+            $shopFacade = $container->get(ShopFacadeInterface::class);
+
+            $isAdmin = $shopFacade->isAdmin();
+            $shouldLog = ($isAdmin && $settingsFacade->isLogAdminEnabled())
+                || (!$isAdmin && $settingsFacade->isLogFrontendEnabled());
+
+            if (!$shouldLog) {
+                return null;
+            }
+
+            /** @var ShopRequestRecorderInterface $recorder */
+            $recorder = $container->get(ShopRequestRecorderInterface::class);
+
+            return $recorder;
+        } catch (\Throwable $e) {
+            $this->reportSkippedLogging($e->getMessage(), $e);
+
+            return null;
+        }
+    }
+
+    /**
+     * The services the logging path needs before it may start, pinned in one place so a
+     * new dependency in that path cannot slip past the guard unnoticed. See OXS-3379.
+     */
+    private function hasModuleServices(ContainerInterface $container): bool
+    {
+        return $container->has(ShopFacadeInterface::class)
+            && $container->has(ModuleSettingFacadeInterface::class)
+            && $container->has(SensitiveDataRedactorInterface::class)
+            && $container->has(ShopRequestRecorderInterface::class);
+    }
+
+    /**
+     * A defect in the logging path costs log entries, an exception out of it costs the
+     * shop. The request logger therefore reports and steps aside. See OXS-3379.
+     */
+    private function reportSkippedLogging(string $reason, ?\Throwable $e = null): void
+    {
+        try {
+            Registry::getLogger()->error(
+                'Heartbeat: request logging skipped: ' . $reason,
+                $e === null ? [] : [$e]
             );
+        } catch (\Throwable $reportingFailure) {
+            // Nothing left to report to, and the request has to survive either way.
         }
     }
 
