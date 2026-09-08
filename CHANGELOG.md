@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Module activation no longer regenerates the database views.
 - Module activation no longer clears the shop caches itself.
+- Module activation provisions the API user, its group and the setup token through an event subscriber with injected services; the activation hook only asks for it.
 - A failed provisioning of the API user no longer aborts the module activation; the cause is logged and shown in the admin area.
 
 ### Fixed

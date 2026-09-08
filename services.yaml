@@ -229,3 +229,7 @@ services:
     OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface:
         class: OxidSupport\Heartbeat\Shop\Facade\ShopFacade
         public: true
+
+    OxidSupport\Heartbeat\Component\ApiUser\EventSubscriber\ApiUserProvisioningSubscriber:
+        public: true
+        tags: ['kernel.event_subscriber']
