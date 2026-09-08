@@ -78,10 +78,12 @@ class ShopControl extends CoreShopControl
         $container = ContainerFactory::getInstance()->getContainer();
 
         if (!$this->hasModuleServices($container)) {
-            // Drop the incomplete container instead of leaving the shop in that state:
-            // the next request then compiles a complete one. See OXS-3379.
-            ContainerFactory::resetContainer();
-            $this->reportSkippedLogging('the container carries no heartbeat services, its cache was dropped');
+            // Deliberately no cache surgery from inside a request: dropping the shop's
+            // container cache here would turn a lasting inconsistency into a full
+            // container compile on every single request. The request logger steps aside
+            // and says why; the cache is rebuilt by the next module activation or cache
+            // clear, which is an operator action, not ours. See OXS-3379.
+            $this->reportSkippedLogging('the container carries no heartbeat services');
 
             return null;
         }
