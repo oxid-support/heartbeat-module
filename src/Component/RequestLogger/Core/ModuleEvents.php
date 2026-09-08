@@ -12,11 +12,11 @@ namespace OxidSupport\Heartbeat\Component\RequestLogger\Core;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerBuilderFactory;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserProvisioningServiceInterface;
-use OxidSupport\Heartbeat\Component\ApiUser\Service\SetupTokenServiceInterface;
+use OxidSupport\Heartbeat\Component\ApiUser\Event\ApiUserProvisioningRequestedEvent;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\TokenInvalidatorInterface;
 use OxidSupport\Heartbeat\Module\Module;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class ModuleEvents
 {
@@ -44,18 +44,28 @@ final class ModuleEvents
         try {
             $container = self::buildContainerWithModuleServices();
 
-            // Create the api group, the service user and the group membership for
-            // the current shop. Idempotent, runs on every activation, and replaces
-            // the former data-seeding migration. This is the single creation path;
-            // there is no migration to run first. See OXS-3046.
-            $container->get(ApiUserProvisioningServiceInterface::class)->ensureApiUser();
+            // The provisioning itself is a subscriber with injected dependencies
+            // (ApiUserProvisioningSubscriber). The hook only asks for it, through the
+            // dispatcher of the container above, so the api user, its group, the
+            // membership and the setup token are created by ordinary services instead
+            // of being pulled out of a container by hand. Idempotent and shop-scoped.
+            // See OXS-3046, OXS-3103, OXS-3377.
+            /** @var EventDispatcherInterface $eventDispatcher */
+            $eventDispatcher = $container->get(EventDispatcherInterface::class);
 
-            // Reconcile the setup token with this shop's service-user password:
-            // a fresh per-shop token while the password is unset, cleared once it is
-            // set. Shop-scoped, so EE subshops never share or retain the base shop's
-            // inherited token (the only gate on the unauthenticated
-            // heartbeatSetPassword mutation). See OXS-3103.
-            $container->get(SetupTokenServiceInterface::class)->ensureSetupToken();
+            // Without a listener the dispatch would be a silent no-op and the shop would
+            // stay without a service user, so say so instead of doing nothing.
+            if (!$eventDispatcher->hasListeners(ApiUserProvisioningRequestedEvent::NAME)) {
+                throw new \RuntimeException(
+                    'no listener on ' . ApiUserProvisioningRequestedEvent::NAME
+                    . ', the module services are not registered'
+                );
+            }
+
+            $eventDispatcher->dispatch(
+                new ApiUserProvisioningRequestedEvent(),
+                ApiUserProvisioningRequestedEvent::NAME
+            );
         } catch (\Throwable $e) {
             self::reportProvisioningFailure($e);
         }
