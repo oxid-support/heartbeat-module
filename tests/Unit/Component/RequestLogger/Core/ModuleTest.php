@@ -76,6 +76,29 @@ final class ModuleTest extends TestCase
         $this->assertStringContainsString('oxid-esales.com', Module::API_USER_EMAIL);
     }
 
+    public function testProvisioningFailedTranslationIdentMatchesTheLanguageFiles(): void
+    {
+        // The admin message is looked up by this ident in the module's language files,
+        // a rename in only one place would show the raw ident. See OXS-3377.
+        $this->assertSame('OXSHEARTBEAT_APIUSER_PROVISIONING_FAILED', Module::TRANSLATION_PROVISIONING_FAILED);
+
+        $languageFiles = [
+            'views/admin/de/oxsheartbeat_lang.php',
+            'views/admin/en/oxsheartbeat_lang.php',
+            'views/admin_twig/de/module_options.php',
+            'views/admin_twig/en/module_options.php',
+        ];
+
+        foreach ($languageFiles as $languageFile) {
+            $file = __DIR__ . '/../../../../../' . $languageFile;
+            $this->assertFileExists($file);
+            $this->assertStringContainsString(
+                Module::TRANSLATION_PROVISIONING_FAILED,
+                (string) file_get_contents($file)
+            );
+        }
+    }
+
     public function testModuleClassIsFinal(): void
     {
         $reflection = new \ReflectionClass(Module::class);
@@ -99,8 +122,9 @@ final class ModuleTest extends TestCase
         // Module has ID + VERSION + API_VERSION + SUPPORTED_OPERATIONS
         // + 6 request logger settings + 1 API user setting
         // + 1 remote setting + 4 log sender settings
-        // + 1 diagnostics provider setting + API_USER_EMAIL = 18 constants
-        $this->assertCount(18, $constants);
+        // + 1 diagnostics provider setting + API_USER_EMAIL
+        // + TRANSLATION_PROVISIONING_FAILED = 19 constants
+        $this->assertCount(19, $constants);
     }
 
     public function testAllConstantsArePublic(): void

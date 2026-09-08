@@ -60,6 +60,7 @@ $aLang = [
     'OXSHEARTBEAT_APIUSER_DESC' => 'Verwaltet den API-Benutzer für den Fernzugriff auf Heartbeat.',
     'OXSHEARTBEAT_APIUSER_STATUS_READY' => 'Aktiv',
     'OXSHEARTBEAT_APIUSER_STATUS_SETUP_REQUIRED' => 'Einrichtung erforderlich',
+    'OXSHEARTBEAT_APIUSER_PROVISIONING_FAILED' => 'Der API-Benutzer konnte bei der Aktivierung nicht angelegt werden. Die Ursache steht im Shop-Log. Nach der Behebung das Modul erneut aktivieren.',
     'OXSHEARTBEAT_APIUSER_INFO_TITLE' => 'Wichtig',
     'OXSHEARTBEAT_APIUSER_INFO_TEXT' => 'Der API User ist erforderlich für alle Komponenten, die Fernzugriff benötigen (z.B. Request Logger Remote). Richten Sie diesen zuerst ein.',
 
