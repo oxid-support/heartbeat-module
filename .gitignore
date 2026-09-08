@@ -11,3 +11,4 @@ composer-setup.php
 /tests/.phpunit.integration.cache/
 /tests/.phpunit.result.cache
 /.claude/settings.local.json
+/.idea/
