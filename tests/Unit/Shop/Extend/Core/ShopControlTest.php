@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Tests\Unit\Shop\Extend\Core;
 
+use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface;
+// phpcs:ignore Generic.Files.LineLength.TooLong
+use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use OxidSupport\Heartbeat\Shop\Extend\Core\ShopControl;
+use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacadeInterface;
+use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -46,6 +52,54 @@ class ShopControlTest extends TestCase
             ->getMock();
 
         return $method->invoke($shopControl, $sessionId);
+    }
+
+    /**
+     * The guard decides whether the request logger may run at all. If it stopped
+     * requiring one of these services, a request could reach the logging path with an
+     * incomplete container again and take the shop offline. See OXS-3379.
+     */
+    public function testHasModuleServicesRequiresEveryServiceOfTheLoggingPath(): void
+    {
+        $required = [
+            ShopFacadeInterface::class,
+            ModuleSettingFacadeInterface::class,
+            SensitiveDataRedactorInterface::class,
+            ShopRequestRecorderInterface::class,
+        ];
+
+        $this->assertTrue($this->invokeHasModuleServices($required));
+
+        foreach ($required as $missing) {
+            $available = array_values(array_diff($required, [$missing]));
+
+            $this->assertFalse(
+                $this->invokeHasModuleServices($available),
+                sprintf('a container without %s must not pass the guard', $missing)
+            );
+        }
+    }
+
+    /** @param string[] $availableServices */
+    private function invokeHasModuleServices(array $availableServices): bool
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')->willReturnCallback(
+            static function (string $id) use ($availableServices): bool {
+                return in_array($id, $availableServices, true);
+            }
+        );
+
+        $reflection = new ReflectionClass(ShopControl::class);
+        $method = $reflection->getMethod('hasModuleServices');
+        $method->setAccessible(true);
+
+        $shopControl = $this->getMockBuilder(ShopControl::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        return (bool) $method->invoke($shopControl, $container);
     }
 
     public function testRedactUrlQueryParams_BlocklistMode_RedactsOnlyBlocklistedKeys(): void
