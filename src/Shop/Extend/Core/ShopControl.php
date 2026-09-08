@@ -8,6 +8,7 @@ use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\ShopControl as CoreShopControl;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Security\SensitiveDataRedactorInterface;
+
 // phpcs:ignore Generic.Files.LineLength.TooLong
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\ShopRequestRecorder\ShopRequestRecorderInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\SymbolTracker;
@@ -78,10 +79,12 @@ class ShopControl extends CoreShopControl
         $container = ContainerFactory::getInstance()->getContainer();
 
         if (!$this->hasModuleServices($container)) {
-            // Drop the incomplete container instead of leaving the shop in that state:
-            // the next request then compiles a complete one. See OXS-3379.
-            ContainerFactory::resetContainer();
-            $this->reportSkippedLogging('the container carries no heartbeat services, its cache was dropped');
+            // Deliberately no cache surgery from inside a request: dropping the shop's
+            // container cache here would turn a lasting inconsistency into a full
+            // container compile on every single request. The request logger steps aside
+            // and says why; the cache is rebuilt by the next module activation or cache
+            // clear, which is an operator action, not ours. See OXS-3379.
+            $this->reportSkippedLogging('the container carries no heartbeat services');
 
             return null;
         }
@@ -147,7 +150,6 @@ class ShopControl extends CoreShopControl
     private function logStart(
         ShopRequestRecorderInterface $recorder
     ): void {
-
         /** @var ShopFacadeInterface $facade */
         $facade = ContainerFactory::getInstance()->getContainer()->get(ShopFacadeInterface::class);
         /** @var SensitiveDataRedactorInterface $redactor */
@@ -155,17 +157,17 @@ class ShopControl extends CoreShopControl
         /** @var ModuleSettingFacadeInterface $settingsFacade */
         $settingsFacade = ContainerFactory::getInstance()->getContainer()->get(ModuleSettingFacadeInterface::class);
 
-        $referer   = $_SERVER['HTTP_REFERER'] ?? null;
+        $referer = $_SERVER['HTTP_REFERER'] ?? null;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
 
-        $get  = $redactor->redact($_GET);
+        $get = $redactor->redact($_GET);
         $post = $redactor->redact($_POST);
 
         $redactAll = $settingsFacade->isRedactAllValuesEnabled();
 
         $scheme = $_SERVER['REQUEST_SCHEME'] ?? (($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http');
-        $host   = $_SERVER['HTTP_HOST'] ?? '';
-        $uri    = $_SERVER['REQUEST_URI'] ?? '/';
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
         // Redact query parameters in referer and URI in BOTH modes. In blocklist
         // mode only blocklisted keys are redacted; this closes the leak where a
@@ -180,25 +182,25 @@ class ShopControl extends CoreShopControl
 
         $recorder->logStart([
 
-            'version'    => $facade->getShopVersion(),
-            'edition'    => $facade->getShopEdition(),
-            'shopId'     => $facade->getShopId(),
-            'shopUrl'    => $facade->getShopUrl(),
+            'version' => $facade->getShopVersion(),
+            'edition' => $facade->getShopEdition(),
+            'shopId' => $facade->getShopId(),
+            'shopUrl' => $facade->getShopUrl(),
 
-            'referer'    => $referer,
-            'uri'        => $uri,
-            'method'     => $_SERVER['REQUEST_METHOD'] ?? null,
-            'get'        => $get,
-            'post'       => $post,
-            'userAgent'  => $redactAll ? '[redacted]' : $userAgent,
-            'lang'       => $facade->getLanguageAbbreviation(),
+            'referer' => $referer,
+            'uri' => $uri,
+            'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+            'get' => $get,
+            'post' => $post,
+            'userAgent' => $redactAll ? '[redacted]' : $userAgent,
+            'lang' => $facade->getLanguageAbbreviation(),
 
-            'sessionId'  => $redactAll ? '[redacted]' : $this->pseudonymizeSessionId($facade->getSessionId()),
-            'userId'     => $redactAll ? '[redacted]' : $facade->getUserId(),
-            'username'   => $redactAll ? '[redacted]' : $facade->getUsername(),
-            'ip'         => $redactAll ? '[redacted]' : ($_SERVER['REMOTE_ADDR'] ?? null),
+            'sessionId' => $redactAll ? '[redacted]' : $this->pseudonymizeSessionId($facade->getSessionId()),
+            'userId' => $redactAll ? '[redacted]' : $facade->getUserId(),
+            'username' => $redactAll ? '[redacted]' : $facade->getUsername(),
+            'ip' => $redactAll ? '[redacted]' : ($_SERVER['REMOTE_ADDR'] ?? null),
 
-            'php'        => PHP_VERSION,
+            'php' => PHP_VERSION,
         ]);
     }
 
@@ -213,13 +215,13 @@ class ShopControl extends CoreShopControl
         float $calculateDurationStartTimestamp,
         float $calculateDurationStopTimestamp
     ): void {
-        $duration = (int) round(
+        $duration = (int)round(
             ($calculateDurationStopTimestamp - $calculateDurationStartTimestamp) * 1000
         );
 
         $recorder->logFinish([
             'durationMs' => $duration,
-            'memoryMb'   => round(memory_get_peak_usage(true) / 1048576, 1),
+            'memoryMb' => round(memory_get_peak_usage(true) / 1048576, 1),
         ]);
     }
 
@@ -282,13 +284,13 @@ class ShopControl extends CoreShopControl
         // Build query string manually to avoid double URL-encoding of [redacted]
         $queryParts = [];
         foreach ($queryParams as $key => $value) {
-            $encodedKey = urlencode((string) $key);
+            $encodedKey = urlencode((string)$key);
 
-            if ($this->shouldRedactQueryKey((string) $key, $redactAll, $excludeFromRedaction, $blocklistLower)) {
+            if ($this->shouldRedactQueryKey((string)$key, $redactAll, $excludeFromRedaction, $blocklistLower)) {
                 // Use literal [redacted] without URL encoding
                 $queryParts[] = $encodedKey . '=[redacted]';
             } else {
-                $encodedValue = urlencode(is_array($value) ? '' : (string) $value);
+                $encodedValue = urlencode(is_array($value) ? '' : (string)$value);
                 $queryParts[] = $encodedKey . '=' . $encodedValue;
             }
         }
