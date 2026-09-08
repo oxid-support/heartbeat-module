@@ -64,4 +64,8 @@ final class Module
     public const SETTING_DIAGNOSTICSPROVIDER_ACTIVE = self::ID . '_diagnosticsprovider_active';
 
     public const API_USER_EMAIL = 'heartbeat-api@oxid-esales.com';
+
+    // Language ident of the admin message shown when activation could not provision
+    // the api user, see ModuleEvents::reportProvisioningFailure() and OXS-3377.
+    public const TRANSLATION_PROVISIONING_FAILED = 'OXSHEARTBEAT_APIUSER_PROVISIONING_FAILED';
 }

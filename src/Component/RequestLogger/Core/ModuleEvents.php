@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OxidSupport\Heartbeat\Component\RequestLogger\Core;
 
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerBuilderFactory;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserProvisioningServiceInterface;
@@ -41,20 +42,24 @@ final class ModuleEvents
         // caches and the module path cache, more than the module ever did.
         // See OXS-3376.
 
-        $container = self::buildContainerWithModuleServices();
+        try {
+            $container = self::buildContainerWithModuleServices();
 
-        // Create the api group, the service user and the group membership for
-        // the current shop. Idempotent, runs on every activation, and replaces
-        // the former data-seeding migration. This is the single creation path;
-        // there is no migration to run first. See OXS-3046.
-        $container->get(ApiUserProvisioningServiceInterface::class)->ensureApiUser();
+            // Create the api group, the service user and the group membership for
+            // the current shop. Idempotent, runs on every activation, and replaces
+            // the former data-seeding migration. This is the single creation path;
+            // there is no migration to run first. See OXS-3046.
+            $container->get(ApiUserProvisioningServiceInterface::class)->ensureApiUser();
 
-        // Reconcile the setup token with this shop's service-user password:
-        // a fresh per-shop token while the password is unset, cleared once it is
-        // set. Shop-scoped, so EE subshops never share or retain the base shop's
-        // inherited token (the only gate on the unauthenticated
-        // heartbeatSetPassword mutation). See OXS-3103.
-        $container->get(SetupTokenServiceInterface::class)->ensureSetupToken();
+            // Reconcile the setup token with this shop's service-user password:
+            // a fresh per-shop token while the password is unset, cleared once it is
+            // set. Shop-scoped, so EE subshops never share or retain the base shop's
+            // inherited token (the only gate on the unauthenticated
+            // heartbeatSetPassword mutation). See OXS-3103.
+            $container->get(SetupTokenServiceInterface::class)->ensureSetupToken();
+        } catch (\Throwable $e) {
+            self::reportProvisioningFailure($e);
+        }
     }
 
     /**
@@ -91,6 +96,31 @@ final class ModuleEvents
      * right before getContainer() only narrows that window. Compiling here reads the
      * yaml directly and never touches the cache file or that class.
      */
+    /**
+     * Keeps a failed provisioning inside the module instead of aborting the activation.
+     *
+     * The container above carries the service definitions of every active module, so a
+     * defect in a foreign module surfaces here too, and the shop runs into the same error
+     * on its next cold compile anyway. Letting that stacktrace end the activation would
+     * blame this module and leave the operator without a next step, so the activation
+     * finishes: the API User page then shows "setup required", and activating again
+     * repeats the provisioning, which is idempotent. See OXS-3377.
+     */
+    private static function reportProvisioningFailure(\Throwable $e): void
+    {
+        Registry::getLogger()->error(
+            'Heartbeat: api user provisioning failed during module activation: ' . $e->getMessage()
+            . ' Fix the cause, then activate the module again.',
+            [$e]
+        );
+
+        // addErrorToDisplay() stores the message in the session and starts one if needed,
+        // which makes no sense in a console activation; there the log is the only channel.
+        if (PHP_SAPI !== 'cli') {
+            Registry::getUtilsView()->addErrorToDisplay(Module::TRANSLATION_PROVISIONING_FAILED);
+        }
+    }
+
     private static function buildContainerWithModuleServices(): ContainerInterface
     {
         $container = (new ContainerBuilderFactory())->create()->getContainer();
