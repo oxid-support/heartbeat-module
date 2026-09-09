@@ -6,14 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.1] - 2026-09-09
+
 ### Changed
-- Module activation no longer regenerates the database views.
-- Module activation no longer clears the shop caches itself.
-- Module activation provisions the API user, its group and the setup token through an event subscriber with injected services; the activation hook only asks for it.
-- A failed provisioning of the API user no longer aborts the module activation; the cause is logged and shown in the admin area.
+- Six services that only ever get injected are no longer public in the container: ApiUserShopScope, ApiUserProvisioning, SetupToken, RemoteComponentStatus, LogSenderStatus and LogReader. Code outside the module that fetched them by id has to inject them instead. (OXS-3377)
+- Module activation no longer regenerates the database views. (OXS-3375)
+- Module activation no longer clears the shop caches itself. (OXS-3376)
+- Module activation provisions the API user, its group and the setup token through an event subscriber with injected services; the activation hook only asks for it. (OXS-3377)
+- A failed provisioning of the API user no longer aborts the module activation; the cause is logged and shown in the admin area. (OXS-3377)
 
 ### Fixed
-- The request logger no longer takes the shop offline when the container carries no module services, which could happen after deactivating and activating the module.
+- The module configuration page reads the setup token under the name the module actually stores it, so it no longer claims the API user is set up when it is not, and the token field stays read-only. (OXS-3384)
+- The admin password reset for the API service user no longer carries the setup token in a redirect URL, where it ended up in the web server log and the browser history. (OXS-3384)
+- The password reset button on the module configuration page posts to the controller the module actually registers. (OXS-3384)
+- The Request Logger setup page in the admin no longer shows a missing translation for its status, the code asked for an ident that no language file defined. (OXS-3383)
+- The request logger no longer takes the shop offline when the container carries no module services, which could happen after deactivating and activating the module. (OXS-3379)
 - Activating the module could abort with "You have requested a non-existent service", because the activation hook took the container from the cache file that a concurrent request had just rewritten, which hands the process the stale container class it booted with.
 
 ## [5.1.0] - 2026-07-14
