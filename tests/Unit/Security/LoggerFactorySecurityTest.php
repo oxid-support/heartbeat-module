@@ -7,7 +7,6 @@ namespace OxidSupport\Heartbeat\Tests\Unit\Security;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\CorrelationId\CorrelationIdProviderInterface;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\LoggerFactory;
 use OxidSupport\Heartbeat\Component\RequestLogger\Infrastructure\Logger\Processor\CorrelationIdProcessorInterface;
-use OxidSupport\Heartbeat\Module\Module;
 use OxidSupport\Heartbeat\Shop\Facade\ModuleSettingFacadeInterface;
 use OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface;
 use PHPUnit\Framework\Attributes\CoversClass;

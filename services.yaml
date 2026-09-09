@@ -99,7 +99,6 @@ services:
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserShopScopeInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserShopScope
-        public: true
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusServiceInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserStatusService
@@ -111,7 +110,6 @@ services:
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserProvisioningServiceInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserProvisioningService
-        public: true
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\TokenGeneratorInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\TokenGenerator
@@ -119,11 +117,14 @@ services:
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\SetupTokenServiceInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\SetupTokenService
-        public: true
 
     OxidSupport\Heartbeat\Component\ApiUser\Service\TokenInvalidatorInterface:
         class: OxidSupport\Heartbeat\Component\ApiUser\Service\TokenInvalidator
         public: true
+
+    # Component: ApiUser - EventSubscriber
+    OxidSupport\Heartbeat\Component\ApiUser\EventSubscriber\ApiUserProvisioningSubscriber:
+        tags: ['kernel.event_subscriber']
 
     # Component: ApiUser - Controller/Admin
     OxidSupport\Heartbeat\Component\ApiUser\Controller\Admin\SetupController:
@@ -151,7 +152,6 @@ services:
 
     OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusServiceInterface:
         class: OxidSupport\Heartbeat\Component\RequestLogger\Service\Remote\RemoteComponentStatusService
-        public: true
 
     # Component: RequestLogger - Remote Controller/GraphQL
     OxidSupport\Heartbeat\Component\RequestLogger\Controller\GraphQL\SettingController:
@@ -180,11 +180,9 @@ services:
 
     OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusServiceInterface:
         class: OxidSupport\Heartbeat\Component\LogSender\Service\LogSenderStatusService
-        public: true
 
     OxidSupport\Heartbeat\Component\LogSender\Service\LogReaderServiceInterface:
         class: OxidSupport\Heartbeat\Component\LogSender\Service\LogReaderService
-        public: true
 
     OxidSupport\Heartbeat\Component\LogSender\Service\LogCollectorServiceInterface:
         class: OxidSupport\Heartbeat\Component\LogSender\Service\LogCollectorService
@@ -229,7 +227,3 @@ services:
     OxidSupport\Heartbeat\Shop\Facade\ShopFacadeInterface:
         class: OxidSupport\Heartbeat\Shop\Facade\ShopFacade
         public: true
-
-    OxidSupport\Heartbeat\Component\ApiUser\EventSubscriber\ApiUserProvisioningSubscriber:
-        public: true
-        tags: ['kernel.event_subscriber']
