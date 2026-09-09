@@ -31,7 +31,7 @@
         .api-reset-section .reset-content li { color: #666; margin: 5px 0; }
     </style>
 
-    {% set setupToken = confstrs['oxsheartbeat_SetupToken']|default('') %}
+    {% set setupToken = confstrs['oxsheartbeat_apiuser_setup_token']|default('') %}
     {% set graphqlBaseActivated = oView.isGraphqlBaseActivated() %}
     {% set configAccessActivated = oView.isConfigAccessActivated() %}
 
@@ -135,7 +135,7 @@
 {% endblock %}
 
 {% block admin_module_config_var_type_str %}
-    {% if module_var == 'oxsheartbeat_SetupToken' %}
+    {% if module_var == 'oxsheartbeat_apiuser_setup_token' %}
         <input type="text" class="txt" style="width: 350px;" name="confstrs[{{ module_var }}]" value="{{ confstrs[module_var]|raw }}" readonly onclick="
             this.select();
             document.execCommand('copy');

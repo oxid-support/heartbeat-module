@@ -36,7 +36,11 @@ final class PasswordResetController extends AdminController
                 Module::ID
             );
 
-            return 'module_config?oxid=' . Module::ID . '&resetSuccess=1&newToken=' . $token;
+            // The token deliberately stays out of the redirect: the core turns this into a
+            // real URL and answers with a 302, so it would land in the web server log and
+            // in the browser history. The API User page is where the operator reads it.
+            // See OXS-3384.
+            return 'module_config?oxid=' . Module::ID . '&resetSuccess=1';
         } catch (UserNotFoundException $e) {
             return 'module_config?oxid=' . Module::ID . '&resetError=USER_NOT_FOUND';
         }
