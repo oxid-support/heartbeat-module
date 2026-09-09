@@ -92,22 +92,6 @@ final class ModuleEvents
     }
 
     /**
-     * Compiles a fresh container from the current generated_services.yaml instead of
-     * asking ContainerFactory for one.
-     *
-     * The activating request booted with the container that was cached while this
-     * module was still inactive, so that container has none of the module's services.
-     * The core resets ContainerFactory once the module's services.yaml is registered,
-     * but the reset only deletes the cache file: FilesystemContainerCache::get() loads
-     * the file with include_once, so when a concurrent request rewrites it before this
-     * hook runs, this process gets a new instance of the stale ProjectServiceContainer
-     * class declared at boot, and "You have requested a non-existent service" follows.
-     * ContainerFactory::resetContainer() right before getContainer() only narrows that
-     * window. Compiling here reads the yaml directly and never touches the cache file
-     * or that class. This is also what the shop's own graphql-base module does in
-     * ModuleSetup::onActivate(), the module event api has no dependency injection.
-     */
-    /**
      * Keeps a failed provisioning inside the module instead of aborting the activation.
      *
      * The container above carries the service definitions of every active module, so a
@@ -132,6 +116,22 @@ final class ModuleEvents
         }
     }
 
+    /**
+     * Compiles a fresh container from the current generated_services.yaml instead of
+     * asking ContainerFactory for one.
+     *
+     * The activating request booted with the container that was cached while this
+     * module was still inactive, so that container has none of the module's services.
+     * The core resets ContainerFactory once the module's services.yaml is registered,
+     * but the reset only deletes the cache file: FilesystemContainerCache::get() loads
+     * the file with include_once, so when a concurrent request rewrites it before this
+     * hook runs, this process gets a new instance of the stale ProjectServiceContainer
+     * class declared at boot, and "You have requested a non-existent service" follows.
+     * ContainerFactory::resetContainer() right before getContainer() only narrows that
+     * window. Compiling here reads the yaml directly and never touches the cache file
+     * or that class. This is also what the shop's own graphql-base module does in
+     * ModuleSetup::onActivate(), the module event api has no dependency injection.
+     */
     private static function buildContainerWithModuleServices(): ContainerInterface
     {
         $container = (new ContainerBuilderFactory())->create()->getContainer();

@@ -14,8 +14,9 @@ use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 use OxidEsales\GraphQL\Base\Tests\Integration\TokenTestCase;
-use OxidSupport\Heartbeat\Component\ApiUser\Service\ApiUserProvisioningServiceInterface;
+use OxidSupport\Heartbeat\Component\ApiUser\Event\ApiUserProvisioningRequestedEvent;
 use OxidSupport\Heartbeat\Module\Module;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Integration test for the api user provisioning that replaced the former
@@ -41,7 +42,7 @@ final class ApiUserProvisioningTest extends TokenTestCase
         $this->removeApiUserAndMembership();
         $this->assertSame(0, $this->apiUserCount(), 'precondition: no api user');
 
-        $this->provisioning()->ensureApiUser();
+        $this->provisionThroughTheModuleWiring();
 
         $userId = $this->apiUserId();
         $this->assertNotEmpty($userId, 'api user created');
@@ -60,19 +61,35 @@ final class ApiUserProvisioningTest extends TokenTestCase
     {
         $this->removeApiUserAndMembership();
 
-        $this->provisioning()->ensureApiUser();
-        $this->provisioning()->ensureApiUser();
+        $this->provisionThroughTheModuleWiring();
+        $this->provisionThroughTheModuleWiring();
 
         $userId = $this->apiUserId();
         $this->assertSame(1, $this->apiUserCount(), 'no duplicate user');
         $this->assertSame(1, $this->membershipCount($userId), 'no duplicate membership');
     }
 
-    private function provisioning(): ApiUserProvisioningServiceInterface
+    /**
+     * Provisions the way the module does it: the activation hook only dispatches the
+     * event, ApiUserProvisioningSubscriber holds the services. The services themselves
+     * are private, so the test takes the same route the shop takes instead of asking the
+     * container for something the shop never fetches either. See OXS-3377.
+     */
+    private function provisionThroughTheModuleWiring(): void
     {
-        return ContainerFactory::getInstance()
+        $dispatcher = ContainerFactory::getInstance()
             ->getContainer()
-            ->get(ApiUserProvisioningServiceInterface::class);
+            ->get(EventDispatcherInterface::class);
+
+        $this->assertTrue(
+            $dispatcher->hasListeners(ApiUserProvisioningRequestedEvent::NAME),
+            'the module subscribes to its own provisioning event'
+        );
+
+        $dispatcher->dispatch(
+            new ApiUserProvisioningRequestedEvent(),
+            ApiUserProvisioningRequestedEvent::NAME
+        );
     }
 
     private function connection(): Connection
