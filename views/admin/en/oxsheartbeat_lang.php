@@ -27,7 +27,6 @@ $aLang = [
     'OXSHEARTBEAT_LF_STATUS_ACTIVE' => 'Active',
     'OXSHEARTBEAT_LF_STATUS_INACTIVE' => 'Inactive',
     'OXSHEARTBEAT_LF_COMPONENT_ACTIVATION' => 'Activate Component',
-    'OXSHEARTBEAT_LF_COMPONENT_ACTIVATION_DESC' => 'Toggle this component on or off.',
 
     // Heartbeat Request Logger
     'OXSHEARTBEAT_LF_REQUESTLOGGER_TITLE' => 'Request Logger',
@@ -61,16 +60,11 @@ $aLang = [
     'OXSHEARTBEAT_APIUSER_STATUS_READY' => 'Active',
     'OXSHEARTBEAT_APIUSER_STATUS_SETUP_REQUIRED' => 'Setup Required',
     'OXSHEARTBEAT_APIUSER_PROVISIONING_FAILED' => 'The api user could not be created during activation. See the shop log for the cause, then activate the module again.',
-    'OXSHEARTBEAT_APIUSER_INFO_TITLE' => 'Important',
-    'OXSHEARTBEAT_APIUSER_INFO_TEXT' => 'The API User is required for all components that need remote access (e.g., Request Logger Remote). Set this up first.',
 
     // API User Setup Workflow
     'OXSHEARTBEAT_APIUSER_SETUP_TITLE' => 'Setup Workflow',
-    'OXSHEARTBEAT_APIUSER_STEP_INSTALL' => 'Module installed',
     'OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE' => 'GraphQL Base module activated',
     'OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE_DESC' => 'Activate with: ./vendor/bin/oe-console oe:module:activate oe_graphql_base',
-    'OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS' => 'GraphQL Configuration Access module activated',
-    'OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS_DESC' => 'Activate with: ./vendor/bin/oe-console oe:module:activate oe_graphql_configuration_access',
     'OXSHEARTBEAT_APIUSER_STEP_ACTIVATE' => 'Heartbeat module activated',
     'OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN' => 'Send setup token to OXID Support',
     'OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN_DESC' => 'Copy the token below and send it via email to support@oxid-esales.com',
@@ -88,7 +82,6 @@ $aLang = [
     'OXSHEARTBEAT_APIUSER_WARNING_3' => 'OXID Support will lose access until a new token is provided and a new password is set',
     'OXSHEARTBEAT_APIUSER_WARNING_4' => 'You must send the new token to OXID Support to restore access',
     'OXSHEARTBEAT_APIUSER_CONFIRM_RESET' => 'I understand the consequences and want to reset the password',
-    'OXSHEARTBEAT_APIUSER_CONFIRM_DIALOG' => 'Are you absolutely sure? This will immediately revoke all remote access!',
     'OXSHEARTBEAT_APIUSER_RESET_BUTTON' => 'Reset Password & Generate New Token',
 
     'OXSHEARTBEAT_APIUSER_INVALIDATE_TITLE' => 'Terminate API Sessions',
@@ -138,27 +131,19 @@ $aLang = [
 
     // Log Sender - Static Paths Configuration
     'OXSHEARTBEAT_LOGSENDER_STATIC_TITLE' => 'Static Log Paths',
-    'OXSHEARTBEAT_LOGSENDER_STATIC_DESC' => 'Configure additional log files or directories to be monitored here.',
-    'OXSHEARTBEAT_LOGSENDER_STATIC_PATHS_LABEL' => 'Log Paths (one path per line)',
     'OXSHEARTBEAT_LOGSENDER_STATIC_PATHS_PLACEHOLDER' => '/var/log/myapp.log
 /var/log/custom/',
-    'OXSHEARTBEAT_LOGSENDER_STATIC_PATHS_HELP' => 'Enter absolute paths. Paths ending with "/" are treated as directories, all others as files.',
     'OXSHEARTBEAT_LOGSENDER_SAVE' => 'Save',
 
     // Log Sender - Path Validation
-    'OXSHEARTBEAT_LOGSENDER_VALIDATION_TITLE' => 'Path Validation',
     'OXSHEARTBEAT_LOGSENDER_TYPE_FILE' => 'File',
     'OXSHEARTBEAT_LOGSENDER_TYPE_DIRECTORY' => 'Directory',
     'OXSHEARTBEAT_LOGSENDER_ERROR_NOT_FOUND' => 'Path does not exist',
     'OXSHEARTBEAT_LOGSENDER_ERROR_NOT_READABLE' => 'Path not readable (missing permissions)',
-    'OXSHEARTBEAT_LOGSENDER_ERROR_TYPE_MISMATCH' => 'Type mismatch',
     'OXSHEARTBEAT_LOGSENDER_ERROR_CANNOT_LIST' => 'Cannot list directory contents',
-    'OXSHEARTBEAT_LOGSENDER_EXPECTED' => 'Expected',
-    'OXSHEARTBEAT_LOGSENDER_FOUND' => 'Found',
     'OXSHEARTBEAT_LOGSENDER_FILES_FOUND' => 'files found',
     'OXSHEARTBEAT_LOGSENDER_SIZE' => 'Size',
     'OXSHEARTBEAT_LOGSENDER_TOGGLE_SOURCE' => 'Enable/disable log source for sending',
-    'OXSHEARTBEAT_LOGSENDER_REFRESH' => 'Refresh',
     'OXSHEARTBEAT_LOGSENDER_REFRESH_TITLE' => 'Reload log sources (clear cache)',
     'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH' => 'Refresh Button',
     'OXSHEARTBEAT_LOGSENDER_HOWTO_REFRESH_DESC' => 'Reloads the list of log sources by clearing the DI container cache. Use this if new providers are not showing up.',
