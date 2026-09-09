@@ -42,7 +42,7 @@ class RemoteSetupController extends AbstractComponentController implements Toggl
     public function getStatusTextKey(): string
     {
         if (!$this->isApiUserSetupComplete()) {
-            return 'OXSHEARTBEAT_REQUESTLOGGER_REMOTE_STATUS_WARNING';
+            return 'OXSHEARTBEAT_REMOTE_STATUS_WARNING';
         }
         return parent::getStatusTextKey();
     }

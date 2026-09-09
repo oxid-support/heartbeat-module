@@ -321,7 +321,9 @@ final class RemoteSetupControllerTest extends TestCase
 
         $controller = $this->createControllerWithMocks(apiUserStatusService: $apiUserStatusService);
 
-        $this->assertSame('OXSHEARTBEAT_REQUESTLOGGER_REMOTE_STATUS_WARNING', $controller->getStatusTextKey());
+        // The ident has to exist in the language files, otherwise the admin renders
+        // "ERROR: Translation for ... not found!". AdminTranslationsTest guards that.
+        $this->assertSame('OXSHEARTBEAT_REMOTE_STATUS_WARNING', $controller->getStatusTextKey());
     }
 
     public function testGetStatusTextKeyReturnsActiveKeyWhenApiUserSetUpAndActive(): void
