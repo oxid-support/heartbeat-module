@@ -12,7 +12,6 @@ namespace OxidSupport\Heartbeat\Tests\Unit\Component\DiagnosticsProvider\Service
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProvider;
 use OxidSupport\Heartbeat\Component\DiagnosticsProvider\Service\DiagnosticsProviderInterface;
 use OxidEsales\Eshop\Application\Model\Diagnostics;
-use OxidEsales\Eshop\Core\Module\Module;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
