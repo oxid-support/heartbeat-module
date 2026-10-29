@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.2] - 2026-10-29
+
+### Changed
+- Runs on OXID eShop 7.6. The shop constraint now allows `>=7.1, <7.7`; Composer selects the matching GraphQL stack per OXID version, 7.6 installs with `graphql-base ^13.0` and `graphql-configuration-access ^4.0`.
+- CI builds OXID 7.1 (PHP 8.2 and 8.3) and OXID 7.6 (PHP 8.3 and 8.5) instead of the placeholder jobs for 7.2 to 7.5. On PHP 8.5 only the unit tests run, because PHPMD 2.15 reports false unused private fields there.
+
 ## [6.1.1] - 2026-09-09
 
 ### Changed

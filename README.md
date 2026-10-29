@@ -1,6 +1,6 @@
 # OXS :: Heartbeat
 
-> **You are on branch `b-7.1.x`** (for OXID eShop 7.1 to 7.5).
+> **You are on branch `b-7.1.x`** (for OXID eShop 7.1 to 7.6).
 >
 > Other supported lines:
 > * **OXID 6.5** → branch [`b-6.5.x`](https://github.com/oxid-support/heartbeat-module/tree/b-6.5.x)
@@ -73,7 +73,7 @@ For more details on OXID GraphQL installation, see the [official documentation](
 
 * **Module 4.x**: OXID 6.5
 * **Module 5.x**: OXID 7.0.x
-* **Module 6.x**: OXID 7.1 to 7.5.x (this branch)
+* **Module 6.x**: OXID 7.1 to 7.6.x (this branch)
 
 Composer picks the right module version based on the installed OXID eShop. Customers never need to specify a module version manually. Module majors are a repo-wide chronological sequence assigned at release time, not tied to the OXID version.
 
@@ -81,7 +81,7 @@ Composer picks the right module version based on the installed OXID eShop. Custo
 
 This repo follows a Symfony / Doctrine style stabilization-branch layout: one long-lived branch per supported OXID line, no `main`. The most recent line is the default branch on GitHub, so a fresh clone lands on it.
 
-* **`b-7.1.x`** (default) active development for the OXID 7.1 to 7.5 line, Heartbeat 6.x (this branch)
+* **`b-7.1.x`** (default) active development for the OXID 7.1 to 7.6 line, Heartbeat 6.x (this branch)
 * **`b-7.0.x`** maintenance branch for the OXID 7.0 line, Heartbeat 5.x
 * **`b-6.5.x`** maintenance branch for the OXID 6.5 line, Heartbeat 4.x
 
@@ -89,7 +89,7 @@ When OXID introduces a new line that needs separate maintenance, a new `b-<X.Y>.
 
 Where to open your PR:
 
-* Bug or feature for OXID 7.1 to 7.5 → `b-7.1.x`
+* Bug or feature for OXID 7.1 to 7.6 → `b-7.1.x`
 * Bug for OXID 7.0 only → `b-7.0.x`
 * Bug for OXID 6.5 only → `b-6.5.x`
 
