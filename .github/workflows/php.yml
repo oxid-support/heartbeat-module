@@ -34,16 +34,22 @@ jobs:
       run: ~/.composer/vendor/bin/phpcs --standard=tests/phpcompat.xml -p
 
   build:
-    name: build (OXID 7.1)
+    name: build (OXID ${{ matrix.oxid }}, PHP ${{ matrix.php-version }})
     needs: phpcompatibility
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        # OXID 7.1 line runs on PHP 8.2-8.3 (the maintained 7.1.1 stack needs 8.2+;
-        # 7.1.x does not install on 8.4/8.5). Other lines (7.2-7.5) are placeholders.
-        php-version: ['8.2', '8.3']
+        # Lowest and highest OXID version of the constraint, each on its lowest and
+        # highest installable PHP. 7.1.x does not install on 8.4/8.5, 7.6 needs 8.3+.
+        # 7.2-7.5 are not built yet, see OXS-3076. PHPMD 2.15 reports false unused
+        # private fields on PHP 8.5, so that cell runs the unit tests only.
+        include:
+          - { oxid: '7.1', php-version: '8.2', graphql-base: '^9.0', static: true }
+          - { oxid: '7.1', php-version: '8.3', graphql-base: '^9.0', static: true }
+          - { oxid: '7.6', php-version: '8.3', graphql-base: '^13.0', static: true }
+          - { oxid: '7.6', php-version: '8.5', graphql-base: '^13.0', static: false }
 
     steps:
     - uses: actions/checkout@v6
@@ -59,22 +65,23 @@ jobs:
     - name: Validate composer.json
       run: composer validate --strict
 
-    - name: Constrain to the OXID 7.1 line
-      # composer.json stays loose (7.1-7.5); the build pins the 7.1 line here so
-      # this job really exercises OXID 7.1 instead of resolving the latest in range.
-      run: composer require --no-update oxid-esales/oxideshop-ce:'~7.1.0' oxid-esales/graphql-base:'^9.0'
+    - name: Constrain to the OXID ${{ matrix.oxid }} line
+      # composer.json stays loose (7.1-7.6); the build pins one line here so each
+      # cell really exercises that OXID version instead of the latest in range.
+      run: composer require --no-update oxid-esales/oxideshop-ce:'~${{ matrix.oxid }}.0' oxid-esales/graphql-base:'${{ matrix.graphql-base }}'
 
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v5
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ matrix.php-version }}-oxid7.1-${{ hashFiles('**/composer.json') }}
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-oxid${{ matrix.oxid }}-${{ hashFiles('**/composer.json') }}
 
     - name: Install dependencies
       run: composer update --prefer-dist --no-progress
 
     - name: Run static tests suite
+      if: matrix.static
       run: composer run-script static
     - name: Run Unit Tests
       run: composer run-script tests-unit
@@ -107,20 +114,6 @@ jobs:
 
     - name: Run Psalm Taint Analysis
       run: php psalm.phar --taint-analysis
-
-  # Placeholder jobs: b-7.1.x is compatible with OXID 7.1 through 7.5. OXID 7.1 is
-  # really built above; 7.2-7.5 are not exercised yet. These dummy jobs make the
-  # planned coverage visible now and will be replaced with real per-version
-  # build/test steps once implemented.
-  oxid-compatibility:
-    name: OXID compatibility (planned)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        oxid: ['7.2', '7.3', '7.4', '7.5']
-    steps:
-      - run: echo "OXID ${{ matrix.oxid }} compatibility check is planned (placeholder, not yet implemented)"
 
   notify-devops:
     name: Notify DevOps Repo
