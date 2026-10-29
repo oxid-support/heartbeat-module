@@ -46,6 +46,12 @@ $aLang = [
     'OXSHEARTBEAT_LF_REMOTE_DESC' => 'Ermöglicht dem OXID Support, den Request Logger aus der Ferne zu konfigurieren.',
 
     // ==========================================================================
+    // Module Config Tab
+    // ==========================================================================
+    'OXSHEARTBEAT_MODULE_CONFIG_HINT' => 'Einstellungen und Einrichtung dieses Moduls finden Sie im linken Menü unter "OXS :: Heartbeat", insbesondere im Eintrag',
+    'OXSHEARTBEAT_MODULE_CONFIG_HINT_LINK' => 'API User',
+
+    // ==========================================================================
     // API User Component
     // ==========================================================================
     'OXSHEARTBEAT_APIUSER_TITLE' => 'API User',
@@ -56,11 +62,8 @@ $aLang = [
 
     // API User Setup Workflow
     'OXSHEARTBEAT_APIUSER_SETUP_TITLE' => 'Einrichtungs-Workflow',
-    'OXSHEARTBEAT_APIUSER_STEP_INSTALL' => 'Modul installiert',
     'OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE' => 'GraphQL Base Modul aktiviert',
     'OXSHEARTBEAT_APIUSER_STEP_GRAPHQL_BASE_DESC' => 'Aktivieren mit: ./vendor/bin/oe-console oe:module:activate oe_graphql_base',
-    'OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS' => 'GraphQL Configuration Access Modul aktiviert',
-    'OXSHEARTBEAT_APIUSER_STEP_CONFIG_ACCESS_DESC' => 'Aktivieren mit: ./vendor/bin/oe-console oe:module:activate oe_graphql_configuration_access',
     'OXSHEARTBEAT_APIUSER_STEP_ACTIVATE' => 'Heartbeat Modul aktiviert',
     'OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN' => 'Setup-Token an OXID Support senden',
     'OXSHEARTBEAT_APIUSER_STEP_SEND_TOKEN_DESC' => 'Kopieren Sie den Token unten und senden Sie ihn per E-Mail an support@oxid-esales.com',
@@ -78,7 +81,6 @@ $aLang = [
     'OXSHEARTBEAT_APIUSER_WARNING_3' => 'OXID Support verliert den Zugriff bis ein neuer Token zur Verfügung gestellt und ein neues Passwort gesetzt wird',
     'OXSHEARTBEAT_APIUSER_WARNING_4' => 'Sie müssen den neuen Token an OXID Support senden, um den Zugriff wiederherzustellen',
     'OXSHEARTBEAT_APIUSER_CONFIRM_RESET' => 'Ich verstehe die Konsequenzen und möchte das Passwort zurücksetzen',
-    'OXSHEARTBEAT_APIUSER_CONFIRM_DIALOG' => 'Sind Sie absolut sicher? Dies widerruft sofort allen Fernzugriff!',
     'OXSHEARTBEAT_APIUSER_RESET_BUTTON' => 'Passwort zurücksetzen & neuen Token generieren',
 
     // API User Token Invalidation (OXS-3058)
