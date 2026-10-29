@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.2] - 2026-10-29
+
 ### Fixed
 - The module settings page under Extensions shows the hint pointing at the API User page instead of repeating the whole setup workflow with the token block and the reset section. (OXS-3397)
 
